@@ -1,25 +1,129 @@
+// // import React, { useState } from 'react';
+// // import styled from 'styled-components';
+// // import axios from 'axios';
+// // import { useNavigate } from 'react-router-dom';
+// // import bgImage from '../images/bg.jpg';
+
+// // // Full-screen container to center the child content
+// // const FullScreenContainer = styled.div`
+// //   background-image: url(${bgImage});
+// //   background-size: cover;
+// //   background-position: center;
+// //   background-blend-mode: overlay;
+// //   background-color: rgba(0, 0, 0, 0.5);
+// //   min-height: 100vh; /* Ensure it covers the whole viewport height */
+// //   display: flex;
+// //   justify-content: center;
+// //   flex-direction: column;
+// //   align-items: center;
+// //   padding: 20px;
+// // `;
+
+
+
+// // const Container = styled.div`
+// //   display: flex;
+// //   flex-direction: column;
+// //   align-items: center;
+// //   justify-content: center;
+// //   padding: 20px;
+// //   background: #FFFFFF;
+// //   border-radius: 8px;
+// //   box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+// //   max-width: 400px;
+// //   width: 100%; // Ensures it does not exceed the max-width
+// //   box-sizing: border-box;
+// // `;
+
+// // const StyledInput = styled.input`
+// //   width: 100%;
+// //   padding: 12px;
+// //   margin: 10px 0;
+// //   border: 2px solid #D3D3D3;
+// //   border-radius: 5px;
+// //   box-sizing: border-box;
+// // `;
+
+// // const Button = styled.button`
+// //   padding: 10px 20px;
+// //   margin-top: 20px;
+// //   background-color: #FF0000;
+// //   color: white;
+// //   border: none;
+// //   border-radius: 20px;
+// //   cursor: pointer;
+// //   width: 100%;
+// //   &:hover {
+// //     background-color: #D3D3D3;
+// //   }
+// // `;
+
+// // const CheckCustomer = () => {
+// //   const navigate = useNavigate();
+// //   const [cnicNumber, setCnicNumber] = useState('');
+
+// //   const checkCustomer = async () => {
+// //     if (!/^\d{16}$/.test(cnicNumber)) {
+// //       alert('CNIC must be exactly 16 digits.');
+// //       return;
+// //     }
+
+// //     try {
+// //       const response = await axios.get(`http://localhost:5000/api/customers/check`, {
+// //         params: { cnicNumber }
+// //       });
+
+// //       if (response.data.exists) {
+// //         alert('Customer verified, please continue.');
+// //         navigate('/InquiryForm', { state: { cnicNumber } }); 
+// //       } else {
+// //         alert('Customer not found. Redirecting to add customer...');
+// //         navigate('/addCustomer');
+// //       }
+// //     } catch (error) {
+// //       console.error('Error verifying customer:', error);
+// //       alert(`Customer not found. Redirecting to add customer...`);
+// //       navigate('/CustomerInquiryForm');
+// //     }
+// //   };
+
+// //   return (
+// //     <FullScreenContainer>
+// //       <Container>
+// //         <StyledInput
+// //           type="number"
+// //           value={cnicNumber}
+// //           onChange={(e) => setCnicNumber(e.target.value)}
+// //           placeholder="Enter Customer CNIC"
+// //         />
+// //         <Button onClick={checkCustomer}>Verify Customer</Button>
+// //       </Container>
+// //     </FullScreenContainer>
+// //   );
+// // };
+
+// // export default CheckCustomer;
+
+
 // import React, { useState } from 'react';
 // import styled from 'styled-components';
 // import axios from 'axios';
 // import { useNavigate } from 'react-router-dom';
 // import bgImage from '../images/bg.jpg';
 
-// // Full-screen container to center the child content
 // const FullScreenContainer = styled.div`
 //   background-image: url(${bgImage});
 //   background-size: cover;
 //   background-position: center;
 //   background-blend-mode: overlay;
 //   background-color: rgba(0, 0, 0, 0.5);
-//   min-height: 100vh; /* Ensure it covers the whole viewport height */
+//   min-height: 100vh;
 //   display: flex;
 //   justify-content: center;
 //   flex-direction: column;
 //   align-items: center;
 //   padding: 20px;
 // `;
-
-
 
 // const Container = styled.div`
 //   display: flex;
@@ -31,7 +135,7 @@
 //   border-radius: 8px;
 //   box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 //   max-width: 400px;
-//   width: 100%; // Ensures it does not exceed the max-width
+//   width: 100%;
 //   box-sizing: border-box;
 // `;
 
@@ -58,44 +162,97 @@
 //   }
 // `;
 
+// const ErrorMessage = styled.div`
+//   color: #ff6b6b;
+//   margin-top: 10px;
+// `;
+
 // const CheckCustomer = () => {
 //   const navigate = useNavigate();
-//   const [cnicNumber, setCnicNumber] = useState('');
+//   const [cnic, setCnic] = useState('');
+//   const [cnicError, setCnicError] = useState('');
+//   const [phoneNumber, setPhoneNumber] = useState('');
+//   const [phoneError, setPhoneError] = useState('');
+
+//   const handleCnicChange = (event) => {
+//     const input = event.target.value;
+//     setCnic(input);
+//     if (!/^\d{16}$/.test(input)) {
+//       setCnicError('CNIC must be exactly 16 digits.');
+//     } else {
+//       setCnicError('');
+//     }
+//   };
+
+//   const handlePhoneNumberChange = (event) => {
+//     const input = event.target.value;
+//     setPhoneNumber(input);
+//     if (!/^\+?[\d\s]{10,}$/.test(input)) {
+//       setPhoneError('Please enter a valid phone number with the country code.');
+//     } else {
+//       setPhoneError('');
+//     }
+//   };
 
 //   const checkCustomer = async () => {
-//     if (!/^\d{16}$/.test(cnicNumber)) {
-//       alert('CNIC must be exactly 16 digits.');
+//     if (cnicError || phoneError) {
+//       alert('Please correct the errors before submitting.');
 //       return;
 //     }
-
+  
+//     if (!cnic && !phoneNumber) {
+//       alert('Please enter at least one identifier to verify a customer.');
+//       return;
+//     }
+  
+//     // Create a params object
+//     let params = {};
+//     if (cnic) {
+//       params.cnicNumber = cnic;
+//     }
+//     if (phoneNumber) {
+//       params.phoneNumber = phoneNumber;
+//     }
+  
 //     try {
-//       const response = await axios.get(`http://195.179.231.102:6003/api/customers/check`, {
-//         params: { cnicNumber }
-//       });
-
+//       const response = await axios.get(`http://localhost:5000/api/customers/check`, { params });
+  
 //       if (response.data.exists) {
 //         alert('Customer verified, please continue.');
-//         navigate('/InquiryForm', { state: { cnicNumber } }); 
+//         navigate('/InquiryForm', { state: { cnic, phoneNumber } });
+//         console.log(cnic, phoneNumber);
 //       } else {
 //         alert('Customer not found. Redirecting to add customer...');
-//         navigate('/addCustomer');
+//         navigate('/addCustomer', { state: { cnic, phoneNumber } });
 //       }
 //     } catch (error) {
 //       console.error('Error verifying customer:', error);
-//       alert(`Customer not found. Redirecting to add customer...`);
-//       navigate('/CustomerInquiryForm');
+//       alert('Failed to verify customer. Please try again.');
 //     }
 //   };
+  
+  
+
 
 //   return (
 //     <FullScreenContainer>
 //       <Container>
 //         <StyledInput
-//           type="number"
-//           value={cnicNumber}
-//           onChange={(e) => setCnicNumber(e.target.value)}
+//           type="text"
+//           value={cnic}
+//           onChange={handleCnicChange}
 //           placeholder="Enter Customer CNIC"
 //         />
+//         {cnicError && <ErrorMessage>{cnicError}</ErrorMessage>}
+        
+//         {/* <StyledInput
+//           type="tel"
+//           value={phoneNumber}
+//           onChange={handlePhoneNumberChange}
+//           placeholder="Enter Customer Phone Number"
+//         />
+//         {phoneError && <ErrorMessage>{phoneError}</ErrorMessage>} */}
+        
 //         <Button onClick={checkCustomer}>Verify Customer</Button>
 //       </Container>
 //     </FullScreenContainer>
@@ -173,6 +330,7 @@ const CheckCustomer = () => {
   const [cnicError, setCnicError] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [phoneError, setPhoneError] = useState('');
+  const [serverError, setServerError] = useState('');
 
   const handleCnicChange = (event) => {
     const input = event.target.value;
@@ -215,7 +373,7 @@ const CheckCustomer = () => {
     }
   
     try {
-      const response = await axios.get(`http://195.179.231.102:6003/api/customers/check`, { params });
+      const response = await axios.get(`http://localhost:5000/api/customers/check`, { params });
   
       if (response.data.exists) {
         alert('Customer verified, please continue.');
@@ -227,13 +385,19 @@ const CheckCustomer = () => {
       }
     } catch (error) {
       console.error('Error verifying customer:', error);
-      alert('Failed to verify customer. Please try again.');
+      if (error.response) {
+        // Server responded with a status other than 200 range
+        setServerError(error.response.data.message || 'An error occurred on the server.');
+      } else if (error.request) {
+        // Request was made but no response received
+        setServerError('No response received from the server. Please try again.');
+      } else {
+        // Something else happened while setting up the request
+        setServerError('Error setting up request: ' + error.message);
+      }
     }
   };
   
-  
-
-
   return (
     <FullScreenContainer>
       <Container>
@@ -245,15 +409,16 @@ const CheckCustomer = () => {
         />
         {cnicError && <ErrorMessage>{cnicError}</ErrorMessage>}
         
-        <StyledInput
+        {/* <StyledInput
           type="tel"
           value={phoneNumber}
           onChange={handlePhoneNumberChange}
           placeholder="Enter Customer Phone Number"
         />
         {phoneError && <ErrorMessage>{phoneError}</ErrorMessage>}
-        
+         */}
         <Button onClick={checkCustomer}>Verify Customer</Button>
+        {serverError && <ErrorMessage>{serverError}</ErrorMessage>}
       </Container>
     </FullScreenContainer>
   );

@@ -7,12 +7,21 @@ const TabsContainer = styled.div`
   align-items: center;
   padding: 20px;
   background: white;
+
+  @media (max-width: 600px) {
+    padding: 10px;
+  }
 `;
 
 const TabList = styled.div`
   display: flex;
   justify-content: space-around;
   width: 100%;
+
+  @media (max-width: 600px) {
+    flex-direction: column;
+    align-items: center;
+  }
 `;
 
 const Tab = styled.button`
@@ -22,10 +31,16 @@ const Tab = styled.button`
   color: ${(props) => (props.active ? 'white' : 'black')};
   font-size: 1rem;
   cursor: pointer;
+  margin: 5px 0;
 
   &:hover {
     background-color: #b82b24;
     color: white;
+  }
+
+  @media (max-width: 600px) {
+    font-size: 0.9rem;
+    width: 100%;
   }
 `;
 
@@ -33,6 +48,10 @@ const Content = styled.div`
   padding: 20px;
   text-align: center;
   color: gray;
+
+  @media (max-width: 600px) {
+    padding: 10px;
+  }
 `;
 
 const features = [

@@ -529,9 +529,40 @@ const Dashboard = () => {
     return () => clearInterval(timer);
   }, []);
 
+  
   useEffect(() => {
     fetchWeather(setWeather);
   }, []);
+
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const response = await fetch(`http://localhost:5000/api/auth/profile/${user.userId}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        });
+        if (response.ok) {
+          const data = await response.json();
+          setUser((prevState) => ({
+            ...prevState,
+            profilePic: data.profilePicture,
+          }));
+        } else {
+          console.error("Failed to fetch user profile:", response.statusText);
+        }
+      } catch (error) {
+        console.error("Failed to fetch user profile:", error);
+      }
+    };
+
+    if (user.userId) {
+      fetchUserProfile();
+    }
+  }, [user.userId]);
+
+  
 
   const profilePic = 'https://cdn-icons-png.freepik.com/512/147/147144.png';
 

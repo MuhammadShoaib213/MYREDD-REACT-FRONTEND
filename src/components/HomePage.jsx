@@ -118,6 +118,7 @@ import backgroundImage from '../images/hero.png';
 import InfoSection from './infoSection';
 import FeatureTabs from './FeatureTabs';
 import ContactForm from './ContactForm';
+import { Link } from 'react-router-dom';
 
 const Header = styled.header`
   text-align: left; /* Align text to the left */
@@ -168,6 +169,7 @@ const Divider = styled.div`
   height: auto;
   min-height: 300px;
   align-self: stretch;
+  margin-left: 300px;
 
   @media (max-width: 768px) {
     display: none; // Hide the divider on mobile screens
@@ -181,7 +183,9 @@ const HomePage = () => {
       <Header>
         <Headline>Your Oasis for Real Estate Growth</Headline>
         <Subheadline>Discover your potential in properties with us.</Subheadline>
+        <Link to="/signup" style={{ textDecoration: 'none' }}>
         <Button>Sign Up</Button>
+        </Link>
       </Header>
       <InfoSection />
       <SectionsContainer>

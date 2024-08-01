@@ -6,25 +6,38 @@ const Form = styled.form`
   flex-direction: column;
   padding: 20px;
   background: #ffffff;
-  width: 300px;
+  width: 100%;
+  max-width: 500px; /* Adjust the max-width as needed */
   margin: auto;
+
+  @media (max-width: 600px) {
+    padding: 10px;
+  }
 `;
 
 const FormContainer = styled.div`
-  /* Add styling for the form container if needed */
-`;
+  width: 100%;
+  padding: 0 10px;
 
+  @media (min-width: 601px) {
+    padding: 0;
+  }
+`;
 
 const Input = styled.input`
   margin-bottom: 10px;
   padding: 8px;
   border: 1px solid #ccc;
+  width: 100%;
+  box-sizing: border-box;
 `;
 
 const TextArea = styled.textarea`
   margin-bottom: 10px;
   padding: 8px;
   border: 1px solid #ccc;
+  width: 100%;
+  box-sizing: border-box;
 `;
 
 const SubmitButton = styled.button`
@@ -37,11 +50,14 @@ const SubmitButton = styled.button`
   &:hover {
     background-color: darkred;
   }
+
+  width: 100%;
 `;
 
 const Heading = styled.h2`
   color: black;
   margin-bottom: 20px;
+  text-align: center;
 `;
 
 const ContactForm = () => {
@@ -58,9 +74,7 @@ const ContactForm = () => {
       },
       body: JSON.stringify({ email, subject, message }),
     });
-    if (response.ok)
-
- {
+    if (response.ok) {
       // Handle success
       alert('Message sent successfully!');
     } else {
@@ -72,16 +86,16 @@ const ContactForm = () => {
   return (
     <FormContainer id="ContactUs">
       <br/>
-    <Form onSubmit={handleSubmit}>
-      <Heading>{'Contact Us'}</Heading>
-      <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Your email" required />
-      <Input type="text" value={subject} onChange={(e) => setSubject(e.target.value)} placeholder="Subject" required />
-      <TextArea value={message} onChange={(e) => setMessage(e.target.value)} placeholder="Message" required />
-      <SubmitButton type="submit">Send</SubmitButton>
-    </Form>
-    <br/>
-    <br/>
-    <br/>
+      <Form onSubmit={handleSubmit}>
+        <Heading>Contact Us</Heading>
+        <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Your email" required />
+        <Input type="text" value={subject} onChange={(e) => setSubject(e.target.value)} placeholder="Subject" required />
+        <TextArea value={message} onChange={(e) => setMessage(e.target.value)} placeholder="Message" required />
+        <SubmitButton type="submit">Send</SubmitButton>
+      </Form>
+      <br/>
+      <br/>
+      <br/>
     </FormContainer>
   );
 };

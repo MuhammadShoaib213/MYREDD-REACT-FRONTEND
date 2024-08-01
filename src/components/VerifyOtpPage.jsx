@@ -3,6 +3,23 @@ import styled from 'styled-components';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import bgImage from '../images/bg.jpg';
+
+
+
+const PageContainer = styled.div`
+  background-image: url(${bgImage});
+  background-size: cover;
+  background-position: center;
+  background-blend-mode: overlay;
+  background-color: rgba(0, 0, 0, 0.5);
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  @media (max-width: 768px) {
+    height: auto;
+  }
+`;
 
 // Styled components
 const Container = styled.div`
@@ -11,7 +28,6 @@ const Container = styled.div`
   align-items: center;
   justify-content: center;
   min-height: 100vh;
-  background: #f7f7f7;
 `;
 
 const Form = styled.form`
@@ -56,7 +72,7 @@ function VerifyOtpPage() {
       return;
     }
 
-    const response = await fetch('http://195.179.231.102:6003/api/auth/verify-otp', {
+    const response = await fetch('http://localhost:5000/api/auth/verify-otp', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -66,7 +82,7 @@ function VerifyOtpPage() {
 
     if (response.ok) {
       toast.success('OTP Verified Successfully!');
-      navigate('/dashboard'); // Navigate to dashboard or another appropriate page
+      navigate('/login'); // Navigate to dashboard or another appropriate page
     } else {
       const errorData = await response.json();
       toast.error(`Verification error: ${errorData.message}`);
@@ -74,6 +90,7 @@ function VerifyOtpPage() {
   };
 
   return (
+    <PageContainer>
     <Container>
       <ToastContainer position="top-center" autoClose={5000} hideProgressBar={false} newestOnTop={false} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover />
       <Form onSubmit={(e) => { e.preventDefault(); verifyOtp(); }}>
@@ -86,6 +103,7 @@ function VerifyOtpPage() {
         <Button type="submit">Verify OTP</Button>
       </Form>
     </Container>
+    </PageContainer>
   );
 }
 

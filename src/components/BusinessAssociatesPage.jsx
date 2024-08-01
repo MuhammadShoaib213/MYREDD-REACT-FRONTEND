@@ -450,7 +450,7 @@
 //   useEffect(() => {
 //     const fetchFriendRequests = async () => {
 //       try {
-//         const response = await axios.get('http://195.179.231.102:6003/api/friend/requests', {
+//         const response = await axios.get('http://localhost:5000/api/friend/requests', {
 //           headers: { Authorization: `Bearer ${token}` }
 //         });
 //         setFriendRequests(response.data);
@@ -466,7 +466,7 @@
   
 //   const handleAcceptFriendRequest = async (requestId) => {
 //     try {
-//       await axios.put('http://195.179.231.102:6003/api/friend/update', { 
+//       await axios.put('http://localhost:5000/api/friend/update', { 
 //         friendsId: requestId,
 //         action: 'accept'
 //       }, {
@@ -483,7 +483,7 @@
   
 //   const handleDeclineFriendRequest = async (requestId) => {
 //     try {
-//       await axios.put('http://195.179.231.102:6003/api/friend/update', { 
+//       await axios.put('http://localhost:5000/api/friend/update', { 
 //         friendsId: requestId,
 //         action: 'decline'
 //       }, {
@@ -856,7 +856,7 @@ const BusinessAssociatesPage = () => {
   useEffect(() => {
     const fetchFriendRequests = async () => {
       try {
-        const response = await axios.get('http://195.179.231.102:6003/api/friend/requests', {
+        const response = await axios.get('http://localhost:5000/api/friend/requests', {
           headers: { Authorization: `Bearer ${token}` }
         });
         setFriendRequests(response.data);
@@ -871,7 +871,7 @@ const BusinessAssociatesPage = () => {
 
   const handleAcceptFriendRequest = async (requestId) => {
     try {
-      await axios.put('http://195.179.231.102:6003/api/friend/update', { 
+      await axios.put('http://localhost:5000/api/friend/update', { 
         friendsId: requestId,
         action: 'accept'
       }, {
@@ -887,7 +887,7 @@ const BusinessAssociatesPage = () => {
 
   const handleDeclineFriendRequest = async (requestId) => {
     try {
-      await axios.put('http://195.179.231.102:6003/api/friend/update', { 
+      await axios.put('http://localhost:5000/api/friend/update', { 
         friendsId: requestId,
         action: 'decline'
       }, {
