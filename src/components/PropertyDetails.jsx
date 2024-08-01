@@ -167,7 +167,7 @@ const PropertyDetailsPage = () => {
   useEffect(() => {
     const fetchPropertyDetails = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/api/properties/property/${id}`, {
+        const response = await axios.get(`http://195.179.231.102:6003/api/properties/property/${id}`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
             'Content-Type': 'application/json'
@@ -196,7 +196,7 @@ const PropertyDetailsPage = () => {
     <PropertyContainer>
       <LeftPanel>
       <Image 
-  src={property.images[0] ? `http://localhost:5000/${property.images[0]}` : 'http://localhost:5000/uploads/bg.jpg'} 
+  src={property.images[0] ? `http://195.179.231.102:6003/${property.images[0]}` : 'http://195.179.231.102:6003/uploads/bg.jpg'} 
   alt={property.title}
 />
         <Title>{property.title || "Home"}</Title>
