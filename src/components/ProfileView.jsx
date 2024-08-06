@@ -678,7 +678,8 @@ const ProfileView = () => {
   return (
     <ProfileContainer>
       <LeftPanel>
-        <ProfilePic src={profile.profilePicture || "https://via.placeholder.com/150"} alt="Profile Picture" />
+        {/* <ProfilePic src={profile.profilePicture || "https://via.placeholder.com/150"} alt="Profile Picture" /> */}
+        <ProfilePic src={profile.profilePicture ? `http://195.179.231.102:6003/${profile.profilePicture}` : 'https://via.placeholder.com/200'} alt={profile.profilePicture} />
         <FileInput type="file" onChange={(e) => handleImageChange(e, setProfileImage)} />
         <p>{`${profile.firstName} ${profile.lastName}`}</p>
         <p>{profile.email}</p>

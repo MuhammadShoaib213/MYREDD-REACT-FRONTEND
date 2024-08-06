@@ -571,7 +571,7 @@ const Dashboard = () => {
       <br/>
       <UserInfoWidget>
         {/* <UserImage src={user.profilePic} alt="Profile" /> */}
-        <UserImage src={user.profilePic || profilePic} />
+        <UserImage src={user.profilePic ? `http://195.179.231.102:6003/${user.profilePic}` : 'https://via.placeholder.com/200'} alt={user.profilePic} />
         <UserName>{user.firstName} {user.lastName}</UserName>
         <UserRole>{user.role}</UserRole>
       </UserInfoWidget>

@@ -429,7 +429,8 @@ const formatDate = (dateString) => {
 
 const CustomerCard = ({ customer, onViewDetail }) => (
   <Card>
-    <CardImage src={customer.profilePicture || 'default-profile.jpg'} alt={customer.fullName} />
+    {/* <CardImage src={customer.profilePicture || 'default-profile.jpg'} alt={customer.fullName} /> */}
+    <CardImage src={customer.profilePicture ? `http://195.179.231.102:6003/${customer.profilePicture}` : 'https://via.placeholder.com/200'} alt={customer.fullName} />
     <CardBody>
       <CardTitle>{customer.fullName}</CardTitle>
       <CardSubtitle>{customer.currentAddress}</CardSubtitle>
