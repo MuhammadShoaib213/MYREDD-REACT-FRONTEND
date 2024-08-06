@@ -79,7 +79,7 @@
 //     const fetchData = async () => {
 //       if (!token) return;
 //       const decoded = jwtDecode(token);
-//       const response = await axios.get(`http://195.179.231.102:6003/api/properties/user/${decoded.userId}`, {
+//       const response = await axios.get(`http://localhost:5000/api/properties/user/${decoded.userId}`, {
 //         headers: { Authorization: `Bearer ${token}` }
 //       });
 //       setData(aggregateData(response.data));
@@ -210,11 +210,13 @@ const PageContainer = styled.div`
   flex-direction: column;
   align-items: center;
   padding: 20px;
+  padding-top: 80px;
   overflow: auto;
 `;
 
 const Header = styled.h1`
   margin-bottom: 20px;
+  color: white;
 `;
 
 const ContentContainer = styled.div`
@@ -270,7 +272,7 @@ function InquiriesStatus() {
     if (!token) return;
     const decoded = jwtDecode(token);
     const fetchData = async () => {
-      const response = await axios.get(`http://195.179.231.102:6003/api/properties/user/${decoded.userId}`, {
+      const response = await axios.get(`http://localhost:5000/api/properties/user/${decoded.userId}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setData(aggregateData(response.data));

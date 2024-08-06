@@ -27,6 +27,7 @@ const PageContainer = styled.div`
   background-color: rgba(0, 0, 0, 0.5);
   min-height: 100vh;
   padding: 20px;
+  padding-top: 80px;
 `;
 
 const PropertiesGrid = styled.div`
@@ -35,6 +36,18 @@ const PropertiesGrid = styled.div`
     gap: 20px;
     justify-content: center;
     margin-top: 50px; 
+`;
+const Header = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 20px;
+  color: white;
+  @media (max-width: 768px) {
+    flex-direction: column;
+    padding: 10px;
+  }
 `;
 
 const PropertyCard = styled.div`
@@ -398,8 +411,8 @@ const PropertyView = () => {
         const decoded = jwtDecode(token);  // Decode the JWT
         const userId = decoded.userId;      // Extract the user ID from the token
 
-        const response = await axios.get(`http://195.179.231.102:6003/api/properties/all?userId=${userId}`);
-        // const response = await axios.get('http://195.179.231.102:6003/api/properties/all');
+        const response = await axios.get(`http://localhost:5000/api/properties/all?userId=${userId}`);
+        // const response = await axios.get('http://localhost:5000/api/properties/all');
         setProperties(response.data);
         console.log(response.data);
       } catch (error) {
@@ -413,6 +426,12 @@ const PropertyView = () => {
   return (
 
     <PageContainer>
+
+<Header>
+          <h1>Property Bank</h1>
+          {/* <Logo>Logo</Logo> */}
+        </Header>
+
          <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
        <Link to="/CheckCustomer"> 
     <SubmitInquiryButton onClick={() => console.log('Navigate to inquiry form')}>
@@ -423,9 +442,9 @@ const PropertyView = () => {
     <PropertiesGrid>
       {properties.map(property => (
         <PropertyCard key={property._id}>
-          {/* <PropertyImage src={property.images[0] ? `http://195.179.231.102:6003/uploads/${property.images[0]}` : 'http://195.179.231.102:6003/uploads/bg.jpg'} alt={property.title} /> */}
+          {/* <PropertyImage src={property.images[0] ? `http://localhost:5000/uploads/${property.images[0]}` : 'http://localhost:5000/uploads/bg.jpg'} alt={property.title} /> */}
           <PropertyImage 
-  src={property.images[0] ? `http://195.179.231.102:6003/${property.images[0]}` : 'http://195.179.231.102:6003/uploads/bg.jpg'} 
+  src={property.images[0] ? `http://localhost:5000/${property.images[0]}` : 'http://localhost:5000/uploads/bg.jpg'} 
   alt={property.title}
 />
 

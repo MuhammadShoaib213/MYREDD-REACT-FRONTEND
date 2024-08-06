@@ -14,6 +14,7 @@ const PageContainer = styled.div`
   background-color: rgba(0, 0, 0, 0.5);
   min-height: 100vh;
   display: flex;
+  padding-top: 80px;
   flex-direction: column;
   align-items: center;
   padding: 20px;
@@ -217,7 +218,7 @@ const FriendDetail = () => {
   useEffect(() => {
     const fetchFriendDetail = async () => {
       try {
-        const response = await fetch(`http://195.179.231.102:6003/api/friend/detail/${id}`, {
+        const response = await fetch(`http://localhost:5000/api/friend/detail/${id}`, {
           headers: {
             Authorization: `Bearer ${token}`, // Include token in headers
           },
@@ -243,11 +244,11 @@ const FriendDetail = () => {
       <Header>Business Associates</Header>
       <ContentContainer>
         <ProfileCard>
-          <ProfileImage src={friend.profilePicture ? `http://195.179.231.102:6003/${friend.profilePicture}` : 'https://via.placeholder.com/150'} alt={friend.fullName} />
+          <ProfileImage src={friend.profilePicture ? `http://localhost:5000/${friend.profilePicture}` : 'https://via.placeholder.com/150'} alt={friend.fullName} />
           <ProfileDetails>
             <DetailText><Label>Name:</Label> {friend.firstName} {friend.lastName}</DetailText><Divider />
             <DetailText><Label>Mobile:</Label> {friend.phoneNumber}</DetailText><Divider />
-            <DetailText><Label>Date of Birth:</Label> {new Date(friend.dateOfBirth).toLocaleDateString()}</DetailText><Divider />
+            {/* <DetailText><Label>Date of Birth:</Label> {new Date(friend.dateOfBirth).toLocaleDateString()}</DetailText><Divider /> */}
             <DetailText><Label>Age:</Label> {friend.age} Years</DetailText><Divider />
             <DetailText><Label>Member Since:</Label> {new Date(friend.createdAt).toLocaleDateString()}</DetailText><Divider />
           </ProfileDetails>
@@ -273,7 +274,7 @@ const FriendDetail = () => {
                 <InfoItem><Label>Business Name:</Label> {friend.businessName}</InfoItem>
                 <InfoItem><Label>Business Owner Name:</Label> {friend.businessOwnerName}</InfoItem>
                 <InfoItem><Label>Business Working Area:</Label> {friend.businessWorkingArea}</InfoItem>
-                <InfoItem><Label>Business NTN:</Label> {friend.businessNTN}</InfoItem>
+                {/* <InfoItem><Label>Business NTN:</Label> {friend.businessNTN}</InfoItem> */}
                 <InfoItem><Label>Residential:</Label> {friend.residential}</InfoItem>
                 <InfoItem><Label>Commercial:</Label> {friend.commercial}</InfoItem>
                 <InfoItem><Label>Land:</Label> {friend.land}</InfoItem>

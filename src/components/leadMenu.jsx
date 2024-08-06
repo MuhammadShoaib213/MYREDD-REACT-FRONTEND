@@ -11,6 +11,7 @@ const DashboardContainer = styled.div`
   background-color: rgba(0, 0, 0, 0.7); // This creates the 50% opacity effect over the image
   height: 100vh;
   display: flex;
+  padding-top: 80px;
   flex-direction: column;
   @media (max-width: 768px) {
     height: auto;
@@ -65,7 +66,7 @@ function LeadMenu() {
     <DashboardContainer>
       <Dashboard>
         <Header>
-          <h1>Menu</h1>
+          <h1>Business Status Menu</h1>
           <Logo></Logo>
         </Header>
         <Buttons>

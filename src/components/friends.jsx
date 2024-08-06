@@ -314,7 +314,7 @@ const FriendsList = () => {
                             <FriendRole>{friend.email}</FriendRole>
                             <FriendRole>{friend.city}</FriendRole>
                             <MoreDetailsButton onClick={() => handleMoreDetails(friend._id)}>More Details</MoreDetailsButton>
-                            <ConnectButton onClick={() => window.open(`https://wa.me/${friend.whatsappNumber}`, '_blank')}>Connect Now</ConnectButton>
+                            <ConnectButton onClick={() => window.open(`https://wa.me/${friend.whatsappNumber}`, '_blank')}>WhatsApp Message</ConnectButton>
                         </FriendInfo>
                     </FriendCard>
                 ))

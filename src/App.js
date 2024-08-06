@@ -51,6 +51,9 @@ import InquiriesStatusDetail from './components/InquiriesStatusDetail';
 import LeadMenu from './components/leadMenu';
 import LeadDetailPage from './components/LeadDetail';
 import SchedulePage from './components/LeadSchedule';
+import ForgotPasswordForm from './components/ForgotPasswordForm';
+import OTPVerificationForm from './components/forgetPasswordOtp';
+import ResetPasswordForm from './components/ResetPasswordForm';
 
 const stripePromise = loadStripe('pk_test_51NPVZGJSiT0U6CqFk8KzITi5LilCEfscsbsUCIUxpDiEdMx2DOMzatnUPHdCiFhQXoorpP4yA6UaNaLKSt7sF06400gjhlHI8y');
 
@@ -127,6 +130,9 @@ function App() {
           <Route path="/LeadMenu" element={<LeadMenu/>} />
           <Route path="/LeadDetailPage/:id" element={<LeadDetailPage/>} />
           <Route path="/SchedulePage" element={<SchedulePage/>} />
+          <Route path="/ForgotPasswordForm" element={<ForgotPasswordForm/>} />
+          <Route path="/OTPVerificationForm" element={<OTPVerificationForm/>} />
+          <Route path="/ResetPasswordForm" element={<ResetPasswordForm/>} />
           <Route path="/Membership" element={<Membership />} />
           <Route path="/DriveComponent" element={<DriveComponent />} />
           <Route path="/subscribe/:planTitle" element={
@@ -135,11 +141,11 @@ function App() {
             </Elements>
           } />
         </Routes>
-        <SocketProvider>
+        {/* <SocketProvider>
           <div className="App">
-            {/* <ChatComponent /> */}
+             <ChatComponent /> 
           </div>
-        </SocketProvider>
+        </SocketProvider> */}
         {/* <FloatingChat /> */}
         {/* {isLoggedIn && <FloatingChat />} */}
         <Footer />

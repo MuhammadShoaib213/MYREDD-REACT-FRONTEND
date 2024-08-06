@@ -180,6 +180,7 @@ const Container = styled.div`
   background-blend-mode: overlay;
   // background-color: rgba(0, 0, 0, 0.5);
   min-height: 70vh;
+  padding-top: 80px;
   display: flex;
   justify-content: center;
   align-items: center;

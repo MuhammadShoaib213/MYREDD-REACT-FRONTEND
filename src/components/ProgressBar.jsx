@@ -28,6 +28,7 @@ const ProgressBarContainer = styled.div`
   border-radius: 10px;  // Increased radius for softer corners
   box-shadow: 0px 2px 4px rgba(0,0,0,0.1);  // Subtle shadow for depth
   margin: 20px auto;  // Centering and adding vertical space
+  padding-top: 80px;
 `;
 
 const Progress = styled.div`

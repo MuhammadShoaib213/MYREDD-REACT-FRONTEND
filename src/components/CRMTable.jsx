@@ -96,7 +96,7 @@
 //           return;
 //         }
 
-//         const response = await axios.get(`http://195.179.231.102:6003/api/properties/lead/user/${decoded.userId}`);
+//         const response = await axios.get(`http://localhost:5000/api/properties/lead/user/${decoded.userId}`);
 //         setData(response.data);
 //         console.log(response.data);
 //       } catch (error) {
@@ -196,13 +196,27 @@ const PageContainer = styled.div`
   align-items: center;
   color: white;
   padding: 20px;
+  padding-top: 80px;
   overflow: auto;
+`;
+
+const Header = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 20px;
+  color: white;
+  @media (max-width: 768px) {
+    flex-direction: column;
+    padding: 10px;
+  }
 `;
 
 const Sidebar = styled.div`
   position: fixed;
   left: 0;
-  top: 100px;
+  top: 200px;
   bottom: 80px;
   width: 200px;
   background-color: white;
@@ -284,7 +298,7 @@ const CRMTable = () => {
           return;
         }
 
-        const response = await axios.get(`http://195.179.231.102:6003/api/properties/lead/user/${decoded.userId}`);
+        const response = await axios.get(`http://localhost:5000/api/properties/lead/user/${decoded.userId}`);
         setData(response.data);
         console.log(response.data._id);
         console.log(response.data);
@@ -307,6 +321,10 @@ const CRMTable = () => {
 
   return (
     <PageContainer>
+              <Header>
+          <h1>Leads</h1>
+          {/* <Logo>Logo</Logo> */}
+        </Header>
       <Sidebar>
         <SidebarTitle>Leads</SidebarTitle>
         <SidebarItem>Category A</SidebarItem>

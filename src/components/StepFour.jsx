@@ -313,9 +313,11 @@
 
 
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import bgImage from '../images/bg.jpg';
+import { getCountryCallingCode } from 'libphonenumber-js';
+import axios from 'axios';
 
 // Main background container
 const Container = styled.div`
@@ -329,6 +331,7 @@ const Container = styled.div`
   justify-content: center;
   align-items: center;
   padding: 10px 20px;
+  padding-top: 80px;
 `;
 
 // Content container with a white semi-transparent background
@@ -400,10 +403,69 @@ const Select = styled.select`
 `;
 
 const StepFour = ({ formData, handleChange, handleSubmit }) => {
+
+  const [countries, setCountries] = useState([]);
+  const [cities, setCities] = useState([]);
+  const [neighborhoods, setNeighborhoods] = useState([]);
+
+
   const handleFileChange = (e) => {
     const { files, name } = e.target;
     handleChange(name)({ target: { name, value: files } });
   };
+
+
+   // Fetch countries on component mount
+   useEffect(() => {
+    fetch('http://api.geonames.org/countryInfoJSON?username=shoaib1')
+      .then(response => response.json())
+      .then(data => setCountries(data.geonames))
+      .catch(error => console.error('Failed to fetch countries:', error));
+  }, []);
+
+  const handleCountryChange = (e) => {
+    const countryCode = e.target.value;
+    handleChange('country')({ target: { name: 'country', value: countryCode } });
+    if (countryCode) {
+      fetch(`http://api.geonames.org/searchJSON?country=${countryCode}&username=shoaib1&cities=cities1000`)
+        .then(response => response.json())
+        .then(data => {
+          setCities(data.geonames);
+          setNeighborhoods([]);
+        })
+        .catch(error => console.error('Failed to fetch cities', error));
+    } else {
+      setCities([]);
+      setNeighborhoods([]);
+    }
+  };
+
+  const handleCityChange = (e) => {
+    const city = e.target.value;
+    handleChange('city')({ target: { name: 'city', value: city } });
+    const selectedCity = cities.find(c => c.name === city);
+    if (selectedCity) {
+      const latitude = selectedCity.lat;
+      const longitude = selectedCity.lng;
+      axios.get('http://localhost:5000/api/neighborhoods', {
+        params: {
+          latitude: latitude,
+          longitude: longitude
+        }
+      })
+      .then(response => {
+        const data = response.data;
+        console.log(response.data);
+        if (data.results) {
+          setNeighborhoods(data.results.map(neighborhood => ({ name: neighborhood.name, placeId: neighborhood.place_id })));
+        }
+      })
+      .catch(error => console.error('Failed to fetch neighborhoods', error));
+    } else {
+      setNeighborhoods([]);
+    }
+  };
+  
 
   // Render fields based on inquiry type selected in previous steps
   const renderFields = () => {
@@ -421,14 +483,38 @@ const StepFour = ({ formData, handleChange, handleSubmit }) => {
   // Render functions for each property type
   const renderForPurchaseFields = () => (
     <>
-      <Label htmlFor="city">City</Label>
+
+            <Label htmlFor="country">Country</Label>
+            <Select name="country" value={formData.country} onChange={handleCountryChange} required>
+              <option value="">Select Country</option>
+              {countries.map(country => (
+                <option key={country.countryCode} value={country.countryCode}>{country.countryName}</option>
+              ))}
+            </Select>
+
+            <Label htmlFor="city">City</Label>
+            <Select id="city" name="city" value={formData.city} onChange={handleCityChange} required>
+              <option value="">Select City</option>
+              {cities.map(city => (
+                <option key={city.geonameId} value={city.name}>{city.name}</option>
+              ))}
+            </Select>
+
+            <Label htmlFor="neighborhood">Neighborhood</Label>
+            <Select id="neighborhood" name="neighborhood" value={formData.neighborhood} onChange={handleChange('neighborhood')} required>
+              <option value="">Select Neighborhood</option>
+              {neighborhoods.map(n => (
+                <option key={n.placeId} value={n.name}>{n.name}</option>
+              ))}
+            </Select>
+
+      {/* <Label htmlFor="city">City</Label>
       <Select id="city" name="city" value={formData.city} onChange={handleChange('city')}>
   <option value="">Select City</option>
   <option value="Lahore">Lahore</option>
   <option value="Karachi">Karachi</option>
   <option value="Islamabad">Islamabad</option>
-  {/* Add more city options as necessary */}
-</Select>
+</Select> */}
 
       <Label htmlFor="area">Area/Society</Label>
       <Input id="area" name="area" value={formData.area} onChange={handleChange('area')} />

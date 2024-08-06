@@ -277,6 +277,8 @@
 // export default Dashboard;
 
 
+
+
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { FiUsers, FiHome, FiBriefcase, FiClock, FiBarChart2, FaBuildingColumns } from 'react-icons/fi';
@@ -296,6 +298,7 @@ const DashboardContainer = styled.div`
   height: 100vh;
   display: flex;
   flex-direction: column;
+  padding-top: 80px;
   @media (max-width: 768px) {
     height: auto;
   }
@@ -488,18 +491,13 @@ const fetchWeather = async (setWeather) => {
   }
 };
 
-const calculateProfileCompletion = (user) => {
-  const fields = ['email', 'firstName', 'lastName', 'address', 'phone', 'biography'];  // Add more fields as needed
-  const filledCount = fields.reduce((count, field) => count + (user[field] ? 1 : 0), 0);
-  return Math.round((filledCount / fields.length) * 100);
-};
 
 
 const Dashboard = () => {
   const [time, setTime] = useState(new Date());
-  const [user, setUser] = useState({ role: 'agent' });
+  const [user, setUser] = useState({ role: 'agent', profileCompletion: 0 });  // Default to 0% until fetched
   const [weather, setWeather] = useState({ temp: '', description: '' });
-  const profileCompletion = calculateProfileCompletion(user);
+
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -538,17 +536,19 @@ const Dashboard = () => {
     const fetchUserProfile = async () => {
       try {
         const token = localStorage.getItem('token');
-        const response = await fetch(`http://195.179.231.102:6003/api/auth/profile/${user.userId}`, {
+        const response = await fetch(`http://localhost:5000/api/auth/profile/${user.userId}`, {
           headers: {
             'Authorization': `Bearer ${token}`,
           },
         });
         if (response.ok) {
           const data = await response.json();
-          setUser((prevState) => ({
+          console.log(data);
+          setUser(prevState => ({
             ...prevState,
             profilePic: data.profilePicture,
-          }));
+            profileCompletion: data.profileCompletion  // Ensure this field is correctly named as received from your backend
+          }));        
         } else {
           console.error("Failed to fetch user profile:", response.statusText);
         }
@@ -616,15 +616,15 @@ const Dashboard = () => {
         </NavButton> */}
         <Link to="/profileView" style={{ textDecoration: 'none' }}>
         <ProfileButton>
-          <div style={{ display: 'flex', alignItems: 'center' }}>
-            <Icon><FiUsers /></Icon>
-            <Label>My Profile</Label>
-          </div>
-          <ProfileCompletion>{profileCompletion}%</ProfileCompletion>
-          <ProgressBarContainer>
-            <ProgressBar style={{ width: `${profileCompletion}%` }} />
-          </ProgressBarContainer>
-        </ProfileButton>
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+              <Icon><FiUsers /></Icon>
+              <Label>My Profile</Label>
+            </div>
+            <ProfileCompletion>{user.profileCompletion}%</ProfileCompletion>
+            <ProgressBarContainer>
+              <ProgressBar style={{ width: `${user.profileCompletion}%` }} />
+            </ProgressBarContainer>
+          </ProfileButton>
       </Link>
         {user.role === 'agency' && (
           <>

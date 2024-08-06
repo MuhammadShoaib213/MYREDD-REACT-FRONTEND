@@ -17,6 +17,20 @@ const PageContainer = styled.div`
 //   flex-direction: column;
   align-items: center;
   padding: 40px;
+  padding-top: 80px;
+`;
+
+const Header = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 20px;
+  color: white;
+  @media (max-width: 768px) {
+    flex-direction: column;
+    padding: 10px;
+  }
 `;
 
 const MainContent = styled.div`
@@ -71,7 +85,7 @@ const CustomerDetail = () => {
   useEffect(() => {
     const fetchCustomerDetail = async () => {
       try {
-        const response = await fetch(`http://195.179.231.102:6003/api/customers/detail/${id}`);
+        const response = await fetch(`http://localhost:5000/api/customers/detail/${id}`);
         if (!response.ok) {
           throw new Error('Failed to fetch customer details');
         }
@@ -90,7 +104,7 @@ const CustomerDetail = () => {
   return (
     <PageContainer>
       <MainContent>
-        <DetailImage src={customer.profilePicture ? `http://195.179.231.102:6003/${customer.profilePicture}` : 'https://via.placeholder.com/200'} alt={customer.fullName} />
+        <DetailImage src={customer.profilePicture ? `http://localhost:5000/${customer.profilePicture}` : 'https://via.placeholder.com/200'} alt={customer.fullName} />
         <DetailText><Label>Name:</Label> {customer.fullName}</DetailText>
         <DetailText><Label>Mobile:</Label> {customer.officialMobile}</DetailText>
         <DetailText><Label>WhatsApp:</Label> {customer.whatsappMobile}</DetailText>
@@ -98,7 +112,7 @@ const CustomerDetail = () => {
         <DetailText><Label>Address:</Label> {customer.currentAddress}</DetailText>
       </MainContent>
       <SidePanel>
-        <DetailEntry><Label>CNIC:</Label> {customer.cnicNumber}</DetailEntry>
+        <DetailEntry><Label>Citizen ID:</Label> {customer.cnicNumber}</DetailEntry>
         <DetailEntry><Label>Living City:</Label> {customer.currentCity}</DetailEntry>
         <DetailEntry><Label>Profession:</Label> {customer.profession}</DetailEntry>
         <DetailEntry><Label>Personal Email:</Label> {customer.personalEmail}</DetailEntry>

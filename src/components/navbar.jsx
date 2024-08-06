@@ -389,7 +389,7 @@
 //        </FormModal>
 //     </Nav>
 //   );
-// };
+// }; 
 
 // export default Navbar;
 
@@ -404,6 +404,20 @@ import FormModal from '../components/FormModal';
 import LoginForm from '../pages/login.js';
 import SignupPage from '../pages/SignupPage.js';
 
+// const Nav = styled.nav`
+//   display: flex;
+//   justify-content: space-between;
+//   align-items: center;
+//   padding: 1rem 5%;
+//   background: white;
+//   z-index: 1000;
+//   position: relative;
+
+//   @media (max-width: 768px) {
+//     justify-content: space-around;
+//   }
+// `;
+
 const Nav = styled.nav`
   display: flex;
   justify-content: space-between;
@@ -411,12 +425,17 @@ const Nav = styled.nav`
   padding: 1rem 5%;
   background: white;
   z-index: 1000;
-  position: relative;
+  position: fixed; /* Updated from relative to fixed */
+  top: 0;           /* Ensures the navbar stays at the top */
+  left: 0;          /* Stretch the navbar across the full width */
+  right: 0;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Optional: adds shadow for better visibility */
 
   @media (max-width: 768px) {
     justify-content: space-around;
   }
 `;
+
 
 const Logo = styled.img`
   height: 3.5rem;

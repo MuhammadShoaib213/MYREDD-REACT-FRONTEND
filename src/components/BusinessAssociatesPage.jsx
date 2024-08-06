@@ -450,7 +450,7 @@
 //   useEffect(() => {
 //     const fetchFriendRequests = async () => {
 //       try {
-//         const response = await axios.get('http://195.179.231.102:6003/api/friend/requests', {
+//         const response = await axios.get('http://localhost:5000/api/friend/requests', {
 //           headers: { Authorization: `Bearer ${token}` }
 //         });
 //         setFriendRequests(response.data);
@@ -466,7 +466,7 @@
   
 //   const handleAcceptFriendRequest = async (requestId) => {
 //     try {
-//       await axios.put('http://195.179.231.102:6003/api/friend/update', { 
+//       await axios.put('http://localhost:5000/api/friend/update', { 
 //         friendsId: requestId,
 //         action: 'accept'
 //       }, {
@@ -483,7 +483,7 @@
   
 //   const handleDeclineFriendRequest = async (requestId) => {
 //     try {
-//       await axios.put('http://195.179.231.102:6003/api/friend/update', { 
+//       await axios.put('http://localhost:5000/api/friend/update', { 
 //         friendsId: requestId,
 //         action: 'decline'
 //       }, {
@@ -547,6 +547,7 @@ const StyledPageContainer = styled.div`
   background-color: rgba(0, 0, 0, .7);
   min-height: 100vh;
   padding: 20px;
+  padding-top: 100px;
 
   @media (max-width: 768px) {
     flex-direction: column; // Stack vertically on smaller screens
@@ -740,6 +741,19 @@ const button = styled.button`
   }
 `;
 
+const Header = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 20px;
+  color: white;
+  @media (max-width: 768px) {
+    flex-direction: column;
+    padding: 10px;
+  }
+`;
+
 const NoRequestsMessage = styled.div`
   text-align: center;
   color: #666;
@@ -853,25 +867,45 @@ const BusinessAssociatesPage = () => {
   const [friendRequests, setFriendRequests] = useState([]);
   const { token } = useAuth();
 
+  // useEffect(() => {
+  //   const fetchFriendRequests = async () => {
+  //     try {
+  //       const response = await axios.get('http://localhost:5000/api/friend/requests', {
+  //         headers: { Authorization: `Bearer ${token}` }
+  //       });
+  //       setFriendRequests(response.data);
+  //       setFriendRequestCount(response.data.length);
+  //     } catch (error) {
+  //       console.error('Failed to fetch friend requests:', error);
+  //     }
+  //   };
+
+  //   fetchFriendRequests();
+  // }, [token]);
+
   useEffect(() => {
     const fetchFriendRequests = async () => {
-      try {
-        const response = await axios.get('http://195.179.231.102:6003/api/friend/requests', {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        setFriendRequests(response.data);
-        setFriendRequestCount(response.data.length);
-      } catch (error) {
-        console.error('Failed to fetch friend requests:', error);
-      }
+        try {
+            const response = await axios.get('http://localhost:5000/api/friend/requests', {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            setFriendRequests(response.data);
+            setFriendRequestCount(response.data.length);
+        } catch (error) {
+            console.error('Failed to fetch friend requests:', error);
+        }
     };
 
     fetchFriendRequests();
-  }, [token]);
+    const intervalId = setInterval(fetchFriendRequests, 3000); // 30 seconds
+
+    return () => clearInterval(intervalId);
+}, [token]);
+
 
   const handleAcceptFriendRequest = async (requestId) => {
     try {
-      await axios.put('http://195.179.231.102:6003/api/friend/update', { 
+      await axios.put('http://localhost:5000/api/friend/update', { 
         friendsId: requestId,
         action: 'accept'
       }, {
@@ -887,7 +921,7 @@ const BusinessAssociatesPage = () => {
 
   const handleDeclineFriendRequest = async (requestId) => {
     try {
-      await axios.put('http://195.179.231.102:6003/api/friend/update', { 
+      await axios.put('http://localhost:5000/api/friend/update', { 
         friendsId: requestId,
         action: 'decline'
       }, {

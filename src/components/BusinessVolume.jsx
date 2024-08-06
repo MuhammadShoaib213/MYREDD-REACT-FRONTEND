@@ -143,11 +143,13 @@ const PageContainer = styled.div`
   align-items: center;
 
   padding: 20px;
+  padding-top: 80px;
   overflow: auto;  // Ensures content can scroll if it exceeds the viewport height
 `;
 
 const Header = styled.h1`
   margin-bottom: 20px;
+  color: white;
 `;
 
 const CategoryContainer = styled.div`
@@ -220,7 +222,7 @@ function BusinessVolume() {
       if (!token) return;
       try {
         const decoded = jwtDecode(token);
-        const response = await axios.get(`http://195.179.231.102:6003/api/properties/user/${decoded.userId}`, {
+        const response = await axios.get(`http://localhost:5000/api/properties/user/${decoded.userId}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         setBusinessData(aggregateData(response.data));

@@ -14,6 +14,7 @@ const PageContainer = styled.div`
   background-color: rgba(0, 0, 0, 0.5);
   min-height: 100vh;
   padding: 20px;
+  padding-top: 80px;
 `;
 
 const PropertyContainer = styled.div`
@@ -23,6 +24,19 @@ const PropertyContainer = styled.div`
   margin: 20px;
   border: 1px solid #ccc;
   border-radius: 8px;
+`;
+
+const Header = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 20px;
+  color: white;
+  @media (max-width: 768px) {
+    flex-direction: column;
+    padding: 10px;
+  }
 `;
 
 const LeftPanel = styled.div`
@@ -167,7 +181,7 @@ const PropertyDetailsPage = () => {
   useEffect(() => {
     const fetchPropertyDetails = async () => {
       try {
-        const response = await axios.get(`http://195.179.231.102:6003/api/properties/property/${id}`, {
+        const response = await axios.get(`http://localhost:5000/api/properties/property/${id}`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
             'Content-Type': 'application/json'
@@ -193,10 +207,14 @@ const PropertyDetailsPage = () => {
 
   return (
     <PageContainer>
+              <Header>
+          <h1>Property Details</h1>
+          {/* <Logo>Logo</Logo> */}
+        </Header>
     <PropertyContainer>
       <LeftPanel>
       <Image 
-  src={property.images[0] ? `http://195.179.231.102:6003/${property.images[0]}` : 'http://195.179.231.102:6003/uploads/bg.jpg'} 
+  src={property.images[0] ? `http://localhost:5000/${property.images[0]}` : 'http://localhost:5000/uploads/bg.jpg'} 
   alt={property.title}
 />
         <Title>{property.title || "Home"}</Title>

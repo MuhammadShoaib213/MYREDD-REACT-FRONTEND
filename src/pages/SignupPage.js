@@ -103,7 +103,7 @@
 // //     }
 
 // //     try {
-// //       const response = await fetch('http://195.179.231.102:6003/api/auth/signup', {
+// //       const response = await fetch('http://localhost:5000/api/auth/signup', {
 // //         method: 'POST',
 // //         headers: {
 // //           'Content-Type': 'application/json',
@@ -125,7 +125,7 @@
 // //   };
 
 // //   const sendOtpToUser = async (email) => {
-// //     const response = await fetch('http://195.179.231.102:6003/api/auth/send-otp', {
+// //     const response = await fetch('http://localhost:5000/api/auth/send-otp', {
 // //       method: 'POST',
 // //       headers: {
 // //         'Content-Type': 'application/json',
@@ -385,7 +385,7 @@
 //     }
 
 //     try {
-//       const response = await fetch('http://195.179.231.102:6003/api/auth/signup', {
+//       const response = await fetch('http://localhost:5000/api/auth/signup', {
 //         method: 'POST',
 //         headers: {
 //           'Content-Type': 'application/json',
@@ -409,7 +409,7 @@
 //   };
 
 //   const sendOtpToUser = async (email) => {
-//     const response = await fetch('http://195.179.231.102:6003/api/auth/send-otp', {
+//     const response = await fetch('http://localhost:5000/api/auth/send-otp', {
 //       method: 'POST',
 //       headers: {
 //         'Content-Type': 'application/json',
@@ -666,7 +666,7 @@ function SignupPage() {
     else if (!isPasswordStrong(formData.password))
       newErrors.password = 'Password must be at least 8 characters long and include uppercase letters, lowercase letters, numbers, and special characters.';
     if (!formData.userRole) newErrors.userRole = 'Role is required';
-    if (!formData.cnic) newErrors.cnic = 'CNIC is required';
+    if (!formData.cnic) newErrors.cnic = 'Citizen ID is required';
     if (!formData.country) newErrors.country = 'Country is required';
     if (!formData.city) newErrors.city = 'City is required';
     if (!phone || !isValidPhoneNumber(phone)) newErrors.phoneNumber = 'Valid Phone Number is required';
@@ -689,7 +689,7 @@ function SignupPage() {
     };
 
     try {
-      const response = await fetch('http://195.179.231.102:6003/api/auth/signup', {
+      const response = await fetch('http://localhost:5000/api/auth/signup', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -710,7 +710,7 @@ function SignupPage() {
   };
 
   const sendOtpToUser = async (email) => {
-    const response = await fetch('http://195.179.231.102:6003/api/auth/send-otp', {
+    const response = await fetch('http://localhost:5000/api/auth/send-otp', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -782,7 +782,7 @@ function SignupPage() {
           </StyledSelect>
           {errors.city && <ErrorMessage>{errors.city}</ErrorMessage>}
 
-          <Label>CNIC</Label>
+          <Label>Citizen ID</Label>
           <StyledInput name="cnic" type="text" value={formData.cnic} onChange={handleChange} required />
           {errors.cnic && <ErrorMessage>{errors.cnic}</ErrorMessage>}
 

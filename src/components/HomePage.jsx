@@ -180,6 +180,11 @@ const Divider = styled.div`
 const HomePage = () => {
   return (
     <>
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+    
       <Header>
         <Headline>Your Oasis for Real Estate Growth</Headline>
         <Subheadline>Discover your potential in properties with us.</Subheadline>

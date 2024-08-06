@@ -119,6 +119,7 @@ const Container = styled.div`
   justify-content: center;
   align-items: center;
   padding: 10px 20px; // Reduced top padding
+  padding-top: 80px;
 `;
 
 // Content container with a white semi-transparent background

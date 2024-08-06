@@ -69,7 +69,7 @@
 // //     }
 
 // //     try {
-// //       const response = await axios.get(`http://195.179.231.102:6003/api/customers/check`, {
+// //       const response = await axios.get(`http://localhost:5000/api/customers/check`, {
 // //         params: { cnicNumber }
 // //       });
 
@@ -215,7 +215,7 @@
 //     }
   
 //     try {
-//       const response = await axios.get(`http://195.179.231.102:6003/api/customers/check`, { params });
+//       const response = await axios.get(`http://localhost:5000/api/customers/check`, { params });
   
 //       if (response.data.exists) {
 //         alert('Customer verified, please continue.');
@@ -275,6 +275,7 @@ const FullScreenContainer = styled.div`
   background-blend-mode: overlay;
   background-color: rgba(0, 0, 0, 0.5);
   min-height: 100vh;
+  padding-top: 80px;
   display: flex;
   justify-content: center;
   flex-direction: column;
@@ -336,7 +337,7 @@ const CheckCustomer = () => {
     const input = event.target.value;
     setCnic(input);
     if (!/^\d{16}$/.test(input)) {
-      setCnicError('CNIC must be exactly 16 digits.');
+      setCnicError('Citizen ID must be exactly 16 digits.');
     } else {
       setCnicError('');
     }
@@ -373,29 +374,34 @@ const CheckCustomer = () => {
     }
   
     try {
-      const response = await axios.get(`http://195.179.231.102:6003/api/customers/check`, { params });
+      const response = await axios.get(`http://localhost:5000/api/customers/check`, { params });
   
       if (response.data.exists) {
-        alert('Customer verified, please continue.');
-        navigate('/InquiryForm', { state: { cnic, phoneNumber } });
-        console.log(cnic, phoneNumber);
+          alert('Customer verified, please continue.');
+          navigate('/InquiryForm', { state: { cnic, phoneNumber } });
+          console.log(cnic, phoneNumber);
       } else {
-        alert('Customer not found. Redirecting to add customer...');
-        navigate('/addCustomer', { state: { cnic, phoneNumber } });
+          alert('Customer not found. Redirecting to add customer...');
+          navigate('/addCustomer', { state: { cnic, phoneNumber } });
       }
-    } catch (error) {
+  } catch (error) {
       console.error('Error verifying customer:', error);
       if (error.response) {
-        // Server responded with a status other than 200 range
-        setServerError(error.response.data.message || 'An error occurred on the server.');
+          // Server responded with a status other than 200 range
+          setServerError(error.response.data.message || 'An error occurred on the server.');
+          if (error.response.status === 404) {
+              // Specific check for 404 status
+              alert('Customer not found. Redirecting to add customer...');
+              navigate('/addCustomer', { state: { cnic, phoneNumber } });
+          }
       } else if (error.request) {
-        // Request was made but no response received
-        setServerError('No response received from the server. Please try again.');
+          // Request was made but no response received
+          setServerError('No response received from the server. Please try again.');
       } else {
-        // Something else happened while setting up the request
-        setServerError('Error setting up request: ' + error.message);
+          // Something else happened while setting up the request
+          setServerError('Error setting up request: ' + error.message);
       }
-    }
+  }  
   };
   
   return (
@@ -405,7 +411,7 @@ const CheckCustomer = () => {
           type="text"
           value={cnic}
           onChange={handleCnicChange}
-          placeholder="Enter Customer CNIC"
+          placeholder="Enter Customer Citizen ID"
         />
         {cnicError && <ErrorMessage>{cnicError}</ErrorMessage>}
         

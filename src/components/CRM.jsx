@@ -10,6 +10,7 @@ const DashboardContainer = styled.div`
   background-blend-mode: overlay;
   background-color: rgba(0, 0, 0, 0.7); // This creates the 50% opacity effect over the image
   min-height: 100vh;
+  padding-top: 80px;
   display: flex;
   flex-direction: column;
   @media (max-width: 768px) {

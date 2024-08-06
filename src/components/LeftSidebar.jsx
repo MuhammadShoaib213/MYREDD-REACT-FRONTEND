@@ -193,6 +193,7 @@ const StyledLeftSidebar = styled.div`
   max-height: 100vh;
   overflow-y: auto;
   border-radius: 10px;
+  padding-top: 80px;
 
   @media (max-width: 768px) {
     display: none; // Hide sidebar on mobile views

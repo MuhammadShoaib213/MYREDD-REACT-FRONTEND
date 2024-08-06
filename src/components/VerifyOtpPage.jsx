@@ -15,6 +15,7 @@ const PageContainer = styled.div`
   background-color: rgba(0, 0, 0, 0.5);
   height: 100vh;
   display: flex;
+  padding-top: 80px;
   flex-direction: column;
   @media (max-width: 768px) {
     height: auto;
@@ -72,7 +73,7 @@ function VerifyOtpPage() {
       return;
     }
 
-    const response = await fetch('http://195.179.231.102:6003/api/auth/verify-otp', {
+    const response = await fetch('http://localhost:5000/api/auth/verify-otp', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

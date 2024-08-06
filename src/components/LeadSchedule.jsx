@@ -17,6 +17,7 @@ const PageContainer = styled.div`
   justify-content: center;
   align-items: center;
   padding: 20px;
+  padding-top: 80px;
   overflow: auto;
 
   @media (max-width: 768px) {
@@ -33,7 +34,7 @@ const ContentContainer = styled.div`
 `;
 
 const Header = styled.h1`
-  color: red;
+  color: white;
   margin-bottom: 20px;
 `;
 
@@ -113,7 +114,7 @@ const SchedulePage = () => {
 
       try {
         const { userId } = jwtDecode(token);
-        const response = await axios.get(`http://195.179.231.102:6003/api/schedules/user/all/${userId}`);
+        const response = await axios.get(`http://localhost:5000/api/schedules/user/all/${userId}`);
         setSchedules(response.data);
         console.log(response.data);
       } catch (err) {
