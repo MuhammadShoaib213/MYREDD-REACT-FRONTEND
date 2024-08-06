@@ -115,7 +115,7 @@
 // //       const decoded = jwtDecode(token);
 // //       const userId = decoded.userId;
 // //       try {
-// //         const response = await axios.get(`http://localhost:5000/api/auth/profile/${userId}`);
+// //         const response = await axios.get(`http://195.179.231.102:6003/api/auth/profile/${userId}`);
 // //         setProfile({ ...profile, ...response.data });
 // //       } catch (error) {
 // //         console.error('Failed to fetch profile:', error);
@@ -129,7 +129,7 @@
 // //     const decoded = jwtDecode(token);
 // //     const userId = decoded.userId;
 // //     try {
-// //       const response = await axios.patch(`http://localhost:5000/api/auth/profile/${userId}`, profile);
+// //       const response = await axios.patch(`http://195.179.231.102:6003/api/auth/profile/${userId}`, profile);
 // //       alert('Profile updated successfully!');
 // //     } catch (error) {
 // //       console.error('Failed to update profile:', error);
@@ -351,7 +351,7 @@
 //       const decoded = jwtDecode(token);
 //       const userId = decoded.userId;
 //       try {
-//         const response = await axios.get(`http://localhost:5000/api/auth/profile/${userId}`);
+//         const response = await axios.get(`http://195.179.231.102:6003/api/auth/profile/${userId}`);
 //         setProfile({ ...profile, ...response.data });
 //         console.log(response.data); // Log the data received, especially the image URLs
 //       } catch (error) {
@@ -384,7 +384,7 @@
 //     };
 
 //     try {
-//       await axios.patch(`http://localhost:5000/api/auth/profile/${userId}`, formData, config);
+//       await axios.patch(`http://195.179.231.102:6003/api/auth/profile/${userId}`, formData, config);
 //       alert('Profile updated successfully!');
 //     } catch (error) {
 //       console.error('Failed to update profile:', error);
@@ -617,7 +617,7 @@ const ProfileView = () => {
       const decoded = jwtDecode(token);
       const userId = decoded.userId;
       try {
-        const response = await axios.get(`http://localhost:5000/api/auth/profile/${userId}`);
+        const response = await axios.get(`http://195.179.231.102:6003/api/auth/profile/${userId}`);
         setProfile({ ...profile, ...response.data });
         setError(null); // Clear any previous errors
       } catch (error) {
@@ -650,7 +650,7 @@ const ProfileView = () => {
     };
 
     try {
-      await axios.patch(`http://localhost:5000/api/auth/profile/${userId}`, formData, config);
+      await axios.patch(`http://195.179.231.102:6003/api/auth/profile/${userId}`, formData, config);
       alert('Profile updated successfully!');
       setError(null); // Clear any previous errors
     } catch (error) {

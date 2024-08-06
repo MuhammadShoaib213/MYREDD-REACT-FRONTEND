@@ -10,7 +10,7 @@ const UserSearch = () => {
     const handleSearch = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.get('http://localhost:5000/api/auth/search', {
+            const response = await axios.get('http://195.179.231.102:6003/api/auth/search', {
                 headers: {
                     Authorization: `Bearer ${token}`
                 },
@@ -26,7 +26,7 @@ const UserSearch = () => {
 
     const sendFriendRequest = async (recipientId) => {
         try {
-            await axios.post('http://localhost:5000/api/friend/request', {
+            await axios.post('http://195.179.231.102:6003/api/friend/request', {
                 recipientId
             }, {
                 headers: {
