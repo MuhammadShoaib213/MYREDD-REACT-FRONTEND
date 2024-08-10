@@ -182,7 +182,7 @@
 // // // //     });
 
 // // // //     try {
-// // // //         const response = await axios.post('http://195.179.231.102:6003/api/customers/add', data, {
+// // // //         const response = await axios.post('http://localhost:5000/api/customers/add', data, {
 // // // //             headers: {
 // // // //                 'Content-Type': 'multipart/form-data'
 // // // //             }
@@ -267,7 +267,7 @@
 // // //   data.append('userId', userId); // Append the user ID to the form data
 
 // // //   try {
-// // //     const response = await axios.post('http://195.179.231.102:6003/api/customers/add', data, {
+// // //     const response = await axios.post('http://localhost:5000/api/customers/add', data, {
 // // //       headers: {
 // // //         'Content-Type': 'multipart/form-data'
 // // //       }
@@ -686,7 +686,7 @@
 
 // //   try {
 // //     console.log(formData);
-// //     const response = await axios.post('http://195.179.231.102:6003/api/customers/add', data, {
+// //     const response = await axios.post('http://localhost:5000/api/customers/add', data, {
 // //       headers: {
 // //         'Content-Type': 'multipart/form-data'
 // //       }
@@ -1125,7 +1125,7 @@
 
 //     try {
 //       console.log(formData);
-//       const response = await axios.post('http://195.179.231.102:6003/api/customers/add', data, {
+//       const response = await axios.post('http://localhost:5000/api/customers/add', data, {
 //         headers: {
 //           'Content-Type': 'multipart/form-data'
 //         }
@@ -1561,7 +1561,7 @@ const CustomerInquiryForm = () => {
 
     try {
       console.log(formData);
-      const response = await axios.post('http://195.179.231.102:6003/api/customers/add', data, {
+      const response = await axios.post('http://localhost:5000/api/customers/add', data, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
@@ -1596,7 +1596,7 @@ const CustomerInquiryForm = () => {
         <Container style={{ display: 'block' }}>
           <h2>Step 1: Basic Details</h2>
           <Form onSubmit={handleSubmit}>
-            <Input type="text" name="cnicNumber" placeholder="CNIC (16 digits)" value={formData.cnicNumber} onChange={handleChange} maxLength={16} />
+            <Input type="text" name="cnicNumber" placeholder="Citizen ID" value={formData.cnicNumber} onChange={handleChange} maxLength={16} />
             {validationErrors.cnicNumber && <ErrorMessage>{validationErrors.cnicNumber}</ErrorMessage>}
             <Select name="country" value={selectedCountry} onChange={handleCountryChange}>
               <option value="">Select your Country</option>

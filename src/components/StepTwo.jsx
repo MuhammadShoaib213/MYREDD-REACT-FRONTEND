@@ -165,6 +165,7 @@ const Checkbox = styled.input`
 // Button styling
 const Button = styled.button`
   padding: 10px 20px;
+  margin-left:10px;
   background-color: #FF0000;
   color: white;
   border: none;

@@ -185,6 +185,7 @@ const RadioCheckbox = styled.input`
   accent-color: #FF0000;
   margin-right: 10px;
   transform: scale(2.0);
+  // padding: 2px;
 `;
 
 // Button styling

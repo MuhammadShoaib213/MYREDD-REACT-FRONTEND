@@ -15,6 +15,12 @@ const PageContainer = styled.div`
   min-height: 100vh;
   padding: 20px;
   padding-top: 80px;
+  overflow-x: hidden; /* Prevent horizontal overflow */
+
+  @media (max-width: 768px) {
+    padding: 40px;
+    padding-top: 60px;
+  }
 `;
 
 const PropertyContainer = styled.div`
@@ -24,6 +30,13 @@ const PropertyContainer = styled.div`
   margin: 20px;
   border: 1px solid #ccc;
   border-radius: 8px;
+  max-width: 100%; /* Prevent overflow */
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    margin: 10px;
+    padding: 10px;
+  }
 `;
 
 const Header = styled.div`
@@ -33,9 +46,13 @@ const Header = styled.div`
   width: 100%;
   padding: 20px;
   color: white;
+
   @media (max-width: 768px) {
     flex-direction: column;
     padding: 10px;
+    h1 {
+      font-size: 1.5rem;
+    }
   }
 `;
 
@@ -43,15 +60,117 @@ const LeftPanel = styled.div`
   width: 35%;
   padding: 20px;
   border-right: 1px solid #ccc;
+  max-width: 100%; /* Prevent overflow */
+
+  @media (max-width: 768px) {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid #ccc;
+    padding: 10px;
+  }
 `;
 
 const RightPanel = styled.div`
   width: 65%;
   padding: 20px;
+  max-width: 100%; /* Prevent overflow */
+
+  @media (max-width: 768px) {
+    width: 100%;
+    padding: 10px;
+  }
 `;
 
+const DetailSection = styled.div`
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  column-gap: 20px;
+  row-gap: 10px;
+  max-width: 100%; /* Prevent overflow */
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+    row-gap: 5px;
+  }
+`;
+
+const TabList = styled.div`
+  display: flex;
+  background-color: #f1f1f1;
+  max-width: 95%; /* Prevent overflow */
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
+`;
+
+const TabButton = styled.button`
+  flex-grow: 1;
+  padding: 10px 20px;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  background-color: ${props => props.isActive ? 'red' : '#f1f1f1'};
+  border-bottom: ${props => props.isActive ? '2px solid grey' : 'none'};
+  max-width: 100%; /* Prevent overflow */
+
+  &:hover {
+    background-color: darkred;
+  }
+
+  @media (max-width: 768px) {
+    padding: 10px;
+    font-size: 14px;
+  }
+`;
+
+
+// const PageContainer = styled.div`
+//   background-image: url(${bgImage});
+//   background-size: cover;
+//   background-position: center;
+//   background-blend-mode: overlay;
+//   background-color: rgba(0, 0, 0, 0.5);
+//   min-height: 100vh;
+//   padding: 20px;
+//   padding-top: 80px;
+// `;
+
+// const PropertyContainer = styled.div`
+//   display: flex;
+//   background: #fff;
+//   box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+//   margin: 20px;
+//   border: 1px solid #ccc;
+//   border-radius: 8px;
+// `;
+
+// const Header = styled.div`
+//   display: flex;
+//   justify-content: space-between;
+//   align-items: center;
+//   width: 100%;
+//   padding: 20px;
+//   color: white;
+//   @media (max-width: 768px) {
+//     flex-direction: column;
+//     padding: 10px;
+//   }
+// `;
+
+// const LeftPanel = styled.div`
+//   width: 35%;
+//   padding: 20px;
+//   border-right: 1px solid #ccc;
+// `;
+
+// const RightPanel = styled.div`
+//   width: 65%;
+//   padding: 20px;
+// `;
+
 const Image = styled.img`
-  width: 100%;
+  width: 95%;
   height: auto;
   margin-bottom: 20px;
   border: 1px solid #ccc;
@@ -82,24 +201,24 @@ const TabsContainer = styled.div`
   flex-direction: column;
 `;
 
-const TabList = styled.div`
-  display: flex;
-  background-color: #f1f1f1;
-`;
+// const TabList = styled.div`
+//   display: flex;
+//   background-color: #f1f1f1;
+// `;
 
-const TabButton = styled.button`
-  flex-grow: 1;
-  padding: 10px 20px;
-  border: none;
-  outline: none;
-  cursor: pointer;
-  background-color: ${props => props.isActive ? '#fff' : '#f1f1f1'};
-  border-bottom: ${props => props.isActive ? '2px solid blue' : 'none'};
+// const TabButton = styled.button`
+//   flex-grow: 1;
+//   padding: 10px 20px;
+//   border: none;
+//   outline: none;
+//   cursor: pointer;
+//   background-color: ${props => props.isActive ? '#fff' : '#f1f1f1'};
+//   border-bottom: ${props => props.isActive ? '2px solid blue' : 'none'};
 
-  &:hover {
-    background-color: #ddd;
-  }
-`;
+//   &:hover {
+//     background-color: #ddd;
+//   }
+// `;
 
 const Content = styled.div`
   padding: 20px;
@@ -107,12 +226,12 @@ const Content = styled.div`
   border: 1px solid #ccc;
 `;
 
-const DetailSection = styled.div`
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  column-gap: 20px;
-  row-gap: 10px;
-`;
+// const DetailSection = styled.div`
+//   display: grid;
+//   grid-template-columns: repeat(2, 1fr);
+//   column-gap: 20px;
+//   row-gap: 10px;
+// `;
 
 const DetailItem = styled.div`
   display: flex;
@@ -181,7 +300,7 @@ const PropertyDetailsPage = () => {
   useEffect(() => {
     const fetchPropertyDetails = async () => {
       try {
-        const response = await axios.get(`http://195.179.231.102:6003/api/properties/property/${id}`, {
+        const response = await axios.get(`http://localhost:5000/api/properties/property/${id}`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
             'Content-Type': 'application/json'
@@ -214,7 +333,7 @@ const PropertyDetailsPage = () => {
     <PropertyContainer>
       <LeftPanel>
       <Image 
-  src={property.images[0] ? `http://195.179.231.102:6003/${property.images[0]}` : 'http://195.179.231.102:6003/uploads/bg.jpg'} 
+  src={property.images[0] ? `http://localhost:5000/${property.images[0]}` : 'http://localhost:5000/uploads/bg.jpg'} 
   alt={property.title}
 />
         <Title>{property.title || "Home"}</Title>

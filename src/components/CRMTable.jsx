@@ -96,7 +96,7 @@
 //           return;
 //         }
 
-//         const response = await axios.get(`http://195.179.231.102:6003/api/properties/lead/user/${decoded.userId}`);
+//         const response = await axios.get(`http://localhost:5000/api/properties/lead/user/${decoded.userId}`);
 //         setData(response.data);
 //         console.log(response.data);
 //       } catch (error) {
@@ -184,6 +184,7 @@ import styled from 'styled-components';
 import bgImage from '../images/bg.jpg';
 import {jwtDecode} from 'jwt-decode'; 
 
+
 const PageContainer = styled.div`
   background-image: url(${bgImage});
   background-size: cover;
@@ -225,7 +226,71 @@ const Sidebar = styled.div`
   color: #333;
   box-shadow: 0 8px 16px rgba(0,0,0,0.25);
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
+  @media (max-width: 768px) {
+    display: none;
+  }
 `;
+
+const Container = styled.div`
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: white;
+  color: #333;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.25);
+  overflow-x: auto;
+  margin-left: 220px;
+  margin-top: 20px;
+
+  @media (max-width: 768px) {
+    margin-left: 0;
+    width: 100%;
+  }
+`;
+
+// const PageContainer = styled.div`
+//   background-image: url(${bgImage});
+//   background-size: cover;
+//   background-position: center;
+//   background-blend-mode: overlay;
+//   background-color: rgba(0, 0, 0, 0.7);
+//   height: 100vh;
+//   display: flex;
+//   flex-direction: column;
+//   align-items: center;
+//   color: white;
+//   padding: 20px;
+//   padding-top: 80px;
+//   overflow: auto;
+// `;
+
+// const Header = styled.div`
+//   display: flex;
+//   justify-content: space-between;
+//   align-items: center;
+//   width: 100%;
+//   padding: 20px;
+//   color: white;
+//   @media (max-width: 768px) {
+//     flex-direction: column;
+//     padding: 10px;
+//   }
+// `;
+
+// const Sidebar = styled.div`
+//   position: fixed;
+//   left: 0;
+//   top: 200px;
+//   bottom: 80px;
+//   width: 200px;
+//   background-color: white;
+//   border-radius: 10px;
+//   padding: 20px;
+//   color: #333;
+//   box-shadow: 0 8px 16px rgba(0,0,0,0.25);
+//   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+// `;
 
 const SidebarTitle = styled.h3`
   margin-bottom: 10px;
@@ -242,21 +307,27 @@ const SidebarItem = styled.div`
   }
 `;
 
-const Container = styled.div`
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background-color: white;
-  color: #333;
-  border-radius: 8px;
-  padding: 20px;
-  box-shadow: 0 8px 16px rgba(0,0,0,0.25);
-  overflow-x: auto;
-  margin-left: 220px;
-  margin-top: 20px;
-`;
+// const Container = styled.div`
+//   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+//   background-color: white;
+//   color: #333;
+//   border-radius: 8px;
+//   padding: 20px;
+//   box-shadow: 0 8px 16px rgba(0,0,0,0.25);
+//   overflow-x: auto;
+//   margin-left: 220px;
+//   margin-top: 20px;
+// `;
+
 
 const Table = styled.table`
   width: 100%;
   border-collapse: collapse;
+  font-size: 14px;
+
+  @media (max-width: 768px) {
+    font-size: 12px;
+  }
 `;
 
 const Th = styled.th`
@@ -264,11 +335,24 @@ const Th = styled.th`
   color: white;
   border: 1px solid #ddd;
   padding: 12px 15px;
+  text-align: left;
+
+  @media (max-width: 768px) {
+    padding: 8px 10px;
+  }
 `;
 
 const Td = styled.td`
   border: 1px solid #ddd;
   padding: 12px 15px;
+  white-space: nowrap; /* Prevent long text from breaking the table layout */
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  @media (max-width: 768px) {
+    padding: 8px 10px;
+    font-size: 12px;
+  }
 `;
 
 const TableRow = styled.tr`
@@ -277,6 +361,36 @@ const TableRow = styled.tr`
     cursor: pointer;
   }
 `;
+
+// Add this wrapper to make the table responsive
+const TableWrapper = styled.div`
+  width: 100%;
+  overflow-x: auto;
+`;
+
+// const Table = styled.table`
+//   width: 100%;
+//   border-collapse: collapse;
+// `;
+
+// const Th = styled.th`
+//   background-color: red;
+//   color: white;
+//   border: 1px solid #ddd;
+//   padding: 12px 15px;
+// `;
+
+// const Td = styled.td`
+//   border: 1px solid #ddd;
+//   padding: 12px 15px;
+// `;
+
+// const TableRow = styled.tr`
+//   &:hover {
+//     background-color: #f5f5f5;
+//     cursor: pointer;
+//   }
+// `;
 
 const CRMTable = () => {
   const [data, setData] = useState([]);
@@ -298,7 +412,7 @@ const CRMTable = () => {
           return;
         }
 
-        const response = await axios.get(`http://195.179.231.102:6003/api/properties/lead/user/${decoded.userId}`);
+        const response = await axios.get(`http://localhost:5000/api/properties/lead/user/${decoded.userId}`);
         setData(response.data);
         console.log(response.data._id);
         console.log(response.data);
@@ -325,7 +439,7 @@ const CRMTable = () => {
           <h1>Leads</h1>
           {/* <Logo>Logo</Logo> */}
         </Header>
-      <Sidebar>
+      {/* <Sidebar>
         <SidebarTitle>Leads</SidebarTitle>
         <SidebarItem>Category A</SidebarItem>
         <SidebarItem>Category B</SidebarItem>
@@ -338,9 +452,10 @@ const CRMTable = () => {
         <SidebarItem>Sold</SidebarItem>
         <SidebarItem>Rented</SidebarItem>
         <SidebarItem>Rejections (Miss)</SidebarItem>
-      </Sidebar>
+      </Sidebar> */}
       <Container>
         <h2>Leads</h2>
+        <TableWrapper>
         <Table>
           <thead>
             <tr>
@@ -381,6 +496,7 @@ const CRMTable = () => {
             })}
           </tbody>
         </Table>
+        </TableWrapper>
       </Container>
     </PageContainer>
   );

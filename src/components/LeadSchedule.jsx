@@ -97,6 +97,79 @@ const AddButton = styled.button`
   }
 `;
 
+// const SchedulePage = () => {
+//   const [schedules, setSchedules] = useState([]);
+//   const [loading, setLoading] = useState(false);
+//   const [error, setError] = useState(null);
+
+//   useEffect(() => {
+//     const fetchSchedules = async () => {
+//       setLoading(true);
+//       const token = localStorage.getItem('token');
+//       if (!token) {
+//         setError('No token found');
+//         setLoading(false);
+//         return;
+//       }
+
+//       try {
+//         const { userId } = jwtDecode(token);
+//         const response = await axios.get(`http://localhost:5000/api/schedules/user/all/${userId}`);
+//         setSchedules(response.data);
+//         console.log(response.data);
+//       } catch (err) {
+//         setError('Failed to fetch schedules');
+//         console.error(err);
+//       } finally {
+//         setLoading(false);
+//       }
+//     };
+
+//     fetchSchedules();
+//   }, []);
+
+//   if (loading) return <p>Loading...</p>;
+//   if (error) return <p>Error: {error}</p>;
+
+//   return (
+//     <PageContainer>
+//       <ContentContainer>
+//         <Header>Schedule</Header>
+//         <FiltersContainer>
+//           <SearchBar placeholder="Search appointments..." />
+//           <div>
+//             <FilterSelect>
+//               <option value="all">All Statuses</option>
+//               <option value="upcoming">Upcoming</option>
+//               <option value="completed">Completed</option>
+//               <option value="canceled">Canceled</option>
+//             </FilterSelect>
+//             <FilterSelect>
+//               <option value="all">All Types</option>
+//               <option value="meetings">Meetings</option>
+//               <option value="calls">Calls</option>
+//               <option value="tasks">Tasks</option>
+//             </FilterSelect>
+//           </div>
+//         </FiltersContainer>
+//         <AppointmentListContainer>
+//           <h2>Upcoming Appointments</h2>
+//           {schedules.map((schedule, index) => (
+//             <AppointmentItem key={index}>
+//              <p><strong>{schedule.scheduleType}</strong> with <strong>{schedule.customerName}</strong></p>
+
+//               <p>{new Date(schedule.date).toLocaleString()}</p>
+//             </AppointmentItem>
+//           ))}
+//         </AppointmentListContainer>
+//         {/* <AddButton>Add Appointment</AddButton> */}
+//       </ContentContainer>
+//     </PageContainer>
+//   );
+// };
+
+// export default SchedulePage;
+
 const SchedulePage = () => {
   const [schedules, setSchedules] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -114,7 +187,7 @@ const SchedulePage = () => {
 
       try {
         const { userId } = jwtDecode(token);
-        const response = await axios.get(`http://195.179.231.102:6003/api/schedules/user/all/${userId}`);
+        const response = await axios.get(`http://localhost:5000/api/schedules/user/all/${userId}`);
         setSchedules(response.data);
         console.log(response.data);
       } catch (err) {
@@ -154,13 +227,16 @@ const SchedulePage = () => {
         </FiltersContainer>
         <AppointmentListContainer>
           <h2>Upcoming Appointments</h2>
-          {schedules.map((schedule, index) => (
-            <AppointmentItem key={index}>
-             <p><strong>{schedule.scheduleType}</strong> with <strong>{schedule.customerName}</strong></p>
-
-              <p>{new Date(schedule.date).toLocaleString()}</p>
-            </AppointmentItem>
-          ))}
+          {schedules.length === 0 ? (
+            <p>No schedules available at the moment.</p>
+          ) : (
+            schedules.map((schedule, index) => (
+              <AppointmentItem key={index}>
+                <p><strong>{schedule.scheduleType}</strong> with <strong>{schedule.customerName}</strong></p>
+                <p>{new Date(schedule.date).toLocaleString()}</p>
+              </AppointmentItem>
+            ))
+          )}
         </AppointmentListContainer>
         {/* <AddButton>Add Appointment</AddButton> */}
       </ContentContainer>
