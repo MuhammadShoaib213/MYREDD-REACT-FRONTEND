@@ -86,7 +86,7 @@ function OTPVerificationForm() {
     }
 
     try {
-      const response = await fetch('http://localhost:5000/api/auth/verify-otp-pass', {
+      const response = await fetch('http://195.179.231.102:6003/api/auth/verify-otp-pass', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

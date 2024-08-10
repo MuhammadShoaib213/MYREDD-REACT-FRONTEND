@@ -114,7 +114,7 @@ const AddButton = styled.button`
 
 //       try {
 //         const { userId } = jwtDecode(token);
-//         const response = await axios.get(`http://localhost:5000/api/schedules/user/all/${userId}`);
+//         const response = await axios.get(`http://195.179.231.102:6003/api/schedules/user/all/${userId}`);
 //         setSchedules(response.data);
 //         console.log(response.data);
 //       } catch (err) {
@@ -187,7 +187,7 @@ const SchedulePage = () => {
 
       try {
         const { userId } = jwtDecode(token);
-        const response = await axios.get(`http://localhost:5000/api/schedules/user/all/${userId}`);
+        const response = await axios.get(`http://195.179.231.102:6003/api/schedules/user/all/${userId}`);
         setSchedules(response.data);
         console.log(response.data);
       } catch (err) {

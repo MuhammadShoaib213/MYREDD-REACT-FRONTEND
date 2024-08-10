@@ -69,7 +69,7 @@
 // //     }
 
 // //     try {
-// //       const response = await axios.get(`http://localhost:5000/api/customers/check`, {
+// //       const response = await axios.get(`http://195.179.231.102:6003/api/customers/check`, {
 // //         params: { cnicNumber }
 // //       });
 
@@ -215,7 +215,7 @@
 //     }
   
 //     try {
-//       const response = await axios.get(`http://localhost:5000/api/customers/check`, { params });
+//       const response = await axios.get(`http://195.179.231.102:6003/api/customers/check`, { params });
   
 //       if (response.data.exists) {
 //         alert('Customer verified, please continue.');
@@ -374,7 +374,7 @@ const CheckCustomer = () => {
     }
   
     try {
-      const response = await axios.get(`http://localhost:5000/api/customers/check`, { params });
+      const response = await axios.get(`http://195.179.231.102:6003/api/customers/check`, { params });
   
       if (response.data.exists) {
           alert('Customer verified, please continue.');
