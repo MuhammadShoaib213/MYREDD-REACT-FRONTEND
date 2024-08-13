@@ -207,7 +207,7 @@
 // //       if (!token) return;
 // //       try {
 // //         const decoded = jwtDecode(token);
-// //         const response = await axios.get(`http://localhost:5000/api/properties/user/${decoded.userId}`, {
+// //         const response = await axios.get(`http://195.179.231.102:6003/api/properties/user/${decoded.userId}`, {
 // //           headers: { Authorization: `Bearer ${token}` }
 // //         });
 // //         setInquiryData(aggregateData(response.data));
@@ -387,7 +387,7 @@
 //       if (!token) return;
 //       try {
 //         const decoded = jwtDecode(token);
-//         const response = await axios.get(`http://localhost:5000/api/properties/user/${decoded.userId}`, {
+//         const response = await axios.get(`http://195.179.231.102:6003/api/properties/user/${decoded.userId}`, {
 //           headers: { Authorization: `Bearer ${token}` }
 //         });
 //         setInquiryData(aggregateData(response.data));
@@ -560,7 +560,7 @@ function InquiriesVsDeals() {
       if (!token) return;
       try {
         const decoded = jwtDecode(token);
-        const response = await axios.get(`http://localhost:5000/api/properties/user/${decoded.userId}`, {
+        const response = await axios.get(`http://195.179.231.102:6003/api/properties/user/${decoded.userId}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         setInquiryData(aggregateData(response.data));
