@@ -96,7 +96,7 @@
 //           return;
 //         }
 
-//         const response = await axios.get(`http://195.179.231.102:6003/api/properties/lead/user/${decoded.userId}`);
+//         const response = await axios.get(`http://localhost:5000/api/properties/lead/user/${decoded.userId}`);
 //         setData(response.data);
 //         console.log(response.data);
 //       } catch (error) {
@@ -183,7 +183,7 @@ import { useNavigate } from 'react-router-dom'; // Ensure correct import
 import styled from 'styled-components';
 import bgImage from '../images/bg.jpg';
 import {jwtDecode} from 'jwt-decode'; 
-
+import ShareLeadModal from './ShareLeadModal';
 
 const PageContainer = styled.div`
   background-image: url(${bgImage});
@@ -392,9 +392,61 @@ const TableWrapper = styled.div`
 //   }
 // `;
 
+const ShareButton = styled.button`
+  background-color: #ff4500; /* Bright orange color */
+  color: white;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+  
+  &:hover {
+    background-color: #e03e00; /* Slightly darker shade on hover */
+  }
+
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 5px #ff4500; /* Add a subtle glow on focus */
+  }
+
+  &:active {
+    background-color: #c63600; /* Even darker shade when clicked */
+  }
+`;
+
+
+const LeadTrackerButton = styled.button`
+  background-color: #28a745;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-bottom: 20px;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: #218838;
+  }
+
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 5px #28a745;
+  }
+
+  &:active {
+    background-color: #1e7e34;
+  }
+`;
+
 const CRMTable = () => {
   const [data, setData] = useState([]);
   const [error, setError] = useState('');
+  const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [selectedLead, setSelectedLead] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -412,7 +464,7 @@ const CRMTable = () => {
           return;
         }
 
-        const response = await axios.get(`http://195.179.231.102:6003/api/properties/lead/user/${decoded.userId}`);
+        const response = await axios.get(`http://localhost:5000/api/properties/lead/user/${decoded.userId}`);
         setData(response.data);
         console.log(response.data._id);
         console.log(response.data);
@@ -427,6 +479,20 @@ const CRMTable = () => {
 
   const handleRowClick = (id) => {
     navigate(`/LeadDetailPage/${id}`);
+  };
+
+  const handleShareClick = (id) => {
+    setSelectedLead(id);
+    setModalIsOpen(true); // Open the modal when "Share" is clicked
+  };
+
+  const closeModal = () => {
+    setModalIsOpen(false);
+    setSelectedLead(null);
+  };
+
+  const navigateToLeadTracker = () => {
+    navigate('/LeadTracker'); // Change '/lead-tracker' to your actual tracker route
   };
 
   if (error) {
@@ -455,6 +521,9 @@ const CRMTable = () => {
       </Sidebar> */}
       <Container>
         <h2>Leads</h2>
+        <LeadTrackerButton onClick={navigateToLeadTracker}>
+          View Shared/Received Leads
+        </LeadTrackerButton>
         <TableWrapper>
         <Table>
           <thead>
@@ -468,6 +537,7 @@ const CRMTable = () => {
               <Th>Budget</Th>
               <Th>Requirements</Th>
               <Th>Expected %</Th>
+              <Th>Actions</Th> {/* New column for actions */}
             </tr>
           </thead>
           <tbody>
@@ -491,6 +561,14 @@ const CRMTable = () => {
                   <Td>{item.budget || ''}</Td>
                   <Td>{requirements}</Td>
                   <Td>{item.expected || ''}</Td>
+                  <Td>
+                  <ShareButton onClick={(e) => {
+                        e.stopPropagation(); // Prevent row click
+                        handleShareClick(item._id);
+                      }}>
+                        Share
+                      </ShareButton>
+                    </Td> {/* Share button */}
                 </TableRow>
               );
             })}
@@ -498,6 +576,11 @@ const CRMTable = () => {
         </Table>
         </TableWrapper>
       </Container>
+      <ShareLeadModal
+        isOpen={modalIsOpen}
+        onRequestClose={closeModal}
+        leadId={selectedLead}
+      />
     </PageContainer>
   );
 };

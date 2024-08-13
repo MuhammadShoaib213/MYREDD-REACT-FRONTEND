@@ -411,8 +411,8 @@ const PropertyView = () => {
         const decoded = jwtDecode(token);  // Decode the JWT
         const userId = decoded.userId;      // Extract the user ID from the token
 
-        const response = await axios.get(`http://195.179.231.102:6003/api/properties/all?userId=${userId}`);
-        // const response = await axios.get('http://195.179.231.102:6003/api/properties/all');
+        const response = await axios.get(`http://localhost:5000/api/properties/all?userId=${userId}`);
+        // const response = await axios.get('http://localhost:5000/api/properties/all');
         setProperties(response.data);
         console.log(response.data);
       } catch (error) {
@@ -442,9 +442,9 @@ const PropertyView = () => {
     <PropertiesGrid>
       {properties.map(property => (
         <PropertyCard key={property._id}>
-          {/* <PropertyImage src={property.images[0] ? `http://195.179.231.102:6003/uploads/${property.images[0]}` : 'http://195.179.231.102:6003/uploads/bg.jpg'} alt={property.title} /> */}
+          {/* <PropertyImage src={property.images[0] ? `http://localhost:5000/uploads/${property.images[0]}` : 'http://localhost:5000/uploads/bg.jpg'} alt={property.title} /> */}
           <PropertyImage 
-  src={property.images[0] ? `http://195.179.231.102:6003/${property.images[0]}` : 'http://195.179.231.102:6003/uploads/bg.jpg'} 
+  src={property.images[0] ? `http://localhost:5000/${property.images[0]}` : 'http://localhost:5000/uploads/bg.jpg'} 
   alt={property.title}
 />
 

@@ -447,7 +447,7 @@ const StepFour = ({ formData, handleChange, handleSubmit }) => {
     if (selectedCity) {
       const latitude = selectedCity.lat;
       const longitude = selectedCity.lng;
-      axios.get('http://195.179.231.102:6003/api/neighborhoods', {
+      axios.get('http://localhost:5000/api/neighborhoods', {
         params: {
           latitude: latitude,
           longitude: longitude
@@ -614,14 +614,29 @@ const StepFour = ({ formData, handleChange, handleSubmit }) => {
 
   const renderForSaleFields = () => (
     <>
-      <Label htmlFor="city">City</Label>
-      <Select id="city" name="city" value={formData.city} onChange={handleChange('city')}>
-  <option value="">Select City</option>
-  <option value="Lahore">Lahore</option>
-  <option value="Karachi">Karachi</option>
-  <option value="Islamabad">Islamabad</option>
-  {/* Add more city options as necessary */}
-</Select>
+      <Label htmlFor="country">Country</Label>
+            <Select name="country" value={formData.country} onChange={handleCountryChange} required>
+              <option value="">Select Country</option>
+              {countries.map(country => (
+                <option key={country.countryCode} value={country.countryCode}>{country.countryName}</option>
+              ))}
+            </Select>
+
+            <Label htmlFor="city">City</Label>
+            <Select id="city" name="city" value={formData.city} onChange={handleCityChange} required>
+              <option value="">Select City</option>
+              {cities.map(city => (
+                <option key={city.geonameId} value={city.name}>{city.name}</option>
+              ))}
+            </Select>
+
+            <Label htmlFor="neighborhood">Neighborhood</Label>
+            <Select id="neighborhood" name="neighborhood" value={formData.neighborhood} onChange={handleChange('neighborhood')} required>
+              <option value="">Select Neighborhood</option>
+              {neighborhoods.map(n => (
+                <option key={n.placeId} value={n.name}>{n.name}</option>
+              ))}
+            </Select>
   
       <Label htmlFor="area">Area/Society</Label>
       <Input id="area" name="area" value={formData.area} onChange={handleChange('area')} />
@@ -629,11 +644,10 @@ const StepFour = ({ formData, handleChange, handleSubmit }) => {
       <Label htmlFor="phaseBlock">Phase/Block</Label>
       <Input id="phaseBlock" name="phaseBlock" value={formData.phaseBlock} onChange={handleChange('phaseBlock')} />
   
-      <Label htmlFor="category">Category</Label>
+      {/* <Label htmlFor="category">Category</Label>
       <Select id="category" name="category" value={formData.category} onChange={handleChange('category')}>
         <option value="">Select Category</option>
-        {/* Add more category options as necessary */}
-      </Select>
+      </Select> */}
   
       <Label htmlFor="houseNumber">House Number</Label>
       <Input id="houseNumber" name="houseNumber" value={formData.houseNumber} onChange={handleChange('houseNumber')} />
@@ -675,14 +689,29 @@ const StepFour = ({ formData, handleChange, handleSubmit }) => {
 
   const renderForRentFields = () => (
     <>
-      <Label htmlFor="city">City</Label>
-      <Select id="city" name="city" value={formData.city} onChange={handleChange('city')}>
-  <option value="">Select City</option>
-  <option value="Lahore">Lahore</option>
-  <option value="Karachi">Karachi</option>
-  <option value="Islamabad">Islamabad</option>
-  {/* Add more city options as necessary */}
-</Select>
+       <Label htmlFor="country">Country</Label>
+            <Select name="country" value={formData.country} onChange={handleCountryChange} required>
+              <option value="">Select Country</option>
+              {countries.map(country => (
+                <option key={country.countryCode} value={country.countryCode}>{country.countryName}</option>
+              ))}
+            </Select>
+
+            <Label htmlFor="city">City</Label>
+            <Select id="city" name="city" value={formData.city} onChange={handleCityChange} required>
+              <option value="">Select City</option>
+              {cities.map(city => (
+                <option key={city.geonameId} value={city.name}>{city.name}</option>
+              ))}
+            </Select>
+
+            <Label htmlFor="neighborhood">Neighborhood</Label>
+            <Select id="neighborhood" name="neighborhood" value={formData.neighborhood} onChange={handleChange('neighborhood')} required>
+              <option value="">Select Neighborhood</option>
+              {neighborhoods.map(n => (
+                <option key={n.placeId} value={n.name}>{n.name}</option>
+              ))}
+            </Select>
   
       <Label htmlFor="area">Area/Society</Label>
       <Input id="area" name="area" value={formData.area} onChange={handleChange('area')} />
@@ -690,11 +719,10 @@ const StepFour = ({ formData, handleChange, handleSubmit }) => {
       <Label htmlFor="phaseBlock">Phase/Block</Label>
       <Input id="phaseBlock" name="phaseBlock" value={formData.phaseBlock} onChange={handleChange('phaseBlock')} />
   
-      <Label htmlFor="category">Category</Label>
+      {/* <Label htmlFor="category">Category</Label>
       <Select id="category" name="category" value={formData.category} onChange={handleChange('category')}>
         <option value="">Select Category</option>
-        {/* Add more category options as necessary */}
-      </Select>
+      </Select> */}
   
       <Label htmlFor="bedrooms">Bedrooms</Label>
       <Input id="bedrooms" name="bedrooms" type="number" value={formData.bedrooms} onChange={handleChange('bedrooms')} />
@@ -734,14 +762,29 @@ const StepFour = ({ formData, handleChange, handleSubmit }) => {
 
   const renderOnRentFields = () => (
     <>
-      <Label htmlFor="city">City</Label>
-      <Select id="city" name="city" value={formData.city} onChange={handleChange('city')}>
-  <option value="">Select City</option>
-  <option value="Lahore">Lahore</option>
-  <option value="Karachi">Karachi</option>
-  <option value="Islamabad">Islamabad</option>
-  {/* Add more city options as necessary */}
-</Select>
+       <Label htmlFor="country">Country</Label>
+            <Select name="country" value={formData.country} onChange={handleCountryChange} required>
+              <option value="">Select Country</option>
+              {countries.map(country => (
+                <option key={country.countryCode} value={country.countryCode}>{country.countryName}</option>
+              ))}
+            </Select>
+
+            <Label htmlFor="city">City</Label>
+            <Select id="city" name="city" value={formData.city} onChange={handleCityChange} required>
+              <option value="">Select City</option>
+              {cities.map(city => (
+                <option key={city.geonameId} value={city.name}>{city.name}</option>
+              ))}
+            </Select>
+
+            <Label htmlFor="neighborhood">Neighborhood</Label>
+            <Select id="neighborhood" name="neighborhood" value={formData.neighborhood} onChange={handleChange('neighborhood')} required>
+              <option value="">Select Neighborhood</option>
+              {neighborhoods.map(n => (
+                <option key={n.placeId} value={n.name}>{n.name}</option>
+              ))}
+            </Select>
   
       <Label htmlFor="area">Area/Society</Label>
       <Input id="area" name="area" value={formData.area} onChange={handleChange('area')} />
@@ -749,11 +792,10 @@ const StepFour = ({ formData, handleChange, handleSubmit }) => {
       <Label htmlFor="phaseBlock">Phase/Block</Label>
       <Input id="phaseBlock" name="phaseBlock" value={formData.phaseBlock} onChange={handleChange('phaseBlock')} />
   
-      <Label htmlFor="category">Category</Label>
+      {/* <Label htmlFor="category">Category</Label>
       <Select id="category" name="category" value={formData.category} onChange={handleChange('category')}>
         <option value="">Select Category</option>
-        {/* Add more category options as necessary */}
-      </Select>
+      </Select> */}
   
       <Label htmlFor="houseNumber">House Number</Label>
       <Input id="houseNumber" name="houseNumber" value={formData.houseNumber} onChange={handleChange('houseNumber')} />

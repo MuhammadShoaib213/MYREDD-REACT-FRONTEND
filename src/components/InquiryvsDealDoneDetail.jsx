@@ -80,7 +80,7 @@ function InquiryDealDetail() {
     const fetchData = async () => {
       if (!token) return;
       const decoded = jwtDecode(token);
-      const response = await axios.get(`http://195.179.231.102:6003/api/properties/user/${decoded.userId}`, {
+      const response = await axios.get(`http://localhost:5000/api/properties/user/${decoded.userId}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setData(aggregateData(response.data));

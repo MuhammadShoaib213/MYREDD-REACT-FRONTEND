@@ -54,6 +54,7 @@ import SchedulePage from './components/LeadSchedule';
 import ForgotPasswordForm from './components/ForgotPasswordForm';
 import OTPVerificationForm from './components/forgetPasswordOtp';
 import ResetPasswordForm from './components/ResetPasswordForm';
+import LeadTracker from './components/LeadTracker';
 
 const stripePromise = loadStripe('pk_test_51NPVZGJSiT0U6CqFk8KzITi5LilCEfscsbsUCIUxpDiEdMx2DOMzatnUPHdCiFhQXoorpP4yA6UaNaLKSt7sF06400gjhlHI8y');
 
@@ -128,6 +129,7 @@ function App() {
           <Route path="/InquiriesStatusDetail" element={<InquiriesStatusDetail/>} />
           <Route path="/NoteManagers" element={<NoteManager/>} />
           <Route path="/LeadMenu" element={<LeadMenu/>} />
+          <Route path="/LeadTracker" element={<LeadTracker/>} />
           <Route path="/LeadDetailPage/:id" element={<LeadDetailPage/>} />
           <Route path="/SchedulePage" element={<SchedulePage/>} />
           <Route path="/ForgotPasswordForm" element={<ForgotPasswordForm/>} />
