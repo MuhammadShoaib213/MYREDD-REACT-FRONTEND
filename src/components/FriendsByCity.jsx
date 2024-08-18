@@ -202,7 +202,7 @@
 // //   useEffect(() => {
 // //     const fetchFriends = async () => {
 // //       try {
-// //         const response = await axios.get(`http://195.179.231.102:6003/api/friend/friends-by-city/${cityName}`, {
+// //         const response = await axios.get(`http://localhost:5000/api/friend/friends-by-city/${cityName}`, {
 // //           headers: { Authorization: `Bearer ${token}` }
 // //         });
 // //         if (response.data && Array.isArray(response.data)) {
@@ -224,7 +224,7 @@
 // //         <FriendCard key={friend.id}>
 // //           <FriendImageContainer>
 // //           <FriendImage
-// //   src={friend.profilePicture ? `http://195.179.231.102:6003/${friend.profilePicture}` : "https://cdn-icons-png.freepik.com/512/147/147144.png"}
+// //   src={friend.profilePicture ? `http://localhost:5000/${friend.profilePicture}` : "https://cdn-icons-png.freepik.com/512/147/147144.png"}
 // //   alt={`${friend.firstName} Avatar`}
 // // />
 // //           </FriendImageContainer>
@@ -363,7 +363,7 @@
 //   useEffect(() => {
 //     const fetchFriends = async () => {
 //       try {
-//         const response = await axios.get(`http://195.179.231.102:6003/api/friend/friends-by-city/${cityName}`, {
+//         const response = await axios.get(`http://localhost:5000/api/friend/friends-by-city/${cityName}`, {
 //           headers: { Authorization: `Bearer ${token}` }
 //         });
 //         if (response.data && Array.isArray(response.data)) {
@@ -390,7 +390,7 @@
 //         <FriendCard key={friend._id}>
 //           <FriendImageContainer>
 //             <FriendImage
-//               src={friend.profilePicture ? `http://195.179.231.102:6003/${friend.profilePicture}` : "https://cdn-icons-png.freepik.com/512/147/147144.png"}
+//               src={friend.profilePicture ? `http://localhost:5000/${friend.profilePicture}` : "https://cdn-icons-png.freepik.com/512/147/147144.png"}
 //               alt={`${friend.firstName} Avatar`}
 //             />
 //           </FriendImageContainer>
@@ -538,7 +538,7 @@ const FriendsByCity = () => {
   useEffect(() => {
     const fetchFriends = async () => {
       try {
-        const response = await axios.get(`http://195.179.231.102:6003/api/friend/friends-by-city/${cityName}`, {
+        const response = await axios.get(`http://localhost:5000/api/friend/friends-by-city/${cityName}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         if (response.data && Array.isArray(response.data)) {
@@ -561,7 +561,7 @@ const FriendsByCity = () => {
         <FriendCard key={friend._id}>
           <FriendImageContainer>
             <FriendImage
-              src={friend.profilePicture ? `http://195.179.231.102:6003/${friend.profilePicture}` : "https://cdn-icons-png.freepik.com/512/147/147144.png"}
+              src={friend.profilePicture ? `http://localhost:5000/${friend.profilePicture}` : "https://cdn-icons-png.freepik.com/512/147/147144.png"}
               alt={`${friend.firstName} Avatar`}
             />
           </FriendImageContainer>

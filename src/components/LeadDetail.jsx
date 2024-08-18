@@ -91,7 +91,7 @@
 //   useEffect(() => {
 //     const fetchPropertyData = async () => {
 //       try {
-//         const response = await axios.get(`http://195.179.231.102:6003/api/properties/propertybyid/${id}`);
+//         const response = await axios.get(`http://localhost:5000/api/properties/propertybyid/${id}`);
 //         setPropertyData(response.data);
 //         console.log(response.data);
 //       } catch (err) {
@@ -248,6 +248,63 @@ const SectionTitle = styled.h2`
   margin-bottom: 10px;
 `;
 
+const Button = styled.button`
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  background-color: red;
+  color: white;
+  cursor: pointer;
+  margin-right: 10px;
+  margin-bottom: 10px;
+
+  &:hover {
+    background-color: darkred;
+  }
+
+  @media (max-width: 768px) {
+    padding: 8px 16px;
+    font-size: 14px;
+    margin-right: 5px;
+    margin-bottom: 5px;
+  }
+`;
+
+// const PageContainer = styled.div`
+//   background-image: url(${bgImage});
+//   background-size: cover;
+//   background-position: center;
+//   background-blend-mode: overlay;
+//   background-color: rgba(0, 0, 0, 0.7);
+//   height: 100vh;
+//   display: flex;
+//   flex-direction: column;
+//   align-items: center;
+//   padding: 20px;
+//   overflow: auto;
+//   padding-top: 80px;
+// `;
+
+// const Header = styled.h1`
+//   color: white;
+//   margin-bottom: 20px;
+// `;
+
+// const Section = styled.div`
+//   width: 100%;
+//   max-width: 800px;
+//   margin-bottom: 20px;
+//   padding: 20px;
+//   background-color: #f9f9f9;
+//   border-radius: 8px;
+//   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+// `;
+
+// const SectionTitle = styled.h2`
+//   color: red;
+//   margin-bottom: 10px;
+// `;
+
 const Label = styled.label`
   display: block;
   margin-bottom: 5px;
@@ -279,18 +336,18 @@ const Textarea = styled.textarea`
   margin-bottom: 10px;
 `;
 
-const Button = styled.button`
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
-  background-color: red;
-  color: white;
-  cursor: pointer;
-  margin-right: 10px;
-  &:hover {
-    background-color: darkred;
-  }
-`;
+// const Button = styled.button`
+//   padding: 10px 20px;
+//   border: none;
+//   border-radius: 5px;
+//   background-color: red;
+//   color: white;
+//   cursor: pointer;
+//   margin-right: 10px;
+//   &:hover {
+//     background-color: darkred;
+//   }
+// `;
 
 const NotesList = styled.ul`
   list-style: none;
@@ -356,7 +413,7 @@ const LeadDetailPage = () => {
   // useEffect(() => {
   //   const fetchPropertyData = async () => {
   //     try {
-  //       const response = await axios.get(`http://195.179.231.102:6003/api/properties/propertybyid/${id}`);
+  //       const response = await axios.get(`http://localhost:5000/api/properties/propertybyid/${id}`);
   //       setPropertyData(response.data);
   //       console.log(response.data);
   //     } catch (err) {
@@ -375,7 +432,7 @@ const LeadDetailPage = () => {
       // Fetch property details first to get customerId
       let propertyResponse;
       try {
-        propertyResponse = await axios.get(`http://195.179.231.102:6003/api/properties/propertybyid/${id}`, { headers });
+        propertyResponse = await axios.get(`http://localhost:5000/api/properties/propertybyid/${id}`, { headers });
         setPropertyData(propertyResponse.data);
         console.log(propertyResponse.data);
       } catch (err) {
@@ -387,7 +444,7 @@ const LeadDetailPage = () => {
         try {
           const decodedToken = jwtDecode(token);
           const userId = decodedToken.userId;
-          const notesResponse = await axios.get(`http://195.179.231.102:6003/api/notes/${userId}/${id}/${propertyResponse.data.customerId}`, { headers });
+          const notesResponse = await axios.get(`http://localhost:5000/api/notes/${userId}/${id}/${propertyResponse.data.customerId}`, { headers });
           setNotes(notesResponse.data);
         } catch (err) {
           console.error(`Error fetching notes: ${err.response ? err.response.data.message : err.message}`);
@@ -410,7 +467,7 @@ const LeadDetailPage = () => {
     try {
       const decodedToken = jwtDecode(token);
       const userId = decodedToken.userId;
-      const response = await axios.get(`http://195.179.231.102:6003/api/schedules/user/${userId}`, { headers });
+      const response = await axios.get(`http://localhost:5000/api/schedules/user/${userId}`, { headers });
       setSchedules(response.data); // Assuming the API returns an array of schedules
     } catch (error) {
       console.error('Failed to fetch schedules:', error);
@@ -423,7 +480,7 @@ const LeadDetailPage = () => {
     setStatus(newStatus);
     try {
       const headers = { Authorization: `Bearer ${token}` };
-      const response = await axios.patch(`http://195.179.231.102:6003/api/properties/updateStatus/${id}`, { status: newStatus }, { headers });
+      const response = await axios.patch(`http://localhost:5000/api/properties/updateStatus/${id}`, { status: newStatus }, { headers });
       alert('Status updated successfully!');
       console.log(response.data);
     } catch (error) {
@@ -467,7 +524,7 @@ const LeadDetailPage = () => {
     }
   
     try {
-      const response = await axios.post('http://195.179.231.102:6003/api/notes', formData, {
+      const response = await axios.post('http://localhost:5000/api/notes', formData, {
         headers: {
           Authorization: `Bearer ${token}`
         },
@@ -484,7 +541,7 @@ const LeadDetailPage = () => {
   const handleDeleteNote = async (noteId, index) => {
     try {
       const headers = { Authorization: `Bearer ${token}` };
-      await axios.delete(`http://195.179.231.102:6003/api/notes/${noteId}`, { headers });
+      await axios.delete(`http://localhost:5000/api/notes/${noteId}`, { headers });
   
       // If the DELETE request is successful, update the UI by removing the note from the list
       const updatedNotes = [...notes];
@@ -557,7 +614,7 @@ const LeadDetailPage = () => {
     };
   
     try {
-      const response = await axios.post('http://195.179.231.102:6003/api/schedules/add', scheduleData, { headers });
+      const response = await axios.post('http://localhost:5000/api/schedules/add', scheduleData, { headers });
       alert('Schedule saved successfully');
       console.log(response.data);
     } catch (error) {

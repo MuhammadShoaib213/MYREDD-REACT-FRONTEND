@@ -459,6 +459,15 @@ const Menu = styled.div`
   }
 `;
 
+// const MenuItem = styled.a`
+//   color: black;
+//   text-decoration: none;
+//   cursor: pointer;
+//   &:hover {
+//     color: red;
+//   }
+// `;
+
 const MenuItem = styled.a`
   color: black;
   text-decoration: none;
@@ -494,6 +503,60 @@ const AuthButton = styled(MenuItem)`
   }
 `;
 
+// const Navbar = () => {
+//   const [isMenuOpen, setIsMenuOpen] = useState(false);
+//   const [isLoginOpen, setIsLoginOpen] = useState(false);
+//   const [isSignupOpen, setIsSignupOpen] = useState(false);
+//   const [isLoggedIn, setIsLoggedIn] = useState(false);
+//   const navigate = useNavigate();
+
+//   useEffect(() => {
+//     const token = localStorage.getItem('token');
+//     if (token) {
+//       setIsLoggedIn(true);
+//     }
+//   }, []);
+
+//   const handleLogout = () => {
+//     localStorage.removeItem('token');
+//     setIsLoggedIn(false);
+//     navigate('/');
+//   };
+
+//   return (
+//     <Nav>
+//       <Logo src={logoImage} alt="Logo" />
+//       <MenuIcon onClick={() => setIsMenuOpen(!isMenuOpen)}>
+//         {isMenuOpen ? <FaTimes /> : <FaBars />}
+//       </MenuIcon>
+//       <Menu isOpen={isMenuOpen}>
+//         <MenuItem href="/">Home</MenuItem>
+//         {isLoggedIn && <MenuItem as={Link} to="/dashboard">Dashboard</MenuItem>}
+//         <StyledLink to="AboutUs" smooth={true} duration={500}>About</StyledLink>
+//         <StyledLink to="Tab" smooth={true} duration={500}>Features</StyledLink>
+//         <StyledLink to="ContactUs" smooth={true} duration={500}>Contact Us</StyledLink>
+//       </Menu>
+//       {isLoggedIn ? (
+//         <AuthButton onClick={handleLogout}>Logout</AuthButton>
+//       ) : (
+//         <AuthButton onClick={() => setIsLoginOpen(true)}>Login</AuthButton>
+//       )}
+
+//       <FormModal isOpen={isLoginOpen} onRequestClose={() => setIsLoginOpen(false)}>
+//         <LoginForm onLoginSuccess={() => {
+//           setIsLoginOpen(false);
+//           setIsLoggedIn(true);
+//         }} onClose={() => setIsLoginOpen(false)} /> {/* Pass onClose prop */}
+//       </FormModal>
+//       <FormModal isOpen={isSignupOpen} onRequestClose={() => setIsSignupOpen(false)}>
+//         <SignupPage />
+//       </FormModal>
+//     </Nav>
+//   );
+// };
+
+// export default Navbar;
+
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isLoginOpen, setIsLoginOpen] = useState(false);
@@ -514,6 +577,10 @@ const Navbar = () => {
     navigate('/');
   };
 
+  const closeMenu = () => {
+    setIsMenuOpen(false);
+  };
+
   return (
     <Nav>
       <Logo src={logoImage} alt="Logo" />
@@ -521,23 +588,23 @@ const Navbar = () => {
         {isMenuOpen ? <FaTimes /> : <FaBars />}
       </MenuIcon>
       <Menu isOpen={isMenuOpen}>
-        <MenuItem href="/">Home</MenuItem>
-        {isLoggedIn && <MenuItem as={Link} to="/dashboard">Dashboard</MenuItem>}
-        <StyledLink to="AboutUs" smooth={true} duration={500}>About</StyledLink>
-        <StyledLink to="Tab" smooth={true} duration={500}>Features</StyledLink>
-        <StyledLink to="ContactUs" smooth={true} duration={500}>Contact Us</StyledLink>
+        <MenuItem href="/" onClick={closeMenu}>Home</MenuItem>
+        {isLoggedIn && <MenuItem as={Link} to="/dashboard" onClick={closeMenu}>Dashboard</MenuItem>}
+        <StyledLink to="AboutUs" smooth={true} duration={500} onClick={closeMenu}>About</StyledLink>
+        <StyledLink to="Tab" smooth={true} duration={500} onClick={closeMenu}>Features</StyledLink>
+        <StyledLink to="ContactUs" smooth={true} duration={500} onClick={closeMenu}>Contact Us</StyledLink>
       </Menu>
       {isLoggedIn ? (
         <AuthButton onClick={handleLogout}>Logout</AuthButton>
       ) : (
-        <AuthButton onClick={() => setIsLoginOpen(true)}>Login</AuthButton>
+        <AuthButton onClick={() => { setIsLoginOpen(true); closeMenu(); }}>Login</AuthButton>
       )}
 
       <FormModal isOpen={isLoginOpen} onRequestClose={() => setIsLoginOpen(false)}>
         <LoginForm onLoginSuccess={() => {
           setIsLoginOpen(false);
           setIsLoggedIn(true);
-        }} onClose={() => setIsLoginOpen(false)} /> {/* Pass onClose prop */}
+        }} onClose={() => setIsLoginOpen(false)} />
       </FormModal>
       <FormModal isOpen={isSignupOpen} onRequestClose={() => setIsSignupOpen(false)}>
         <SignupPage />
@@ -547,3 +614,4 @@ const Navbar = () => {
 };
 
 export default Navbar;
+

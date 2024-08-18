@@ -279,7 +279,7 @@
 
 
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect , useRef } from 'react';
 import styled from 'styled-components';
 import { FiUsers, FiHome, FiBriefcase, FiClock, FiBarChart2, FaBuildingColumns } from 'react-icons/fi';
 import {jwtDecode} from 'jwt-decode'; // Correct the import statement
@@ -288,6 +288,8 @@ import Lottie from 'react-lottie';
 import animationData from '../animation/3.json';
 import WeatherWidget from '../components/WeatherWidget';
 import bgImage from '../images/bg.jpg';
+import { useNavigate } from 'react-router-dom';
+
 
 const DashboardContainer = styled.div`
   background-image: url(${bgImage});
@@ -497,6 +499,37 @@ const Dashboard = () => {
   const [time, setTime] = useState(new Date());
   const [user, setUser] = useState({ role: 'agent', profileCompletion: 0 });  // Default to 0% until fetched
   const [weather, setWeather] = useState({ temp: '', description: '' });
+  const navigate = useNavigate();
+  const hasRedirected = useRef(false);
+
+
+  useEffect(() => {
+    if (hasRedirected.current) return; // Prevent further execution if already redirected
+
+    const token = localStorage.getItem('token');
+
+    if (!token) {
+      alert('Authentication Required. Redirecting to login...');
+      hasRedirected.current = true; // Mark as redirected
+      navigate('/login');
+      return;
+    }
+
+    try {
+      const decodedToken = jwtDecode(token);
+      const currentTime = Date.now() / 1000;
+
+      if (decodedToken.exp < currentTime) {
+        alert('Session has expired. Redirecting to login...');
+        hasRedirected.current = true; // Mark as redirected
+        navigate('/login');
+      }
+    } catch (error) {
+      alert('Authentication Required. Redirecting to login...');
+      hasRedirected.current = true; // Mark as redirected
+      navigate('/login');
+    }
+  }, [navigate]);
 
 
   useEffect(() => {
@@ -536,7 +569,7 @@ const Dashboard = () => {
     const fetchUserProfile = async () => {
       try {
         const token = localStorage.getItem('token');
-        const response = await fetch(`http://195.179.231.102:6003/api/auth/profile/${user.userId}`, {
+        const response = await fetch(`http://localhost:5000/api/auth/profile/${user.userId}`, {
           headers: {
             'Authorization': `Bearer ${token}`,
           },
@@ -571,7 +604,7 @@ const Dashboard = () => {
       <br/>
       <UserInfoWidget>
         {/* <UserImage src={user.profilePic} alt="Profile" /> */}
-        <UserImage src={user.profilePic ? `http://195.179.231.102:6003/${user.profilePic}` : 'https://via.placeholder.com/200'} alt={user.profilePic} />
+        <UserImage src={user.profilePic ? `http://localhost:5000/${user.profilePic}` : 'https://via.placeholder.com/200'} alt={user.profilePic} />
         <UserName>{user.firstName} {user.lastName}</UserName>
         <UserRole>{user.role}</UserRole>
       </UserInfoWidget>

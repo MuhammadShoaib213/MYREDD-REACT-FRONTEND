@@ -182,7 +182,7 @@
 // // // //     });
 
 // // // //     try {
-// // // //         const response = await axios.post('http://195.179.231.102:6003/api/customers/add', data, {
+// // // //         const response = await axios.post('http://localhost:5000/api/customers/add', data, {
 // // // //             headers: {
 // // // //                 'Content-Type': 'multipart/form-data'
 // // // //             }
@@ -267,7 +267,7 @@
 // // //   data.append('userId', userId); // Append the user ID to the form data
 
 // // //   try {
-// // //     const response = await axios.post('http://195.179.231.102:6003/api/customers/add', data, {
+// // //     const response = await axios.post('http://localhost:5000/api/customers/add', data, {
 // // //       headers: {
 // // //         'Content-Type': 'multipart/form-data'
 // // //       }
@@ -686,7 +686,7 @@
 
 // //   try {
 // //     console.log(formData);
-// //     const response = await axios.post('http://195.179.231.102:6003/api/customers/add', data, {
+// //     const response = await axios.post('http://localhost:5000/api/customers/add', data, {
 // //       headers: {
 // //         'Content-Type': 'multipart/form-data'
 // //       }
@@ -1125,7 +1125,7 @@
 
 //     try {
 //       console.log(formData);
-//       const response = await axios.post('http://195.179.231.102:6003/api/customers/add', data, {
+//       const response = await axios.post('http://localhost:5000/api/customers/add', data, {
 //         headers: {
 //           'Content-Type': 'multipart/form-data'
 //         }
@@ -1450,9 +1450,9 @@ const CustomerInquiryForm = () => {
     setFormData(prevFormData => ({
         ...prevFormData,
         country: countryCode,
-        officialMobile: `+${phoneCode}`,
-        personalMobile: `+${phoneCode}`,
-        whatsappMobile: `+${phoneCode}`
+        officialMobile: `+${phoneCode} `,
+        personalMobile: `+${phoneCode} `,
+        whatsappMobile: `+${phoneCode} `
     }));
 
     if (countryCode) {
@@ -1462,33 +1462,71 @@ const CustomerInquiryForm = () => {
     }
   };
 
+  // const handleChange = (e) => {
+  //   const { name, value, files } = e.target;
+  //   setFormData(prevFormData => ({
+  //     ...prevFormData,
+  //     [name]: files ? files[0] : value
+  //   }));
+  // };
+
+  // const handleMobileSelectionChange = (e) => {
+  //   const { name, value } = e.target;
+  //   setMobileSelection(prevSelection => ({
+  //     ...prevSelection,
+  //     [name]: value
+  //   }));
+
+  //   if (value === 'same') {
+  //     setFormData(prevFormData => ({
+  //       ...prevFormData,
+  //       [name]: prevFormData.officialMobile
+  //     }));
+  //   } else {
+  //     setFormData(prevFormData => ({
+  //       ...prevFormData,
+  //       [name]: ''
+  //     }));
+  //   }
+  // };
+
   const handleChange = (e) => {
     const { name, value, files } = e.target;
     setFormData(prevFormData => ({
-      ...prevFormData,
-      [name]: files ? files[0] : value
+        ...prevFormData,
+        [name]: files ? files[0] : value
     }));
-  };
+
+    // Update the personal and WhatsApp numbers if their selection is 'same'
+    if (name === 'officialMobile') {
+        if (mobileSelection.personalMobile === 'same') {
+            setFormData(prevFormData => ({
+                ...prevFormData,
+                personalMobile: value
+            }));
+        }
+        if (mobileSelection.whatsappMobile === 'same') {
+            setFormData(prevFormData => ({
+                ...prevFormData,
+                whatsappMobile: value
+            }));
+        }
+    }
+};
 
   const handleMobileSelectionChange = (e) => {
     const { name, value } = e.target;
     setMobileSelection(prevSelection => ({
-      ...prevSelection,
-      [name]: value
+        ...prevSelection,
+        [name]: value
     }));
 
-    if (value === 'same') {
-      setFormData(prevFormData => ({
+    // Automatically update the phone number fields based on the selection
+    setFormData(prevFormData => ({
         ...prevFormData,
-        [name]: prevFormData.officialMobile
-      }));
-    } else {
-      setFormData(prevFormData => ({
-        ...prevFormData,
-        [name]: ''
-      }));
-    }
-  };
+        [name]: value === 'same' ? prevFormData.officialMobile : ''
+    }));
+};
 
   const handleNext = () => {
     setCurrentStep(2);
@@ -1565,7 +1603,7 @@ const CustomerInquiryForm = () => {
 
     try {
       console.log(formData);
-      const response = await axios.post('http://195.179.231.102:6003/api/customers/add', data, {
+      const response = await axios.post('http://localhost:5000/api/customers/add', data, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
@@ -1649,7 +1687,7 @@ const CustomerInquiryForm = () => {
             <h2>Step 2: Contact Details</h2>
             <Form onSubmit={handleSubmit}>
               <Input type="text" name="officialMobile" placeholder="Official Mobile #" value={formData.officialMobile} onChange={handleChange} />
-              <div>
+              {/* <div>
                 <label>
                   <input
                     type="radio"
@@ -1698,7 +1736,67 @@ const CustomerInquiryForm = () => {
               </div>
               {mobileSelection.whatsappMobile === 'different' && (
                 <Input type="text" name="whatsappMobile" placeholder="WhatsApp Mobile #" value={formData.whatsappMobile} onChange={handleChange} />
-              )}
+              )} */}
+              <div>
+    <label>
+        <input
+            type="radio"
+            name="personalMobile"
+            value="same"
+            checked={mobileSelection.personalMobile === 'same'}
+            onChange={handleMobileSelectionChange}
+        />
+        Same as Official Mobile
+    </label>
+    <label>
+        <input
+            type="radio"
+            name="personalMobile"
+            value="different"
+            checked={mobileSelection.personalMobile === 'different'}
+            onChange={handleMobileSelectionChange}
+        />
+        Different Personal Number
+    </label>
+    <Input
+        type="text"
+        name="personalMobile"
+        placeholder="Personal Mobile #"
+        value={mobileSelection.personalMobile === 'same' ? formData.officialMobile : formData.personalMobile}
+        onChange={handleChange}
+    />
+</div>
+
+<div>
+    <label>
+        <input
+            type="radio"
+            name="whatsappMobile"
+            value="same"
+            checked={mobileSelection.whatsappMobile === 'same'}
+            onChange={handleMobileSelectionChange}
+        />
+        Same as Official Mobile
+    </label>
+    <label>
+        <input
+            type="radio"
+            name="whatsappMobile"
+            value="different"
+            checked={mobileSelection.whatsappMobile === 'different'}
+            onChange={handleMobileSelectionChange}
+        />
+        Different Whatsapp Number
+    </label>
+    <Input
+        type="text"
+        name="whatsappMobile"
+        placeholder="WhatsApp Mobile #"
+        value={mobileSelection.whatsappMobile === 'same' ? formData.officialMobile : formData.whatsappMobile}
+        onChange={handleChange}
+    />
+</div>
+
               <Input type="email" name="officialEmail" placeholder="Official Email" value={formData.officialEmail} onChange={handleChange} />
               <Input type="email" name="personalEmail" placeholder="Personal Email" value={formData.personalEmail} onChange={handleChange} />
               <Select name="maritalStatus" value={formData.maritalStatus} onChange={handleChange}>

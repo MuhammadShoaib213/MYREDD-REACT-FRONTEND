@@ -55,6 +55,7 @@ import ForgotPasswordForm from './components/ForgotPasswordForm';
 import OTPVerificationForm from './components/forgetPasswordOtp';
 import ResetPasswordForm from './components/ResetPasswordForm';
 import LeadTracker from './components/LeadTracker';
+import ProtectedRoute from './components/ProtectedRoute';
 
 const stripePromise = loadStripe('pk_test_51NPVZGJSiT0U6CqFk8KzITi5LilCEfscsbsUCIUxpDiEdMx2DOMzatnUPHdCiFhQXoorpP4yA6UaNaLKSt7sF06400gjhlHI8y');
 
