@@ -74,7 +74,7 @@
 // // //   const handleSubmit = async (event) => {
 // // //     event.preventDefault();
 // // //     try {
-// // //       const response = await fetch('http://localhost:5000/api/auth/login', {
+// // //       const response = await fetch('http://195.179.231.102:6003/api/auth/login', {
 // // //         method: 'POST',
 // // //         headers: {
 // // //           'Content-Type': 'application/json',
@@ -204,7 +204,7 @@
 // //   const handleSubmit = async (event) => {
 // //     event.preventDefault();
 // //     try {
-// //       const response = await fetch('http://localhost:5000/api/auth/login', {
+// //       const response = await fetch('http://195.179.231.102:6003/api/auth/login', {
 // //         method: 'POST',
 // //         headers: {
 // //           'Content-Type': 'application/json',
@@ -337,7 +337,7 @@
 //   // const handleSubmit = async (event) => {
 //   //   event.preventDefault();
 //   //   try {
-//   //     const response = await fetch('http://localhost:5000/api/auth/login', {
+//   //     const response = await fetch('http://195.179.231.102:6003/api/auth/login', {
 //   //       method: 'POST',
 //   //       headers: {
 //   //         'Content-Type': 'application/json',
@@ -362,7 +362,7 @@
 //   const handleSubmit = async (event) => {
 //     event.preventDefault();
 //     try {
-//       const response = await fetch('http://localhost:5000/api/auth/login', {
+//       const response = await fetch('http://195.179.231.102:6003/api/auth/login', {
 //         method: 'POST',
 //         headers: {
 //           'Content-Type': 'application/json',
@@ -506,7 +506,7 @@ function LoginForm({ onLoginSuccess, onClose }) { // Ensure onClose is also cond
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      const response = await fetch('http://localhost:5000/api/auth/login', {
+      const response = await fetch('http://195.179.231.102:6003/api/auth/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
