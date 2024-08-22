@@ -173,13 +173,13 @@ const StepThree = ({ nextStep, prevStep, handleChange, formData }) => {
     const renderCheckboxes = () => {
         const types = [];
         if (propertyType.residential) {
-            types.push('Home', 'Apartment', 'Villas', 'Farm House', 'All');
+            types.push('Home', 'Apartment', 'Villas');
         }
         if (propertyType.commercial) {
-            types.push('Office', 'Shop', 'Warehouse', 'Factory', 'All');
+            types.push('Office', 'Shop', 'Warehouse', 'Factory');
         }
         if (propertyType.land) {
-            types.push('Residential', 'Commercial', 'Industrial', 'Agriculture', 'All');
+            types.push('Residential', 'Commercial', 'Industrial', 'Agriculture');
         }
 
         return types.map((type, index) => (
