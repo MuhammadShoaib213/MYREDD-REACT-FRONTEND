@@ -114,7 +114,7 @@
 
 // //       try {
 // //         const { userId } = jwtDecode(token);
-// //         const response = await axios.get(`http://195.179.231.102:6003/api/schedules/user/all/${userId}`);
+// //         const response = await axios.get(`http://localhost:5000/api/schedules/user/all/${userId}`);
 // //         setSchedules(response.data);
 // //         console.log(response.data);
 // //       } catch (err) {
@@ -187,7 +187,7 @@
 
 //       try {
 //         const { userId } = jwtDecode(token);
-//         const response = await axios.get(`http://195.179.231.102:6003/api/schedules/user/all/${userId}`);
+//         const response = await axios.get(`http://localhost:5000/api/schedules/user/all/${userId}`);
 //         setSchedules(response.data);
 //         console.log(response.data);
 //       } catch (err) {
@@ -252,6 +252,8 @@ import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
 import styled, { createGlobalStyle } from 'styled-components';
 import bgImage from '../images/bg.jpg';
+import {  useNavigate } from 'react-router-dom';
+
 
 const GlobalStyle = createGlobalStyle`
   body {
@@ -273,8 +275,9 @@ const PageContainer = styled.div`
   height: 100vh;
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;  /* Align content to the top instead of center */
   padding: 20px;
+  padding-top: 200px;  /* Decrease the top padding to reduce the space from the top */
   overflow: auto;
 
   @media (max-width: 768px) {
@@ -282,6 +285,7 @@ const PageContainer = styled.div`
     padding-top: 80px;
   }
 `;
+
 
 const ContentContainer = styled.div`
   display: flex;
@@ -316,10 +320,42 @@ const AppointmentItem = styled.div`
   }
 `;
 
+const BackButton = styled.button`
+  position: absolute;
+  left: 20px;
+  top: 135px;
+  background-color: #333;
+  border: 2px solid #ff0000;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 15px 20px;
+  border-radius: 10px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  width: 200px;
+  height: 60px;
+  transition: background-color 0.3s, transform 0.3s;
+  z-index: 10; // Bring the button above other elements
+  
+  &:hover {
+    background-color: #ff0000;
+    transform: translateY(-2px);
+  }
+
+  @media (max-width: 768px) {
+    font-size: 14px;
+    width: 100%;
+    height: auto;
+    left: 10px;
+  }
+`;
+
+
 const SchedulePage = () => {
   const [schedules, setSchedules] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const navigate = useNavigate(); 
 
   useEffect(() => {
     const fetchSchedules = async () => {
@@ -333,7 +369,7 @@ const SchedulePage = () => {
 
       try {
         const { userId } = jwtDecode(token);
-        const response = await axios.get(`http://195.179.231.102:6003/api/schedules/user/all/${userId}`);
+        const response = await axios.get(`http://localhost:5000/api/schedules/user/all/${userId}`);
         setSchedules(response.data);
       } catch (err) {
         setError('Failed to fetch schedules');
@@ -353,6 +389,7 @@ const SchedulePage = () => {
     <>
       <GlobalStyle />
       <PageContainer>
+      <BackButton onClick={() => navigate(-1)}>← Back</BackButton>
         <ContentContainer>
           <Header>Schedule</Header>
           <AppointmentListContainer>

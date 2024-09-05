@@ -115,7 +115,7 @@
 // // //       const decoded = jwtDecode(token);
 // // //       const userId = decoded.userId;
 // // //       try {
-// // //         const response = await axios.get(`http://195.179.231.102:6003/api/auth/profile/${userId}`);
+// // //         const response = await axios.get(`http://localhost:5000/api/auth/profile/${userId}`);
 // // //         setProfile({ ...profile, ...response.data });
 // // //       } catch (error) {
 // // //         console.error('Failed to fetch profile:', error);
@@ -129,7 +129,7 @@
 // // //     const decoded = jwtDecode(token);
 // // //     const userId = decoded.userId;
 // // //     try {
-// // //       const response = await axios.patch(`http://195.179.231.102:6003/api/auth/profile/${userId}`, profile);
+// // //       const response = await axios.patch(`http://localhost:5000/api/auth/profile/${userId}`, profile);
 // // //       alert('Profile updated successfully!');
 // // //     } catch (error) {
 // // //       console.error('Failed to update profile:', error);
@@ -351,7 +351,7 @@
 // //       const decoded = jwtDecode(token);
 // //       const userId = decoded.userId;
 // //       try {
-// //         const response = await axios.get(`http://195.179.231.102:6003/api/auth/profile/${userId}`);
+// //         const response = await axios.get(`http://localhost:5000/api/auth/profile/${userId}`);
 // //         setProfile({ ...profile, ...response.data });
 // //         console.log(response.data); // Log the data received, especially the image URLs
 // //       } catch (error) {
@@ -384,7 +384,7 @@
 // //     };
 
 // //     try {
-// //       await axios.patch(`http://195.179.231.102:6003/api/auth/profile/${userId}`, formData, config);
+// //       await axios.patch(`http://localhost:5000/api/auth/profile/${userId}`, formData, config);
 // //       alert('Profile updated successfully!');
 // //     } catch (error) {
 // //       console.error('Failed to update profile:', error);
@@ -617,7 +617,7 @@
 //       const decoded = jwtDecode(token);
 //       const userId = decoded.userId;
 //       try {
-//         const response = await axios.get(`http://195.179.231.102:6003/api/auth/profile/${userId}`);
+//         const response = await axios.get(`http://localhost:5000/api/auth/profile/${userId}`);
 //         setProfile({ ...profile, ...response.data });
 //         setError(null); // Clear any previous errors
 //       } catch (error) {
@@ -650,7 +650,7 @@
 //     };
 
 //     try {
-//       await axios.patch(`http://195.179.231.102:6003/api/auth/profile/${userId}`, formData, config);
+//       await axios.patch(`http://localhost:5000/api/auth/profile/${userId}`, formData, config);
 //       alert('Profile updated successfully!');
 //       setError(null); // Clear any previous errors
 //     } catch (error) {
@@ -679,7 +679,7 @@
 //     <ProfileContainer>
 //       <LeftPanel>
 //         {/* <ProfilePic src={profile.profilePicture || "https://via.placeholder.com/150"} alt="Profile Picture" /> */}
-//         <ProfilePic src={profile.profilePicture ? `http://195.179.231.102:6003/${profile.profilePicture}` : 'https://via.placeholder.com/200'} alt={profile.profilePicture} />
+//         <ProfilePic src={profile.profilePicture ? `http://localhost:5000/${profile.profilePicture}` : 'https://via.placeholder.com/200'} alt={profile.profilePicture} />
 //         <FileInput type="file" onChange={(e) => handleImageChange(e, setProfileImage)} />
 //         <p>{`${profile.firstName} ${profile.lastName}`}</p>
 //         <p>{profile.email}</p>
@@ -783,13 +783,20 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
+import bgImage from '../images/bg.jpg';
+import {  useNavigate } from 'react-router-dom';
+
 
 const ProfileContainer = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
-  background: #f1f1f1;
-  padding-top: 80px;
+  background-image: url(${bgImage});
+  background-size: cover;
+  background-position: center;
+  background-blend-mode: overlay;
+  background-color: rgba(0, 0, 0, .7);
+  padding-top: 88px;
 
   @media (min-width: 768px) {
     flex-direction: row;
@@ -874,13 +881,18 @@ const Select = styled.select`
 
 const UpdateButton = styled.button`
   padding: 10px 20px;
-  background-color: blue;
+  background-color: red;
   color: white;
   font-size: 16px;
   border: none;
   border-radius: 5px;
   cursor: pointer;
   margin-top: 20px;
+  
+    &:hover {
+    background-color: darkred;
+  }
+
 `;
 
 const ErrorContainer = styled.div`
@@ -892,6 +904,37 @@ const ErrorContainer = styled.div`
   margin-bottom: 20px;
 `;
 
+const BackButton = styled.button`
+  position: absolute;
+  left: 20px;
+  top: 135px;
+  background-color: #333;
+  border: 2px solid #ff0000;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 15px 20px;
+  border-radius: 10px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  width: 200px;
+  height: 60px;
+  transition: background-color 0.3s, transform 0.3s;
+  z-index: 10; // Bring the button above other elements
+  
+  &:hover {
+    background-color: #ff0000;
+    transform: translateY(-2px);
+  }
+
+  @media (max-width: 768px) {
+    font-size: 14px;
+    width: 100%;
+    height: auto;
+    left: 10px;
+  }
+`;
+
+
 const ProfileView = () => {
   const [activeTab, setActiveTab] = useState('about');
   const [profile, setProfile] = useState({
@@ -900,6 +943,7 @@ const ProfileView = () => {
   const [profileImage, setProfileImage] = useState(null);
   const [businessLogoImage, setBusinessLogoImage] = useState(null);
   const [error, setError] = useState(null);
+  const navigate = useNavigate(); 
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -907,7 +951,7 @@ const ProfileView = () => {
       const decoded = jwtDecode(token);
       const userId = decoded.userId;
       try {
-        const response = await axios.get(`http://195.179.231.102:6003/api/auth/profile/${userId}`);
+        const response = await axios.get(`http://localhost:5000/api/auth/profile/${userId}`);
         setProfile({ ...profile, ...response.data });
         setError(null); // Clear any previous errors
       } catch (error) {
@@ -940,7 +984,7 @@ const ProfileView = () => {
     };
 
     try {
-      await axios.patch(`http://195.179.231.102:6003/api/auth/profile/${userId}`, formData, config);
+      await axios.patch(`http://localhost:5000/api/auth/profile/${userId}`, formData, config);
       alert('Profile updated successfully!');
       setError(null); // Clear any previous errors
     } catch (error) {
@@ -967,8 +1011,16 @@ const ProfileView = () => {
 
   return (
     <ProfileContainer>
+      <BackButton onClick={() => navigate(-1)}>← Back</BackButton>
       <LeftPanel>
-        <ProfilePic src={profile.profilePicture ? `http://195.179.231.102:6003/${profile.profilePicture}` : 'https://via.placeholder.com/200'} alt={profile.profilePicture} />
+      <br/>
+      <br/>
+      <br/>
+      <br/>
+      <br/>
+      <br/>
+      <br/>
+        <ProfilePic src={profile.profilePicture ? `http://localhost:5000/${profile.profilePicture}` : 'https://via.placeholder.com/200'} alt={profile.profilePicture} />
         <FileInput type="file" onChange={(e) => handleImageChange(e, setProfileImage)} />
         <p>{`${profile.firstName} ${profile.lastName}`}</p>
         <p>{profile.email}</p>

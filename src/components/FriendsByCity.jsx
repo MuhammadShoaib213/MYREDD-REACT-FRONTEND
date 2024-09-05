@@ -202,7 +202,7 @@
 // //   useEffect(() => {
 // //     const fetchFriends = async () => {
 // //       try {
-// //         const response = await axios.get(`http://195.179.231.102:6003/api/friend/friends-by-city/${cityName}`, {
+// //         const response = await axios.get(`http://localhost:5000/api/friend/friends-by-city/${cityName}`, {
 // //           headers: { Authorization: `Bearer ${token}` }
 // //         });
 // //         if (response.data && Array.isArray(response.data)) {
@@ -224,7 +224,7 @@
 // //         <FriendCard key={friend.id}>
 // //           <FriendImageContainer>
 // //           <FriendImage
-// //   src={friend.profilePicture ? `http://195.179.231.102:6003/${friend.profilePicture}` : "https://cdn-icons-png.freepik.com/512/147/147144.png"}
+// //   src={friend.profilePicture ? `http://localhost:5000/${friend.profilePicture}` : "https://cdn-icons-png.freepik.com/512/147/147144.png"}
 // //   alt={`${friend.firstName} Avatar`}
 // // />
 // //           </FriendImageContainer>
@@ -363,7 +363,7 @@
 //   useEffect(() => {
 //     const fetchFriends = async () => {
 //       try {
-//         const response = await axios.get(`http://195.179.231.102:6003/api/friend/friends-by-city/${cityName}`, {
+//         const response = await axios.get(`http://localhost:5000/api/friend/friends-by-city/${cityName}`, {
 //           headers: { Authorization: `Bearer ${token}` }
 //         });
 //         if (response.data && Array.isArray(response.data)) {
@@ -390,7 +390,7 @@
 //         <FriendCard key={friend._id}>
 //           <FriendImageContainer>
 //             <FriendImage
-//               src={friend.profilePicture ? `http://195.179.231.102:6003/${friend.profilePicture}` : "https://cdn-icons-png.freepik.com/512/147/147144.png"}
+//               src={friend.profilePicture ? `http://localhost:5000/${friend.profilePicture}` : "https://cdn-icons-png.freepik.com/512/147/147144.png"}
 //               alt={`${friend.firstName} Avatar`}
 //             />
 //           </FriendImageContainer>
@@ -415,6 +415,25 @@ import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from './AuthContext';
 import styled from 'styled-components';
+import bgImage from '../images/bg.jpg';
+
+const StyledPageContainer = styled.div`
+
+  flex-direction: row; // Default to row for larger screens
+  background-image: url(${bgImage});
+  background-size: cover;
+  background-position: center;
+  background-blend-mode: overlay;
+  background-color: rgba(0, 0, 0, .7);
+  min-height: 100vh;
+  padding: 20px;
+
+
+  @media (max-width: 768px) {
+    flex-direction: column; // Stack vertically on smaller screens
+    align-items: center; // Center the content for better mobile presentation
+  }
+`;
 
 // Styled components
 const FriendsContainer = styled.div`
@@ -513,7 +532,7 @@ const ConnectButton = styled.button`
 const Header = styled.header`
   background-color: red;
   color: white;
-  width: 100%;
+  width: 76%;
   text-align: center;
   padding: 10px 0;
   font-size: 24px;
@@ -522,6 +541,37 @@ const Header = styled.header`
   margin-left: 100px;
   margin-right: 100px;
 `;
+
+const BackButton = styled.button`
+  position: absolute;
+  left: 20px;
+  top: 135px;
+  background-color: #333;
+  border: 2px solid #ff0000;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 15px 20px;
+  border-radius: 10px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  width: 200px;
+  height: 60px;
+  transition: background-color 0.3s, transform 0.3s;
+  z-index: 10; // Bring the button above other elements
+  
+  &:hover {
+    background-color: #ff0000;
+    transform: translateY(-2px);
+  }
+
+  @media (max-width: 768px) {
+    font-size: 14px;
+    width: 100%;
+    height: auto;
+    left: 10px;
+  }
+`;
+
 
 const FriendsByCity = () => {
   const { cityName } = useParams();
@@ -538,7 +588,7 @@ const FriendsByCity = () => {
   useEffect(() => {
     const fetchFriends = async () => {
       try {
-        const response = await axios.get(`http://195.179.231.102:6003/api/friend/friends-by-city/${cityName}`, {
+        const response = await axios.get(`http://localhost:5000/api/friend/friends-by-city/${cityName}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         if (response.data && Array.isArray(response.data)) {
@@ -555,13 +605,15 @@ const FriendsByCity = () => {
   }, [cityName, token]);
 
   return (
+    <StyledPageContainer>
+    <BackButton onClick={() => navigate(-1)}>← Back</BackButton>
     <FriendsContainer>
       <Header>Business Associates in {cityName}</Header> {/* Dynamic city name display */}
       {friends.map(friend => (
         <FriendCard key={friend._id}>
           <FriendImageContainer>
             <FriendImage
-              src={friend.profilePicture ? `http://195.179.231.102:6003/${friend.profilePicture}` : "https://cdn-icons-png.freepik.com/512/147/147144.png"}
+              src={friend.profilePicture ? `http://localhost:5000/${friend.profilePicture}` : "https://cdn-icons-png.freepik.com/512/147/147144.png"}
               alt={`${friend.firstName} Avatar`}
             />
           </FriendImageContainer>
@@ -576,6 +628,7 @@ const FriendsByCity = () => {
         </FriendCard>
       ))}
     </FriendsContainer>
+    </StyledPageContainer>
   );
 };
 

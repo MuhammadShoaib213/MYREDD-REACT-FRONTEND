@@ -182,7 +182,7 @@
 // // // //     });
 
 // // // //     try {
-// // // //         const response = await axios.post('http://195.179.231.102:6003/api/customers/add', data, {
+// // // //         const response = await axios.post('http://localhost:5000/api/customers/add', data, {
 // // // //             headers: {
 // // // //                 'Content-Type': 'multipart/form-data'
 // // // //             }
@@ -267,7 +267,7 @@
 // // //   data.append('userId', userId); // Append the user ID to the form data
 
 // // //   try {
-// // //     const response = await axios.post('http://195.179.231.102:6003/api/customers/add', data, {
+// // //     const response = await axios.post('http://localhost:5000/api/customers/add', data, {
 // // //       headers: {
 // // //         'Content-Type': 'multipart/form-data'
 // // //       }
@@ -686,7 +686,7 @@
 
 // //   try {
 // //     console.log(formData);
-// //     const response = await axios.post('http://195.179.231.102:6003/api/customers/add', data, {
+// //     const response = await axios.post('http://localhost:5000/api/customers/add', data, {
 // //       headers: {
 // //         'Content-Type': 'multipart/form-data'
 // //       }
@@ -1125,7 +1125,7 @@
 
 //     try {
 //       console.log(formData);
-//       const response = await axios.post('http://195.179.231.102:6003/api/customers/add', data, {
+//       const response = await axios.post('http://localhost:5000/api/customers/add', data, {
 //         headers: {
 //           'Content-Type': 'multipart/form-data'
 //         }
@@ -1270,7 +1270,7 @@ const PageContainer = styled.div`
   background-size: cover;
   background-position: center;
   background-blend-mode: overlay;
-  padding-top: 80px;
+  padding-top: 10px;
   background-color: rgba(0, 0, 0, 0.5);
 
   @media (max-width: 768px) {
@@ -1326,13 +1326,13 @@ const Select = styled.select`
 
 const Button = styled.button`
   padding: 10px 20px;
-  background-color: #FF0000;
+  background-color: red;
   color: white;
   border: none;
   border-radius: 5px;
   cursor: pointer;
   &:hover {
-    background-color: #D3D3D3;
+    background-color: darkred;
   }
 `;
 
@@ -1372,6 +1372,33 @@ const CloseButton = styled.button`
   font-size: 24px;
   cursor: pointer;
 `;
+
+const FileInputContainer = styled.div`
+  position: relative;
+  display: flex;
+  align-items: center;
+`;
+
+const HiddenFileInput = styled.input`
+  opacity: 0;
+  width: 0.1px;
+  height: 0.1px;
+  position: absolute;
+`;
+
+const FileInputLabel = styled.label`
+  padding: 8px 16px;
+  background-color: #ccc;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-right: 10px;
+  display: inline-block;
+`;
+
+const FileNameDisplay = styled.span`
+  font-size: 16px;
+`;
+
 
 const CustomerInquiryForm = () => {
   const navigate = useNavigate();
@@ -1603,7 +1630,7 @@ const CustomerInquiryForm = () => {
 
     try {
       console.log(formData);
-      const response = await axios.post('http://195.179.231.102:6003/api/customers/add', data, {
+      const response = await axios.post('http://localhost:5000/api/customers/add', data, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
@@ -1648,18 +1675,18 @@ const CustomerInquiryForm = () => {
                 </option>
               ))}
             </Select>
-            {validationErrors.country && <ErrorMessage>{validationErrors.country}</ErrorMessage>}
-            <Select name="cityFrom" value={formData.cityFrom} onChange={handleChange}>
-              <option value="">Select your city</option>
+            {validationErrors.cityFrom && <ErrorMessage>{validationErrors.cityFrom}</ErrorMessage>}
+            <Select name="currentCity" value={formData.currentCity} onChange={handleChange}>
+              <option value="">Select your Current city</option>
               {cities.map((city) => (
                 <option key={city.geonameId} value={city.name}>
                   {city.name}
                 </option>
               ))}
             </Select>
-            {validationErrors.cityFrom && <ErrorMessage>{validationErrors.cityFrom}</ErrorMessage>}
-            <Select name="currentCity" value={formData.currentCity} onChange={handleChange}>
-              <option value="">Select your Current city</option>
+            {validationErrors.country && <ErrorMessage>{validationErrors.country}</ErrorMessage>}
+            <Select name="cityFrom" value={formData.cityFrom} onChange={handleChange}>
+              <option value="">Select your Permanent city</option>
               {cities.map((city) => (
                 <option key={city.geonameId} value={city.name}>
                   {city.name}
@@ -1675,7 +1702,21 @@ const CustomerInquiryForm = () => {
               <option value="Female">Female</option>
             </Select>
             {validationErrors.gender && <ErrorMessage>{validationErrors.gender}</ErrorMessage>}
-            <Input type="file" name="image" onChange={handleChange} />
+            {/* <Input type="file" name="image" onChange={handleChange} /> */}
+            <FileInputContainer>
+  <HiddenFileInput
+    id="file"
+    type="file"
+    name="image"
+    onChange={handleChange}
+    accept="image/jpeg, image/png"
+  />
+  <FileInputLabel htmlFor="file">Upload your pic</FileInputLabel>
+  <FileNameDisplay>
+    {formData.image ? formData.image.name : 'No file chosen'}
+  </FileNameDisplay>
+</FileInputContainer>
+<br/>
             <Input type="text" name="profession" placeholder="Profession (Optional)" value={formData.profession} onChange={handleChange} />
             <Input type="number" name="age" placeholder="Age" value={formData.age} onChange={handleChange} />
             <Button type="button" onClick={handleNext}>Save and Next</Button>
@@ -1738,6 +1779,16 @@ const CustomerInquiryForm = () => {
                 <Input type="text" name="whatsappMobile" placeholder="WhatsApp Mobile #" value={formData.whatsappMobile} onChange={handleChange} />
               )} */}
               <div>
+              <label>
+        <input
+            type="radio"
+            name="personalMobile"
+            value="different"
+            checked={mobileSelection.personalMobile === 'different'}
+            onChange={handleMobileSelectionChange}
+        />
+        Different Personal Number
+    </label>
     <label>
         <input
             type="radio"
@@ -1747,16 +1798,6 @@ const CustomerInquiryForm = () => {
             onChange={handleMobileSelectionChange}
         />
         Same as Official Mobile
-    </label>
-    <label>
-        <input
-            type="radio"
-            name="personalMobile"
-            value="different"
-            checked={mobileSelection.personalMobile === 'different'}
-            onChange={handleMobileSelectionChange}
-        />
-        Different Personal Number
     </label>
     <Input
         type="text"
@@ -1768,6 +1809,16 @@ const CustomerInquiryForm = () => {
 </div>
 
 <div>
+<label>
+        <input
+            type="radio"
+            name="whatsappMobile"
+            value="different"
+            checked={mobileSelection.whatsappMobile === 'different'}
+            onChange={handleMobileSelectionChange}
+        />
+        Different Whatsapp Number
+    </label>
     <label>
         <input
             type="radio"
@@ -1777,16 +1828,6 @@ const CustomerInquiryForm = () => {
             onChange={handleMobileSelectionChange}
         />
         Same as Official Mobile
-    </label>
-    <label>
-        <input
-            type="radio"
-            name="whatsappMobile"
-            value="different"
-            checked={mobileSelection.whatsappMobile === 'different'}
-            onChange={handleMobileSelectionChange}
-        />
-        Different Whatsapp Number
     </label>
     <Input
         type="text"

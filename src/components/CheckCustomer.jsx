@@ -69,7 +69,7 @@
 // //     }
 
 // //     try {
-// //       const response = await axios.get(`http://195.179.231.102:6003/api/customers/check`, {
+// //       const response = await axios.get(`http://localhost:5000/api/customers/check`, {
 // //         params: { cnicNumber }
 // //       });
 
@@ -215,7 +215,7 @@
 //     }
   
 //     try {
-//       const response = await axios.get(`http://195.179.231.102:6003/api/customers/check`, { params });
+//       const response = await axios.get(`http://localhost:5000/api/customers/check`, { params });
   
 //       if (response.data.exists) {
 //         alert('Customer verified, please continue.');
@@ -275,19 +275,36 @@ const FullScreenContainer = styled.div`
   background-blend-mode: overlay;
   background-color: rgba(0, 0, 0, 0.5);
   min-height: 100vh;
-  padding-top: 80px;
+  padding: 120px 20px;
   display: flex;
-  justify-content: center;
   flex-direction: column;
+  justify-content: flex-start;
   align-items: center;
+  width: 100%;
+`;
+
+const Header = styled.h1`
+  position: absolute;  // Ensure it's at the top
+  top: 135px;  // Adjust this value as needed
+  left: 50%;
+  transform: translateX(-50%);
   padding: 20px;
+  color: white;
+  font-size: 2rem;
+  text-align: center;
+  z-index: 5;  // Ensure it's above other elements
+
+  @media (max-width: 768px) {
+    padding: 10px;
+    font-size: 1.5rem;
+  }
 `;
 
 const Container = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   padding: 20px;
   background: #FFFFFF;
   border-radius: 8px;
@@ -295,7 +312,10 @@ const Container = styled.div`
   max-width: 400px;
   width: 100%;
   box-sizing: border-box;
+  margin-top: 150px;  // Push it down to avoid overlapping with the header
 `;
+
+
 
 const StyledInput = styled.input`
   width: 100%;
@@ -320,10 +340,42 @@ const Button = styled.button`
   }
 `;
 
+
 const ErrorMessage = styled.div`
   color: #ff6b6b;
   margin-top: 10px;
 `;
+
+const BackButton = styled.button`
+  position: absolute;
+  left: 20px;
+  top: 135px;
+  background-color: #333;
+  border: 2px solid #ff0000;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 15px 20px;
+  border-radius: 10px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  width: 200px;
+  height: 60px;
+  transition: background-color 0.3s, transform 0.3s;
+  z-index: 10; // Bring the button above other elements
+  
+  &:hover {
+    background-color: #ff0000;
+    transform: translateY(-2px);
+  }
+
+  @media (max-width: 768px) {
+    font-size: 14px;
+    width: 100%;
+    height: auto;
+    left: 10px;
+  }
+`;
+
 
 const CheckCustomer = () => {
   const navigate = useNavigate();
@@ -381,7 +433,7 @@ const CheckCustomer = () => {
     }
   
     try {
-      const response = await axios.get(`http://195.179.231.102:6003/api/customers/check`, { params });
+      const response = await axios.get(`http://localhost:5000/api/customers/check`, { params });
   
       if (response.data.exists) {
           alert('Customer verified, please continue.');
@@ -413,6 +465,8 @@ const CheckCustomer = () => {
   
   return (
     <FullScreenContainer>
+      <BackButton onClick={() => navigate(-1)}>← Back</BackButton>
+      <Header>Verify the Customer From Database</Header> 
       <Container>
         <StyledInput
           type="text"

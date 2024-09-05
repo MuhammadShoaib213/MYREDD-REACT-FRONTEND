@@ -450,7 +450,7 @@
 //   useEffect(() => {
 //     const fetchFriendRequests = async () => {
 //       try {
-//         const response = await axios.get('http://195.179.231.102:6003/api/friend/requests', {
+//         const response = await axios.get('http://localhost:5000/api/friend/requests', {
 //           headers: { Authorization: `Bearer ${token}` }
 //         });
 //         setFriendRequests(response.data);
@@ -466,7 +466,7 @@
   
 //   const handleAcceptFriendRequest = async (requestId) => {
 //     try {
-//       await axios.put('http://195.179.231.102:6003/api/friend/update', { 
+//       await axios.put('http://localhost:5000/api/friend/update', { 
 //         friendsId: requestId,
 //         action: 'accept'
 //       }, {
@@ -483,7 +483,7 @@
   
 //   const handleDeclineFriendRequest = async (requestId) => {
 //     try {
-//       await axios.put('http://195.179.231.102:6003/api/friend/update', { 
+//       await axios.put('http://localhost:5000/api/friend/update', { 
 //         friendsId: requestId,
 //         action: 'decline'
 //       }, {
@@ -533,6 +533,8 @@ import FriendsList from './friends';
 import RightSidebar from './RightSidebar';
 import LeftSidebar from './LeftSidebar';
 import bgImage from '../images/bg.jpg';
+import {  useNavigate } from 'react-router-dom';
+
 
 
 
@@ -547,7 +549,7 @@ const StyledPageContainer = styled.div`
   background-color: rgba(0, 0, 0, .7);
   min-height: 100vh;
   padding: 20px;
-  padding-top: 100px;
+  padding-top: 210px;
 
   @media (max-width: 768px) {
     flex-direction: column; // Stack vertically on smaller screens
@@ -761,6 +763,37 @@ const NoRequestsMessage = styled.div`
   margin-top: 20px; // Space from the top of the container
 `;
 
+const BackButton = styled.button`
+  position: absolute;
+  left: 20px;
+  top: 135px;
+  background-color: #333;
+  border: 2px solid #ff0000;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 15px 20px;
+  border-radius: 10px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  width: 200px;
+  height: 60px;
+  transition: background-color 0.3s, transform 0.3s;
+  z-index: 10; // Bring the button above other elements
+  
+  &:hover {
+    background-color: #ff0000;
+    transform: translateY(-2px);
+  }
+
+  @media (max-width: 768px) {
+    font-size: 14px;
+    width: 100%;
+    height: auto;
+    left: 10px;
+  }
+`;
+
+
 const TopBar = ({ activeTab, setActiveTab, friendRequestCount }) => (
   <StyledTopBar>
     <Tab onClick={() => setActiveTab('main')} style={activeTab === 'main' ? { borderBottom: '3px solid #0073B1' } : null}>
@@ -866,11 +899,12 @@ const BusinessAssociatesPage = () => {
   const [friendRequestCount, setFriendRequestCount] = useState(0);
   const [friendRequests, setFriendRequests] = useState([]);
   const { token } = useAuth();
+  const navigate = useNavigate(); 
 
   // useEffect(() => {
   //   const fetchFriendRequests = async () => {
   //     try {
-  //       const response = await axios.get('http://195.179.231.102:6003/api/friend/requests', {
+  //       const response = await axios.get('http://localhost:5000/api/friend/requests', {
   //         headers: { Authorization: `Bearer ${token}` }
   //       });
   //       setFriendRequests(response.data);
@@ -886,7 +920,7 @@ const BusinessAssociatesPage = () => {
   useEffect(() => {
     const fetchFriendRequests = async () => {
         try {
-            const response = await axios.get('http://195.179.231.102:6003/api/friend/requests', {
+            const response = await axios.get('http://localhost:5000/api/friend/requests', {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setFriendRequests(response.data);
@@ -905,7 +939,7 @@ const BusinessAssociatesPage = () => {
 
   const handleAcceptFriendRequest = async (requestId) => {
     try {
-      await axios.put('http://195.179.231.102:6003/api/friend/update', { 
+      await axios.put('http://localhost:5000/api/friend/update', { 
         friendsId: requestId,
         action: 'accept'
       }, {
@@ -921,7 +955,7 @@ const BusinessAssociatesPage = () => {
 
   const handleDeclineFriendRequest = async (requestId) => {
     try {
-      await axios.put('http://195.179.231.102:6003/api/friend/update', { 
+      await axios.put('http://localhost:5000/api/friend/update', { 
         friendsId: requestId,
         action: 'decline'
       }, {
@@ -937,6 +971,7 @@ const BusinessAssociatesPage = () => {
 
   return (
     <StyledPageContainer>
+      <BackButton onClick={() => navigate(-1)}>← Back</BackButton>
       <LeftSidebar />
       <div style={{ flex: 1 }}>
         <TopBar

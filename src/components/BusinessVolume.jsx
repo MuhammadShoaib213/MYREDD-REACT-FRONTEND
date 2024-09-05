@@ -128,7 +128,7 @@ import axios from 'axios';
 import {jwtDecode} from 'jwt-decode';
 import styled from 'styled-components';
 import bgImage from '../images/bg.jpg';
-import { Link, useNavigate } from 'react-router-dom';
+import {  useNavigate } from 'react-router-dom';
 
 
 const PageContainer = styled.div`
@@ -143,7 +143,7 @@ const PageContainer = styled.div`
   align-items: center;
 
   padding: 20px;
-  padding-top: 80px;
+  padding-top: 135px;
   overflow: auto;  // Ensures content can scroll if it exceeds the viewport height
 `;
 
@@ -212,6 +212,35 @@ const LearnMoreButton = styled.button`
   text-align: center;
 `;
 
+const BackButton = styled.button`
+  position: absolute;
+  left: 20px;
+  top: 135px;
+  background-color: #333; // Subtle dark background
+  border: 2px solid #ff0000; // Border to match red theme
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 15px 20px; // Adjusted padding for better appearance
+  border-radius: 10px; // More rounded corners
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); // Soft shadow for depth
+  width: 200px; // Match the width of other buttons
+  height: 60px; // Match the height of other buttons
+  transition: background-color 0.3s, transform 0.3s; // Smooth transition effects
+
+  &:hover {
+    background-color: #ff0000; // Match hover effect with the red theme
+    transform: translateY(-2px); // Slight lift on hover
+  }
+
+  @media (max-width: 768px) {
+    font-size: 14px;
+    width: 100%;
+    height: auto;
+    left: 10px;
+  }
+`;
+
 function BusinessVolume() {
   const [businessData, setBusinessData] = useState({});
   const token = localStorage.getItem('token');
@@ -222,7 +251,7 @@ function BusinessVolume() {
       if (!token) return;
       try {
         const decoded = jwtDecode(token);
-        const response = await axios.get(`http://195.179.231.102:6003/api/properties/user/${decoded.userId}`, {
+        const response = await axios.get(`http://localhost:5000/api/properties/user/${decoded.userId}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         setBusinessData(aggregateData(response.data));
@@ -263,6 +292,7 @@ function BusinessVolume() {
 
   return (
     <PageContainer>
+      <BackButton onClick={() => navigate(-1)}>← Back</BackButton>
       <Header>Business Volume</Header>
       <CategoryContainer>
         {Object.entries(businessData).map(([type, details], index) => (

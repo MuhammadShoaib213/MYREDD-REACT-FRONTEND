@@ -96,7 +96,7 @@
 //           return;
 //         }
 
-//         const response = await axios.get(`http://195.179.231.102:6003/api/properties/lead/user/${decoded.userId}`);
+//         const response = await axios.get(`http://localhost:5000/api/properties/lead/user/${decoded.userId}`);
 //         setData(response.data);
 //         console.log(response.data);
 //       } catch (error) {
@@ -197,17 +197,17 @@ const PageContainer = styled.div`
   align-items: center;
   color: white;
   padding: 20px;
-  padding-top: 80px;
+  padding-top: 135px;
   overflow: auto;
 `;
 
 const Header = styled.div`
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
+  position: relative;
   width: 100%;
   padding: 20px;
-  color: white;
   @media (max-width: 768px) {
     flex-direction: column;
     padding: 10px;
@@ -442,6 +442,37 @@ const LeadTrackerButton = styled.button`
   }
 `;
 
+const BackButton = styled.button`
+  position: absolute;
+  left: 20px;
+  top: 135px;
+  background-color: #333;
+  border: 2px solid #ff0000;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 15px 20px;
+  border-radius: 10px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  width: 200px;
+  height: 60px;
+  transition: background-color 0.3s, transform 0.3s;
+  z-index: 10; // Bring the button above other elements
+  
+  &:hover {
+    background-color: #ff0000;
+    transform: translateY(-2px);
+  }
+
+  @media (max-width: 768px) {
+    font-size: 14px;
+    width: 100%;
+    height: auto;
+    left: 10px;
+  }
+`;
+
+
 const CRMTable = () => {
   const [data, setData] = useState([]);
   const [error, setError] = useState('');
@@ -464,7 +495,7 @@ const CRMTable = () => {
           return;
         }
 
-        const response = await axios.get(`http://195.179.231.102:6003/api/properties/lead/user/${decoded.userId}`);
+        const response = await axios.get(`http://localhost:5000/api/properties/lead/user/${decoded.userId}`);
         setData(response.data);
         console.log(response.data._id);
         console.log(response.data);
@@ -501,6 +532,7 @@ const CRMTable = () => {
 
   return (
     <PageContainer>
+      <BackButton onClick={() => navigate(-1)}>← Back</BackButton>
               <Header>
           <h1>Leads</h1>
           {/* <Logo>Logo</Logo> */}

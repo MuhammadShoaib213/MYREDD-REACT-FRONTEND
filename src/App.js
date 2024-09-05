@@ -56,6 +56,8 @@ import OTPVerificationForm from './components/forgetPasswordOtp';
 import ResetPasswordForm from './components/ResetPasswordForm';
 import LeadTracker from './components/LeadTracker';
 import ProtectedRoute from './components/ProtectedRoute';
+import PropertyAd from './components/PropertyAd';
+import PropertyMatches from './components/PropertyMatches';
 
 const stripePromise = loadStripe('pk_test_51NPVZGJSiT0U6CqFk8KzITi5LilCEfscsbsUCIUxpDiEdMx2DOMzatnUPHdCiFhQXoorpP4yA6UaNaLKSt7sF06400gjhlHI8y');
 
@@ -138,6 +140,8 @@ function App() {
           <Route path="/ResetPasswordForm" element={<ResetPasswordForm/>} />
           <Route path="/Membership" element={<Membership />} />
           <Route path="/DriveComponent" element={<DriveComponent />} />
+          <Route path="/PropertyAd/:id" element={<PropertyAd/>} />
+          <Route path="/PropertyMatches/:id" element={<PropertyMatches/>} />
           <Route path="/subscribe/:planTitle" element={
             <Elements stripe={stripePromise}>
               <SubscriptionForm />

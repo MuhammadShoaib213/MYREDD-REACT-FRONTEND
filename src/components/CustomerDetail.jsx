@@ -85,7 +85,7 @@
 //   useEffect(() => {
 //     const fetchCustomerDetail = async () => {
 //       try {
-//         const response = await fetch(`http://195.179.231.102:6003/api/customers/detail/${id}`);
+//         const response = await fetch(`http://localhost:5000/api/customers/detail/${id}`);
 //         if (!response.ok) {
 //           throw new Error('Failed to fetch customer details');
 //         }
@@ -104,7 +104,7 @@
 //   return (
 //     <PageContainer>
 //       <MainContent>
-//         <DetailImage src={customer.profilePicture ? `http://195.179.231.102:6003/${customer.profilePicture}` : 'https://via.placeholder.com/200'} alt={customer.fullName} />
+//         <DetailImage src={customer.profilePicture ? `http://localhost:5000/${customer.profilePicture}` : 'https://via.placeholder.com/200'} alt={customer.fullName} />
 //         <DetailText><Label>Name:</Label> {customer.fullName}</DetailText>
 //         <DetailText><Label>Mobile:</Label> {customer.officialMobile}</DetailText>
 //         <DetailText><Label>WhatsApp:</Label> {customer.whatsappMobile}</DetailText>
@@ -131,18 +131,20 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { useParams } from 'react-router-dom';
 import bgImage from '../images/bg.jpg';
+import {  useNavigate } from 'react-router-dom';
 
-// Styled components
+
+
 const PageContainer = styled.div`
   background-image: url(${bgImage});
   background-size: cover;
   background-position: center;
   background-blend-mode: overlay;
   background-color: rgba(0, 0, 0, 0.5);
-  min-height: 100vh; /* Ensure it covers the whole viewport height */
+  min-height: 100vh;
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: stretch; /* Adjusted to stretch to make all children equal height */
   padding: 40px;
   padding-top: 180px;
 
@@ -154,6 +156,67 @@ const PageContainer = styled.div`
     flex-direction: row;
   }
 `;
+
+const MainContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: white;
+  padding: 40px;
+  height: 500px;
+  border-radius: 20px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  margin-right: 20px;
+  width: 100%;
+  max-width: 400px;
+  flex: 1; /* Ensures it takes the space needed and respects flex properties */
+
+  @media (max-width: 768px) {
+    margin-right: 0;
+    margin-bottom: 20px;
+    width: 100%;
+  }
+`;
+
+const SidePanel = styled.div`
+  background: #e8e8e8;
+  padding: 40px;
+  border-radius: 20px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  width: 100%;
+  height: 500px;
+  max-width: 400px;
+  flex: 1; /* Ensures it takes the space needed and respects flex properties */
+
+  @media (max-width: 768px) {
+    width: 100%;
+    margin-bottom: 20px;
+  }
+`;
+
+
+// Styled components
+// const PageContainer = styled.div`
+//   background-image: url(${bgImage});
+//   background-size: cover;
+//   background-position: center;
+//   background-blend-mode: overlay;
+//   background-color: rgba(0, 0, 0, 0.5);
+//   min-height: 100vh; /* Ensure it covers the whole viewport height */
+//   display: flex;
+//   justify-content: center;
+//   align-items: center;
+//   padding: 40px;
+//   padding-top: 180px;
+
+//   @media (max-width: 768px) {
+//     flex-direction: column;
+//   }
+
+//   @media (min-width: 769px) {
+//     flex-direction: row;
+//   }
+// `;
 
 const Header = styled.div`
   display: flex;
@@ -169,38 +232,38 @@ const Header = styled.div`
   }
 `;
 
-const MainContent = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  background: white;
-  padding: 40px; // Increased padding
-  border-radius: 20px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-  margin-right: 20px;
-  width: 100%;
-  max-width: 400px; // Limiting width
+// const MainContent = styled.div`
+//   display: flex;
+//   flex-direction: column;
+//   align-items: center;
+//   background: white;
+//   padding: 40px; // Increased padding
+//   border-radius: 20px;
+//   box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+//   margin-right: 20px;
+//   width: 100%;
+//   max-width: 400px; // Limiting width
 
-  @media (max-width: 768px) {
-    margin-right: 0;
-    margin-bottom: 20px;
-    width: 100%; // Ensuring same width as SidePanel
-  }
-`;
+//   @media (max-width: 768px) {
+//     margin-right: 0;
+//     margin-bottom: 20px;
+//     width: 100%; // Ensuring same width as SidePanel
+//   }
+// `;
 
-const SidePanel = styled.div`
-  background: #e8e8e8;
-  padding: 40px; // Increased padding
-  border-radius: 20px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-  width: 100%;
-  max-width: 400px; // Limiting width
+// const SidePanel = styled.div`
+//   background: #e8e8e8;
+//   padding: 40px; // Increased padding
+//   border-radius: 20px;
+//   box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+//   width: 100%;
+//   max-width: 400px; // Limiting width
 
-  @media (max-width: 768px) {
-    width: 100%; // Matching MainContent width
-    margin-bottom: 20px; // Optional: Add margin bottom to separate from footer
-  }
-`;
+//   @media (max-width: 768px) {
+//     width: 100%; // Matching MainContent width
+//     margin-bottom: 20px; // Optional: Add margin bottom to separate from footer
+//   }
+// `;
 
 const DetailImage = styled.img`
   width: 250px; // Increased size
@@ -228,14 +291,44 @@ const DetailEntry = styled.div`
   font-size: 18px; // Increased font size
 `;
 
+const BackButton = styled.button`
+  position: absolute;
+  left: 20px;
+  top: 135px;
+  background-color: #333; // Subtle dark background
+  border: 2px solid #ff0000; // Border to match red theme
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 15px 20px; // Adjusted padding for better appearance
+  border-radius: 10px; // More rounded corners
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); // Soft shadow for depth
+  width: 200px; // Match the width of other buttons
+  height: 60px; // Match the height of other buttons
+  transition: background-color 0.3s, transform 0.3s; // Smooth transition effects
+
+  &:hover {
+    background-color: #ff0000; // Match hover effect with the red theme
+    transform: translateY(-2px); // Slight lift on hover
+  }
+
+  @media (max-width: 768px) {
+    font-size: 14px;
+    width: 100%;
+    height: auto;
+    left: 10px;
+  }
+`;
+
 const CustomerDetail = () => {
   const { id } = useParams();
   const [customer, setCustomer] = useState(null);
+  const navigate = useNavigate(); 
 
   useEffect(() => {
     const fetchCustomerDetail = async () => {
       try {
-        const response = await fetch(`http://195.179.231.102:6003/api/customers/detail/${id}`);
+        const response = await fetch(`http://localhost:5000/api/customers/detail/${id}`);
         if (!response.ok) {
           throw new Error('Failed to fetch customer details');
         }
@@ -253,8 +346,9 @@ const CustomerDetail = () => {
 
   return (
     <PageContainer>
+      <BackButton onClick={() => navigate(-1)}>← Back</BackButton>
       <MainContent>
-        <DetailImage src={customer.profilePicture ? `http://195.179.231.102:6003/${customer.profilePicture}` : 'https://via.placeholder.com/200'} alt={customer.fullName} />
+        <DetailImage src={customer.profilePicture ? `http://localhost:5000/${customer.profilePicture}` : 'https://via.placeholder.com/200'} alt={customer.fullName} />
         <DetailText><Label>Name:</Label> {customer.fullName}</DetailText>
         <DetailText><Label>Mobile:</Label> {customer.officialMobile}</DetailText>
         <DetailText><Label>WhatsApp:</Label> {customer.whatsappMobile}</DetailText>

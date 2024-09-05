@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import axios from 'axios';
 import { FaBed, FaBath, FaRulerCombined, FaCar, FaTree,FaCalendarAlt , FaRoad,FaCity, FaHome, FaArrowsAlt, FaDollarSign } from 'react-icons/fa';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import {jwtDecode} from 'jwt-decode';
 import bgImage from '../images/bg.jpg';
 
@@ -39,8 +39,9 @@ const PropertiesGrid = styled.div`
 `;
 const Header = styled.div`
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
+  position: relative;
   width: 100%;
   padding: 20px;
   color: white;
@@ -348,6 +349,35 @@ const DetailIcon = styled.span`
   align-items: center;
 `;
 
+const BackButton = styled.button`
+  position: absolute;
+  left: 20px;
+  top: 50px;
+  background-color: #333; // Subtle dark background
+  border: 2px solid #ff0000; // Border to match red theme
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 15px 20px; // Adjusted padding for better appearance
+  border-radius: 10px; // More rounded corners
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); // Soft shadow for depth
+  width: 200px; // Match the width of other buttons
+  height: 60px; // Match the height of other buttons
+  transition: background-color 0.3s, transform 0.3s; // Smooth transition effects
+
+  &:hover {
+    background-color: #ff0000; // Match hover effect with the red theme
+    transform: translateY(-2px); // Slight lift on hover
+  }
+
+  @media (max-width: 768px) {
+    font-size: 14px;
+    width: 100%;
+    height: auto;
+    left: 10px;
+  }
+`;
+
 
 const FeatureIcon = ({ feature, IconComponent }) => (
   feature ? <IconComponent size="20" /> : null
@@ -402,6 +432,7 @@ const getInquiryTypeLabel = (inquiryType) => {
 
 const PropertyView = () => {
   const [properties, setProperties] = useState([]);
+  const navigate = useNavigate(); 
 
   useEffect(() => {
     const fetchProperties = async () => {
@@ -411,8 +442,8 @@ const PropertyView = () => {
         const decoded = jwtDecode(token);  // Decode the JWT
         const userId = decoded.userId;      // Extract the user ID from the token
 
-        const response = await axios.get(`http://195.179.231.102:6003/api/properties/all?userId=${userId}`);
-        // const response = await axios.get('http://195.179.231.102:6003/api/properties/all');
+        const response = await axios.get(`http://localhost:5000/api/properties/all?userId=${userId}`);
+        // const response = await axios.get('http://localhost:5000/api/properties/all');
         setProperties(response.data);
         console.log(response.data);
       } catch (error) {
@@ -428,6 +459,7 @@ const PropertyView = () => {
     <PageContainer>
 
 <Header>
+      <BackButton onClick={() => navigate(-1)}>← Back</BackButton>
           <h1>Property Bank</h1>
           {/* <Logo>Logo</Logo> */}
         </Header>
@@ -442,9 +474,9 @@ const PropertyView = () => {
     <PropertiesGrid>
       {properties.map(property => (
         <PropertyCard key={property._id}>
-          {/* <PropertyImage src={property.images[0] ? `http://195.179.231.102:6003/uploads/${property.images[0]}` : 'http://195.179.231.102:6003/uploads/bg.jpg'} alt={property.title} /> */}
+          {/* <PropertyImage src={property.images[0] ? `http://localhost:5000/uploads/${property.images[0]}` : 'http://localhost:5000/uploads/bg.jpg'} alt={property.title} /> */}
           <PropertyImage 
-  src={property.images[0] ? `http://195.179.231.102:6003/${property.images[0]}` : 'http://195.179.231.102:6003/uploads/bg.jpg'} 
+  src={property.images[0] ? `http://localhost:5000/${property.images[0]}` : 'http://localhost:5000/uploads/bg.jpg'} 
   alt={property.title}
 />
 

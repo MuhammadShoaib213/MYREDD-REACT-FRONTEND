@@ -171,7 +171,7 @@
 //         const decodedToken = jwtDecode(token);
 //         const userId = decodedToken.userId;
 
-//         const response = await fetch(`http://195.179.231.102:6003/api/customers?userId=${userId}`);
+//         const response = await fetch(`http://localhost:5000/api/customers?userId=${userId}`);
 //         if (!response.ok) {
 //           throw new Error('Failed to fetch customers');
 //         }
@@ -405,22 +405,68 @@ const CloseButton = styled.button`
 `;
 
 const AddCustomerButton = styled.button`
-  background-color: red;
-  color: white;
+  padding: 20px;
   border: none;
-  padding: 10px 20px;
-  border-radius: 20px;
-  cursor: pointer;
-  transition: background-color 0.3s;
+  color: white;
   font-size: 16px;
-  text-align: center;
-  display: inline-block;
-  width: auto;
-
+  border-radius: 5px;
+  cursor: pointer;
+  background-color: red;
+  width: 100%;
+  height: 60px; // Set a fixed height for all buttons
   &:hover {
-    background-color: #8B0000;
+    background-color: darkred;
+  @media (max-width: 768px) {
+    padding: 15px 0;
+    font-size: 14px;
+    height: auto; // Adjust height for smaller screens
   }
 `;
+
+const Header = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  width: 100%;
+  padding: 20px;
+  color: white;
+  @media (max-width: 768px) {
+    flex-direction: column;
+    padding: 10px;
+  }
+`;
+
+const BackButton = styled.button`
+  position: absolute;
+  left: 20px;
+  top: 135px;
+  background-color: #333;
+  border: 2px solid #ff0000;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 15px 20px;
+  border-radius: 10px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  width: 200px;
+  height: 60px;
+  transition: background-color 0.3s, transform 0.3s;
+  z-index: 10; // Bring the button above other elements
+  
+  &:hover {
+    background-color: #ff0000;
+    transform: translateY(-2px);
+  }
+
+  @media (max-width: 768px) {
+    font-size: 14px;
+    width: 100%;
+    height: auto;
+    left: 10px;
+  }
+`;
+
 
 const formatDate = (dateString) => {
   const date = new Date(dateString);
@@ -430,7 +476,7 @@ const formatDate = (dateString) => {
 const CustomerCard = ({ customer, onViewDetail }) => (
   <Card>
     {/* <CardImage src={customer.profilePicture || 'default-profile.jpg'} alt={customer.fullName} /> */}
-    <CardImage src={customer.profilePicture ? `http://195.179.231.102:6003/${customer.profilePicture}` : 'https://via.placeholder.com/200'} alt={customer.fullName} />
+    <CardImage src={customer.profilePicture ? `http://localhost:5000/${customer.profilePicture}` : 'https://via.placeholder.com/200'} alt={customer.fullName} />
     <CardBody>
       <CardTitle>{customer.fullName}</CardTitle>
       <CardSubtitle>{customer.currentAddress}</CardSubtitle>
@@ -459,7 +505,7 @@ const CustomerView = (customer) => {
         const decodedToken = jwtDecode(token);
         const userId = decodedToken.userId;
 
-        const response = await fetch(`http://195.179.231.102:6003/api/customers?userId=${userId}`);
+        const response = await fetch(`http://localhost:5000/api/customers?userId=${userId}`);
         if (!response.ok) {
           throw new Error('Failed to fetch customers');
         }
@@ -488,9 +534,11 @@ const handleViewDetail = (customer) => {
 
   return (
     <PageContainer>
-      <HeadingContainer>
-        <h1>Customer Database</h1>
-      </HeadingContainer>
+      <BackButton onClick={() => navigate(-1)}>← Back</BackButton>
+              <Header>
+          <h1>Customer Database</h1>
+          {/* <Logo>Logo</Logo> */}
+        </Header>
       {customers.length === 0 ? (
         <ErrorMessage>No customers available</ErrorMessage>
       ) : null}

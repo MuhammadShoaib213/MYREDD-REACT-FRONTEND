@@ -189,7 +189,7 @@ const StyledLeftSidebar = styled.div`
   background-color: #F8F8F8;
   padding: 20px;
   min-height: 60vh;
-  height: auto;
+  height: 50vh; 
   max-height: 100vh;
   overflow-y: auto;
   border-radius: 10px;

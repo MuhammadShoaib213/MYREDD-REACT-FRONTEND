@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { useParams } from 'react-router-dom';
 import bgImage from '../images/bg.jpg';
-import { useAuth } from './AuthContext'; // Adjust the path to your AuthContext
+import { useAuth } from './AuthContext';
+import {  useNavigate } from 'react-router-dom';
 
 
 // Styled components
@@ -37,6 +38,7 @@ const ContentContainer = styled.div`
   gap: 20px;
   width: 100%;
   max-width: 1200px;
+  padding-top: 80px;
   flex-direction: row; // Default to row
 
   @media (max-width: 768px) {
@@ -209,16 +211,48 @@ const InfoItem = styled.div`
   background: #f9f9f9; // Slightly off-white for contrast
 `;
 
+const BackButton = styled.button`
+  position: absolute;
+  left: 20px;
+  top: 135px;
+  background-color: #333;
+  border: 2px solid #ff0000;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 15px 20px;
+  border-radius: 10px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  width: 200px;
+  height: 60px;
+  transition: background-color 0.3s, transform 0.3s;
+  z-index: 10; // Bring the button above other elements
+  
+  &:hover {
+    background-color: #ff0000;
+    transform: translateY(-2px);
+  }
+
+  @media (max-width: 768px) {
+    font-size: 14px;
+    width: 100%;
+    height: auto;
+    left: 10px;
+  }
+`;
+
+
 const FriendDetail = () => {
   const { id } = useParams();
   const [friend, setFriend] = useState(null);
   const { token } = useAuth(); // Get token from auth context
   const [activeTab, setActiveTab] = useState('about');
+  const navigate = useNavigate(); 
 
   useEffect(() => {
     const fetchFriendDetail = async () => {
       try {
-        const response = await fetch(`http://195.179.231.102:6003/api/friend/detail/${id}`, {
+        const response = await fetch(`http://localhost:5000/api/friend/detail/${id}`, {
           headers: {
             Authorization: `Bearer ${token}`, // Include token in headers
           },
@@ -241,10 +275,11 @@ const FriendDetail = () => {
 
   return (
     <PageContainer>
+      <BackButton onClick={() => navigate(-1)}>← Back</BackButton>
       <Header>Business Associates</Header>
       <ContentContainer>
         <ProfileCard>
-          <ProfileImage src={friend.profilePicture ? `http://195.179.231.102:6003/${friend.profilePicture}` : 'https://via.placeholder.com/150'} alt={friend.fullName} />
+          <ProfileImage src={friend.profilePicture ? `http://localhost:5000/${friend.profilePicture}` : 'https://via.placeholder.com/150'} alt={friend.fullName} />
           <ProfileDetails>
             <DetailText><Label>Name:</Label> {friend.firstName} {friend.lastName}</DetailText><Divider />
             <DetailText><Label>Mobile:</Label> {friend.phoneNumber}</DetailText><Divider />

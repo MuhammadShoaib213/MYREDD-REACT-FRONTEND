@@ -403,11 +403,9 @@ const GlobalStyle = createGlobalStyle`
 
 // Styled components adjusted for responsiveness
 const Container = styled.div`
-  background-image: url(${bgImage});
+
   background-size: cover;
   background-position: center;
-  background-blend-mode: overlay;
-  background-color: rgba(0, 0, 0, 0.5);
   min-height: 100vh;
   display: flex;
   flex-direction: column;

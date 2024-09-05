@@ -4,6 +4,8 @@ import axios from 'axios';
 import styled from 'styled-components';
 import { FaMapMarkerAlt, FaPhone, FaEnvelope, FaTree, FaCar, FaBuilding } from 'react-icons/fa';
 import bgImage from '../images/bg.jpg';
+import {  useNavigate } from 'react-router-dom';
+
 
 
 const PageContainer = styled.div`
@@ -14,7 +16,7 @@ const PageContainer = styled.div`
   background-color: rgba(0, 0, 0, 0.5);
   min-height: 100vh;
   padding: 20px;
-  padding-top: 80px;
+  padding-top: 135px;
   overflow-x: hidden; /* Prevent horizontal overflow */
 
   @media (max-width: 768px) {
@@ -41,20 +43,19 @@ const PropertyContainer = styled.div`
 
 const Header = styled.div`
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
+  position: relative;
   width: 100%;
   padding: 20px;
   color: white;
-
   @media (max-width: 768px) {
     flex-direction: column;
     padding: 10px;
-    h1 {
-      font-size: 1.5rem;
-    }
   }
 `;
+
+
 
 const LeftPanel = styled.div`
   width: 35%;
@@ -247,6 +248,36 @@ const Value = styled.span`
   margin-left: 5px;
 `;
 
+const BackButton = styled.button`
+  position: absolute;
+  left: 20px;
+  top: 135px;
+  background-color: #333; // Subtle dark background
+  border: 2px solid #ff0000; // Border to match red theme
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 15px 20px; // Adjusted padding for better appearance
+  border-radius: 10px; // More rounded corners
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); // Soft shadow for depth
+  width: 200px; // Match the width of other buttons
+  height: 60px; // Match the height of other buttons
+  transition: background-color 0.3s, transform 0.3s; // Smooth transition effects
+  z-index: 1000;
+
+  &:hover {
+    background-color: #ff0000; // Match hover effect with the red theme
+    transform: translateY(-2px); // Slight lift on hover
+  }
+
+  @media (max-width: 768px) {
+    font-size: 14px;
+    width: 100%;
+    height: auto;
+    left: 10px;
+  }
+`;
+
 const TabContent = ({ activeTab, property }) => {
   switch (activeTab) {
     case 'overview':
@@ -296,11 +327,12 @@ const PropertyDetailsPage = () => {
   const { id } = useParams();
   const [property, setProperty] = useState(null);
   const [error, setError] = useState('');
+  const navigate = useNavigate(); 
 
   useEffect(() => {
     const fetchPropertyDetails = async () => {
       try {
-        const response = await axios.get(`http://195.179.231.102:6003/api/properties/property/${id}`, {
+        const response = await axios.get(`http://localhost:5000/api/properties/property/${id}`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
             'Content-Type': 'application/json'
@@ -326,14 +358,15 @@ const PropertyDetailsPage = () => {
 
   return (
     <PageContainer>
-              <Header>
+      <BackButton onClick={() => navigate(-1)}>← Back</BackButton>
+          <Header>
           <h1>Property Details</h1>
           {/* <Logo>Logo</Logo> */}
         </Header>
     <PropertyContainer>
       <LeftPanel>
       <Image 
-  src={property.images[0] ? `http://195.179.231.102:6003/${property.images[0]}` : 'http://195.179.231.102:6003/uploads/bg.jpg'} 
+  src={property.images[0] ? `http://localhost:5000/${property.images[0]}` : 'http://localhost:5000/uploads/bg.jpg'} 
   alt={property.title}
 />
         <Title>{property.title || "Home"}</Title>
