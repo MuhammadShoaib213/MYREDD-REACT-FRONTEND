@@ -193,7 +193,7 @@ const PropertyAd = () => {
   useEffect(() => {
     const fetchPropertyDetails = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/api/properties/propertyAd/${propertyId}`, {
+        const response = await axios.get(`http://195.179.231.102:6003/api/properties/propertyAd/${propertyId}`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
             'Content-Type': 'application/json'
@@ -264,7 +264,7 @@ const PropertyAd = () => {
         {propertyDetails ? (
           <>
             <img 
-              src={`http://localhost:5000/${propertyDetails.images?.[0] ? propertyDetails.images[0].replace(/\\/g, '/').replace(/ /g, '%20') : 'uploads/bg.jpg'}`} 
+              src={`http://195.179.231.102:6003/${propertyDetails.images?.[0] ? propertyDetails.images[0].replace(/\\/g, '/').replace(/ /g, '%20') : 'uploads/bg.jpg'}`} 
               alt="Property Image" 
               style={{ width: '100%', height: 'auto', borderRadius: '20px' }} 
             />

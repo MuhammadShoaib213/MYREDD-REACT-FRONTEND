@@ -96,7 +96,7 @@
 //           return;
 //         }
 
-//         const response = await axios.get(`http://localhost:5000/api/properties/lead/user/${decoded.userId}`);
+//         const response = await axios.get(`http://195.179.231.102:6003/api/properties/lead/user/${decoded.userId}`);
 //         setData(response.data);
 //         console.log(response.data);
 //       } catch (error) {
@@ -495,7 +495,7 @@ const CRMTable = () => {
           return;
         }
 
-        const response = await axios.get(`http://localhost:5000/api/properties/lead/user/${decoded.userId}`);
+        const response = await axios.get(`http://195.179.231.102:6003/api/properties/lead/user/${decoded.userId}`);
         setData(response.data);
         console.log(response.data._id);
         console.log(response.data);

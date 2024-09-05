@@ -476,7 +476,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
       const latitude = selectedCity.lat;
       const longitude = selectedCity.lng;
       axios
-        .get("http://localhost:5000/api/neighborhoods", {
+        .get("http://195.179.231.102:6003/api/neighborhoods", {
           params: {
             latitude: latitude,
             longitude: longitude,
