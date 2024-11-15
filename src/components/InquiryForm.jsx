@@ -294,7 +294,7 @@
 // //     });
   
 // //     try {
-// //       const response = await axios.post('http://localhost:5000/api/properties/add', submitData, {
+// //       const response = await axios.post('http://195.179.231.102:6003/api/properties/add', submitData, {
 // //         headers: { 'Content-Type': 'multipart/form-data' }
 // //       });
 // //       console.log('Form submitted successfully:', response.data);
@@ -322,7 +322,7 @@
 // //   });
 
 // //   try {
-// //     const response = await axios.post('http://localhost:5000/api/properties/add', submitData, {
+// //     const response = await axios.post('http://195.179.231.102:6003/api/properties/add', submitData, {
 // //       headers: { 'Content-Type': 'multipart/form-data' }
 // //     });
 // //     console.log('Form submitted successfully:', response.data);
@@ -350,7 +350,7 @@
 // //   });
 
 // //   try {
-// //       const response = await axios.post('http://localhost:5000/api/properties/add', submitData, {
+// //       const response = await axios.post('http://195.179.231.102:6003/api/properties/add', submitData, {
 // //           headers: { 'Content-Type': 'multipart/form-data' }
 // //       });
 // //       console.log('Form submitted successfully:', response.data);
@@ -399,7 +399,7 @@
 // //   }
 
 // //   try {
-// //       const response = await axios.post('http://localhost:5000/api/properties/add', submitData, {
+// //       const response = await axios.post('http://195.179.231.102:6003/api/properties/add', submitData, {
 // //           headers: { 'Content-Type': 'multipart/form-data' }
 // //       });
 // //       console.log('Form submitted successfully:', response.data);
@@ -452,7 +452,7 @@
 //       console.log('Submitting form data...');
     
 //       // Submit the form data to the API endpoint
-//       const response = await axios.post('http://localhost:5000/api/properties/add', submitData, {
+//       const response = await axios.post('http://195.179.231.102:6003/api/properties/add', submitData, {
 //         headers: { 'Content-Type': 'multipart/form-data' }
 //       });
     
@@ -809,7 +809,7 @@ const InquiryForm = () => {
       console.log('Submitting form data...');
     
       // Submit the form data to the API endpoint
-      const response = await axios.post('http://localhost:5000/api/properties/add', submitData, {
+      const response = await axios.post('http://195.179.231.102:6003/api/properties/add', submitData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
     

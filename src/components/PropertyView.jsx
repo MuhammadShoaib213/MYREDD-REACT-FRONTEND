@@ -442,8 +442,8 @@
 // // //         const decoded = jwtDecode(token);  // Decode the JWT
 // // //         const userId = decoded.userId;      // Extract the user ID from the token
 
-// // //         const response = await axios.get(`http://localhost:5000/api/properties/all?userId=${userId}`);
-// // //         // const response = await axios.get('http://localhost:5000/api/properties/all');
+// // //         const response = await axios.get(`http://195.179.231.102:6003/api/properties/all?userId=${userId}`);
+// // //         // const response = await axios.get('http://195.179.231.102:6003/api/properties/all');
 // // //         setProperties(response.data);
 // // //         console.log(response.data);
 // // //       } catch (error) {
@@ -474,9 +474,9 @@
 // // //     <PropertiesGrid>
 // // //       {properties.map(property => (
 // // //         <PropertyCard key={property._id}>
-// // //           {/* <PropertyImage src={property.images[0] ? `http://localhost:5000/uploads/${property.images[0]}` : 'http://localhost:5000/uploads/bg.jpg'} alt={property.title} /> */}
+// // //           {/* <PropertyImage src={property.images[0] ? `http://195.179.231.102:6003/uploads/${property.images[0]}` : 'http://195.179.231.102:6003/uploads/bg.jpg'} alt={property.title} /> */}
 // // //           <PropertyImage 
-// // //   src={property.images[0] ? `http://localhost:5000/${property.images[0]}` : 'http://localhost:5000/uploads/bg.jpg'} 
+// // //   src={property.images[0] ? `http://195.179.231.102:6003/${property.images[0]}` : 'http://195.179.231.102:6003/uploads/bg.jpg'} 
 // // //   alt={property.title}
 // // // />
 
@@ -912,7 +912,7 @@
 // //         const decoded = jwtDecode(token);  // Decode the JWT
 // //         const userId = decoded.userId;      // Extract the user ID from the token
 
-// //         const response = await axios.get(`http://localhost:5000/api/properties/all?userId=${userId}`);
+// //         const response = await axios.get(`http://195.179.231.102:6003/api/properties/all?userId=${userId}`);
         
 // //         // Sort the properties by updatedAt in descending order
 // //         const sortedProperties = [...response.data].sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
@@ -1023,8 +1023,8 @@
 // //             <PropertyCard key={property._id}>
 // //               <PropertyImage 
 // //                 src={property.images[0] 
-// //                   ? `http://localhost:5000/${property.images[0]}` 
-// //                   : 'http://localhost:5000/uploads/bg.jpg'} 
+// //                   ? `http://195.179.231.102:6003/${property.images[0]}` 
+// //                   : 'http://195.179.231.102:6003/uploads/bg.jpg'} 
 // //                 alt={property.title || 'Property Image'}
 // //               />
 
@@ -1487,7 +1487,7 @@
 //         const decoded = jwtDecode(token);
 //         const userId = decoded.userId;
 
-//         const response = await axios.get(`http://localhost:5000/api/properties/all?userId=${userId}`);
+//         const response = await axios.get(`http://195.179.231.102:6003/api/properties/all?userId=${userId}`);
         
 //         // Check if response.data is an array
 //         if (!Array.isArray(response.data)) {
@@ -1622,8 +1622,8 @@
 //               <PropertyCard key={property._id} onClick={() => handleCardClick(property._id)}>
 //                 <PropertyImage 
 //                   src={property.images && property.images.length > 0 
-//                     ? `http://localhost:5000/${property.images[0]}` 
-//                     : 'http://localhost:5000/uploads/bg.jpg'} 
+//                     ? `http://195.179.231.102:6003/${property.images[0]}` 
+//                     : 'http://195.179.231.102:6003/uploads/bg.jpg'} 
 //                   alt={property.title || 'Property Image'}
 //                 />
 
@@ -2118,7 +2118,7 @@
 //         const decoded = jwtDecode(token);
 //         const userId = decoded.userId;
 
-//         const response = await axios.get(`http://localhost:5000/api/properties/all?userId=${userId}`);
+//         const response = await axios.get(`http://195.179.231.102:6003/api/properties/all?userId=${userId}`);
         
 //         // Check if response.data is an array
 //         if (!Array.isArray(response.data)) {
@@ -2253,7 +2253,7 @@
 //               <PropertyCard key={property._id} onClick={() => handleCardClick(property._id)}>
 //                 <PropertyImage 
 //                   src={property.images && property.images.length > 0 
-//                     ? `http://localhost:5000/${property.images[0]}` 
+//                     ? `http://195.179.231.102:6003/${property.images[0]}` 
 //                     : getImageForPropertySubType(property.propertySubType)} 
 //                   alt={property.title || 'Property Image'}
 //                 />
@@ -2802,7 +2802,7 @@ const PropertyView = () => {
         const decoded = jwtDecode(token);
         const userId = decoded.userId;
 
-        const response = await axios.get(`http://localhost:5000/api/properties/all?userId=${userId}`);
+        const response = await axios.get(`http://195.179.231.102:6003/api/properties/all?userId=${userId}`);
 
         // Check if response.data is an array
         if (!Array.isArray(response.data)) {
@@ -2910,7 +2910,7 @@ const PropertyView = () => {
         const token = localStorage.getItem('token');
         const headers = { Authorization: `Bearer ${token}` };
         const response = await axios.patch(
-          `http://localhost:5000/api/properties/updateStatus/${property._id}`,
+          `http://195.179.231.102:6003/api/properties/updateStatus/${property._id}`,
           { status: newStatus },
           { headers }
         );
@@ -2973,7 +2973,7 @@ const PropertyView = () => {
         <PropertyImage
           src={
             property.images && property.images.length > 0
-              ? `http://localhost:5000/${property.images[0]}`
+              ? `http://195.179.231.102:6003/${property.images[0]}`
               : getImageForPropertySubType(property.propertySubType)
           }
           alt={property.title || 'Property Image'}

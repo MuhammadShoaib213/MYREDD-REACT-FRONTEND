@@ -307,7 +307,7 @@ const FriendsList = () => {
                     <FriendCard key={friend._id}>
                         <FriendImageContainer>
                             {/* <FriendImage src={friend.profilePicture || "https://cdn-icons-png.freepik.com/512/147/147144.png"} alt={`${friend.firstName} Avatar`} /> */}
-                            <FriendImage src={friend.profilePicture ? `http://localhost:5000/${friend.profilePicture}` : 'https://via.placeholder.com/200'} alt={friend.firstName}  />
+                            <FriendImage src={friend.profilePicture ? `http://195.179.231.102:6003/${friend.profilePicture}` : 'https://via.placeholder.com/200'} alt={friend.firstName}  />
                         </FriendImageContainer>
                         <FriendInfo>
                             <FriendName>{friend.firstName} {friend.lastName}</FriendName>

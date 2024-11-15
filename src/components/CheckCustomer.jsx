@@ -69,7 +69,7 @@
 // // //     }
 
 // // //     try {
-// // //       const response = await axios.get(`http://localhost:5000/api/customers/check`, {
+// // //       const response = await axios.get(`http://195.179.231.102:6003/api/customers/check`, {
 // // //         params: { cnicNumber }
 // // //       });
 
@@ -215,7 +215,7 @@
 // //     }
   
 // //     try {
-// //       const response = await axios.get(`http://localhost:5000/api/customers/check`, { params });
+// //       const response = await axios.get(`http://195.179.231.102:6003/api/customers/check`, { params });
   
 // //       if (response.data.exists) {
 // //         alert('Customer verified, please continue.');
@@ -433,7 +433,7 @@
 //     }
   
 //     try {
-//       const response = await axios.get(`http://localhost:5000/api/customers/check`, { params });
+//       const response = await axios.get(`http://195.179.231.102:6003/api/customers/check`, { params });
   
 //       if (response.data.exists) {
 //           alert('Customer verified, please continue.');
@@ -729,7 +729,7 @@ const CheckCustomer = () => {
     }
 
     try {
-      const response = await axios.get(`http://localhost:5000/api/customers/check`, { params });
+      const response = await axios.get(`http://195.179.231.102:6003/api/customers/check`, { params });
 
       if (response.data.exists) {
         setCustomerData(response.data.customer);
@@ -757,7 +757,7 @@ const CheckCustomer = () => {
           <ModalContent>
             <CloseButton onClick={() => setModalVisible(false)}>×</CloseButton>
             <Card>
-              <CardImage src={customerData.profilePicture ? `http://localhost:5000/${customerData.profilePicture}` : 'https://via.placeholder.com/200'} alt={customerData.fullName} />
+              <CardImage src={customerData.profilePicture ? `http://195.179.231.102:6003/${customerData.profilePicture}` : 'https://via.placeholder.com/200'} alt={customerData.fullName} />
               <CardBody>
                 <CardTitle>{customerData.fullName}</CardTitle>
                 <CardSubtitle>{customerData.currentAddress}</CardSubtitle>

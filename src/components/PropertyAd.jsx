@@ -238,7 +238,7 @@
 // // //   useEffect(() => {
 // // //     const fetchPropertyDetails = async () => {
 // // //       try {
-// // //         const response = await axios.get(`http://localhost:5000/api/properties/propertyAd/${propertyId}`, {
+// // //         const response = await axios.get(`http://195.179.231.102:6003/api/properties/propertyAd/${propertyId}`, {
 // // //           headers: {
 // // //             Authorization: `Bearer ${localStorage.getItem('token')}`,
 // // //             'Content-Type': 'application/json'
@@ -309,7 +309,7 @@
 // // //         {propertyDetails ? (
 // // //           <>
 // // //             <img 
-// // //               src={`http://localhost:5000/${propertyDetails.images?.[0] ? propertyDetails.images[0].replace(/\\/g, '/').replace(/ /g, '%20') : 'uploads/bg.jpg'}`} 
+// // //               src={`http://195.179.231.102:6003/${propertyDetails.images?.[0] ? propertyDetails.images[0].replace(/\\/g, '/').replace(/ /g, '%20') : 'uploads/bg.jpg'}`} 
 // // //               alt="Property Image" 
 // // //               style={{ width: '100%', height: 'auto', borderRadius: '20px' }} 
 // // //             />
@@ -680,7 +680,7 @@
 // //     const fetchPropertyDetails = async () => {
 // //       try {
 // //         const response = await axios.get(
-// //           `http://localhost:5000/api/properties/propertyAd/${propertyId}`,
+// //           `http://195.179.231.102:6003/api/properties/propertyAd/${propertyId}`,
 // //           {
 // //             headers: {
 // //               Authorization: `Bearer ${localStorage.getItem('token')}`,
@@ -784,7 +784,7 @@
 // //           {/* Main Property Image with Overlay */}
 // //           <ImageContainer>
 // //             <MainImage
-// //               src={`http://localhost:5000/${getImageUrl(propertyDetails.images?.[0])}`}
+// //               src={`http://195.179.231.102:6003/${getImageUrl(propertyDetails.images?.[0])}`}
 // //               alt={`Image of ${propertyType} in ${propertyDetails.city}`}
 // //             />
 // //             <OverlayContent>
@@ -812,7 +812,7 @@
 // //             {propertyDetails.images?.slice(1, 5).map((image, index) => (
 // //               <ThumbnailImage
 // //                 key={index}
-// //                 src={`http://localhost:5000/${getImageUrl(image)}`}
+// //                 src={`http://195.179.231.102:6003/${getImageUrl(image)}`}
 // //                 alt={`Property Image ${index + 1}`}
 // //                 loading="lazy"
 // //               />
@@ -1149,7 +1149,7 @@
 //   useEffect(() => {
 //     const fetchPropertyDetails = async () => {
 //       try {
-//         const response = await axios.get(`http://localhost:5000/api/properties/propertyAd/${propertyId}`, {
+//         const response = await axios.get(`http://195.179.231.102:6003/api/properties/propertyAd/${propertyId}`, {
 //           headers: {
 //             Authorization: `Bearer ${localStorage.getItem('token')}`,
 //             'Content-Type': 'application/json',
@@ -1179,7 +1179,7 @@
 //   // Get the appropriate image for the property subtype
 //   const imageUrl =
 //     propertyDetails.images && propertyDetails.images.length > 0
-//       ? `http://localhost:5000/${propertyDetails.images[0]}`
+//       ? `http://195.179.231.102:6003/${propertyDetails.images[0]}`
 //       : getImageForPropertySubType(propertyDetails.propertySubType);
 
 //   // Function to handle opening and closing of modal
@@ -1566,7 +1566,7 @@ const PropertyAd = () => {
   useEffect(() => {
     const fetchPropertyDetails = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/api/properties/propertyAd/${propertyId}`, {
+        const response = await axios.get(`http://195.179.231.102:6003/api/properties/propertyAd/${propertyId}`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
             'Content-Type': 'application/json',
@@ -1596,7 +1596,7 @@ const PropertyAd = () => {
   // Get the appropriate image for the property subtype
   const imageUrl =
     propertyDetails.images && propertyDetails.images.length > 0
-      ? `http://localhost:5000/${propertyDetails.images[0]}`
+      ? `http://195.179.231.102:6003/${propertyDetails.images[0]}`
       : getImageForPropertySubType(propertyDetails.propertySubType);
 
   // Function to handle opening and closing of modal

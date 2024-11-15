@@ -267,7 +267,7 @@
 //         const decoded = jwtDecode(token);
 //         const userId = decoded.userId;
 
-//         const response = await axios.get('http://localhost:5000/api/properties/all', {
+//         const response = await axios.get('http://195.179.231.102:6003/api/properties/all', {
 //           params: { userId: userId },
 //         });
 //         setProperties(response.data);
@@ -328,7 +328,7 @@
 //           {filteredProperties.map(property => (
 //             <PropertyCard key={property._id} onClick={() => handleCardClick(property._id)}>
 //               <PropertyImage 
-//                 src={property.images && property.images.length > 0 ? `http://localhost:5000/${property.images[0]}` : 'http://localhost:5000/uploads/bg.jpg'} 
+//                 src={property.images && property.images.length > 0 ? `http://195.179.231.102:6003/${property.images[0]}` : 'http://195.179.231.102:6003/uploads/bg.jpg'} 
 //                 alt={property.title || 'Property Image'}
 //               />
 //               <PropertyInfo>
@@ -768,7 +768,7 @@ const PropertyList = () => {
         const decoded = jwtDecode(token);
         const userId = decoded.userId;
 
-        const response = await axios.get('http://localhost:5000/api/properties/all', {
+        const response = await axios.get('http://195.179.231.102:6003/api/properties/all', {
           params: { userId: userId },
         });
 
@@ -845,8 +845,8 @@ const PropertyList = () => {
               <PropertyCard key={property._id} onClick={() => handleCardClick(property._id)}>
                 <PropertyImage 
                   src={property.images && property.images.length > 0 
-                    ? `http://localhost:5000/${property.images[0]}` 
-                    : 'http://localhost:5000/uploads/bg.jpg'} 
+                    ? `http://195.179.231.102:6003/${property.images[0]}` 
+                    : 'http://195.179.231.102:6003/uploads/bg.jpg'} 
                   alt={property.title || 'Property Image'}
                 />
 

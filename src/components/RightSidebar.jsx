@@ -99,7 +99,7 @@
 // //   const handleSearch = async (event) => {
 // //     event.preventDefault();
 // //     try {
-// //       const response = await axios.get(`http://localhost:5000/api/auth/search`, {
+// //       const response = await axios.get(`http://195.179.231.102:6003/api/auth/search`, {
 // //         headers: { Authorization: `Bearer ${token}` },
 // //         params: { query: searchTerm }
 // //       });
@@ -113,7 +113,7 @@
 
 //   // const handleFriendRequest = async (userId) => {
 //   //   try {
-//   //     await axios.post('http://localhost:5000/api/friend/request', { recipientId: userId }, {
+//   //     await axios.post('http://195.179.231.102:6003/api/friend/request', { recipientId: userId }, {
 //   //       headers: { Authorization: `Bearer ${token}` }
 //   //     });
 //   //     alert('Friend request sent!');
@@ -139,7 +139,7 @@
 // //       {searchResults.map(user => (
 // //         <UserCard key={user._id}>
 // //           <ProfilePic
-// //               src={user.profilePicture ? `http://localhost:5000/${user.profilePicture}` : "https://cdn-icons-png.freepik.com/512/147/147144.png"}
+// //               src={user.profilePicture ? `http://195.179.231.102:6003/${user.profilePicture}` : "https://cdn-icons-png.freepik.com/512/147/147144.png"}
 // //               alt={`${user.firstName} Avatar`}
 // //             />
 // //           <UserInfo>
@@ -277,7 +277,7 @@
 //     event.preventDefault();
 //     setShowInviteForm(false); // Reset the visibility state on new search
 //     try {
-//       const response = await axios.get(`http://localhost:5000/api/auth/search`, {
+//       const response = await axios.get(`http://195.179.231.102:6003/api/auth/search`, {
 //         headers: { Authorization: `Bearer ${token}` },
 //         params: { query: searchTerm }
 //       });
@@ -298,7 +298,7 @@
 
 //   const handleFriendRequest = async (userId) => {
 //     try {
-//       await axios.post('http://localhost:5000/api/friend/request', { recipientId: userId }, {
+//       await axios.post('http://195.179.231.102:6003/api/friend/request', { recipientId: userId }, {
 //         headers: { Authorization: `Bearer ${token}` }
 //       });
 //       alert('Friend request sent!');
@@ -312,7 +312,7 @@
 //   const handleInvite = async (event) => {
 //     event.preventDefault();
 //     try {
-//       await axios.post('http://localhost:5000/api/auth/invite', { email: inviteEmail }, {
+//       await axios.post('http://195.179.231.102:6003/api/auth/invite', { email: inviteEmail }, {
 //         headers: { Authorization: `Bearer ${token}` }
 //       });
 //       alert('Invite sent!');
@@ -340,7 +340,7 @@
 //         searchResults.map(user => (
 //           <UserCard key={user._id}>
 //             <ProfilePic
-//               src={user.profilePicture ? `http://localhost:5000/${user.profilePicture}` : "https://cdn-icons-png.freepik.com/512/147/147144.png"}
+//               src={user.profilePicture ? `http://195.179.231.102:6003/${user.profilePicture}` : "https://cdn-icons-png.freepik.com/512/147/147144.png"}
 //               alt={`${user.firstName} Avatar`}
 //             />
 //             <UserInfo>
@@ -507,7 +507,7 @@ const RightSidebar = () => {
     event.preventDefault();
     setShowInviteForm(false);
     try {
-      const response = await axios.get(`http://localhost:5000/api/auth/search`, {
+      const response = await axios.get(`http://195.179.231.102:6003/api/auth/search`, {
         headers: { Authorization: `Bearer ${token}` },
         params: { query: searchTerm },
       });
@@ -528,7 +528,7 @@ const RightSidebar = () => {
   const handleFriendRequest = async (userId) => {
     try {
       await axios.post(
-        'http://localhost:5000/api/friend/request',
+        'http://195.179.231.102:6003/api/friend/request',
         { recipientId: userId },
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -558,7 +558,7 @@ const RightSidebar = () => {
           return;
         }
         await axios.post(
-          'http://localhost:5000/api/auth/invite',
+          'http://195.179.231.102:6003/api/auth/invite',
           { email: inviteEmail },
           {
             headers: { Authorization: `Bearer ${token}` },
@@ -572,7 +572,7 @@ const RightSidebar = () => {
           return;
         }
         await axios.post(
-          'http://localhost:5000/api/auth/invite-sms',
+          'http://195.179.231.102:6003/api/auth/invite-sms',
           { phoneNumber: invitePhone },
           {
             headers: { Authorization: `Bearer ${token}` },
@@ -606,7 +606,7 @@ const RightSidebar = () => {
             <ProfilePic
               src={
                 user.profilePicture
-                  ? `http://localhost:5000/${user.profilePicture}`
+                  ? `http://195.179.231.102:6003/${user.profilePicture}`
                   : 'https://cdn-icons-png.freepik.com/512/147/147144.png'
               }
               alt={`${user.firstName} Avatar`}
