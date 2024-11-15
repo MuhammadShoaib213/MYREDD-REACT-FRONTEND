@@ -12,7 +12,7 @@ const FriendRequests = () => {
 
     const fetchFriendRequests = async () => {
         try {
-            const response = await axios.get('http://195.179.231.102:6003/api/friend/requests', {
+            const response = await axios.get('http://localhost:5000/api/friend/requests', {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
@@ -26,7 +26,7 @@ const FriendRequests = () => {
 
     const handleUpdateFriendStatus = async (friendId, action) => {
         try {
-            const response = await axios.put('http://195.179.231.102:6003/api/friend/update', {
+            const response = await axios.put('http://localhost:5000/api/friend/update', {
                 friendsId: friendId,
                 action: action
             }, {
@@ -45,7 +45,7 @@ const FriendRequests = () => {
 
     return (
         <div>
-            <h2>Incoming Friend Requests</h2>
+            <h2>Incoming Connection Requests</h2>
             <ul>
                 {requests.map(request => (
                     <li key={request._id}>

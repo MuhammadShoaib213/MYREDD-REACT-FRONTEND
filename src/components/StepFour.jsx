@@ -393,12 +393,24 @@ const Select = styled.select`
   border-radius: 5px;
 `;
 
+const BoldLabel = styled.h4`
+  font-size: 1rem; /* Small font size */
+  font-weight: bold; /* Bold text */
+  color: #333; /* Dark text color, adjust as needed */
+  margin: 0 0 10px 0; /* Spacing below the heading */
+`;
+
 const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
   const [countries, setCountries] = useState([]);
   const [cities, setCities] = useState([]);
   const [neighborhoods, setNeighborhoods] = useState([]);
   const [unit, setUnit] = useState("feet"); // Default to feet
   const [totalSize, setTotalSize] = useState(0);
+  const [coveredTotalSize, setCoveredTotalSize] = useState(0);
+  const [landTotalSize, setLandTotalSize] = useState(0);
+  const [address, setAddress] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   const calculateTotalSize = () => {
     const length = parseFloat(formData.length || 0);
@@ -426,6 +438,54 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
   useEffect(() => {
     calculateTotalSize();
   }, [formData.length, formData.width, unit]);
+
+  // Function to calculate total size for Covered Area
+  const calculateCoveredTotalSize = () => {
+    const length = parseFloat(formData.length || 0);
+    const width = parseFloat(formData.width || 0);
+
+    let total = length * width;
+
+    switch (unit) {
+      case "meters":
+        total *= 0.092903;
+        break;
+      case "yards":
+        total *= 0.111111;
+        break;
+      default:
+        break;
+    }
+
+    setCoveredTotalSize(total.toFixed(2));
+  };
+
+  // Function to calculate total size for Land Area
+  const calculateLandTotalSize = () => {
+    const length = parseFloat(formData.landlength || 0);
+    const width = parseFloat(formData.landwidth || 0);
+
+    let total = length * width;
+
+    switch (unit) {
+      case "meters":
+        total *= 0.092903;
+        break;
+      case "yards":
+        total *= 0.111111;
+        break;
+      default:
+        break;
+    }
+
+    setLandTotalSize(total.toFixed(2));
+  };
+
+  // Recalculate on formData or unit change
+  React.useEffect(() => {
+    calculateCoveredTotalSize();
+    calculateLandTotalSize();
+  }, [formData, unit]);
 
   const handleFileChange = (e) => {
     const { files, name } = e.target;
@@ -476,7 +536,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
       const latitude = selectedCity.lat;
       const longitude = selectedCity.lng;
       axios
-        .get("http://195.179.231.102:6003/api/neighborhoods", {
+        .get("http://localhost:5000/api/neighborhoods", {
           params: {
             latitude: latitude,
             longitude: longitude,
@@ -499,6 +559,44 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         );
     } else {
       setNeighborhoods([]);
+    }
+  };
+
+  const getCurrentLocation = () => {
+    if (navigator.geolocation) {
+      setLoading(true);
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          const { latitude, longitude } = position.coords;
+
+          try {
+            const response = await fetch(
+              `http://localhost:5000/api/address/reverse-geocode?lat=${latitude}&lng=${longitude}`
+            );
+            const data = await response.json();
+
+            if (response.ok) {
+              const detectedAddress = data.address;
+              setAddress(detectedAddress);
+            } else {
+              setError(data.error || "Error fetching address");
+            }
+          } catch (error) {
+            console.error("Error fetching address:", error);
+            setError("Error fetching address");
+          } finally {
+            setLoading(false);
+          }
+        },
+        (error) => {
+          console.error("Error obtaining location", error);
+          setError("Error obtaining location");
+          setLoading(false);
+        }
+      );
+    } else {
+      console.log("Geolocation is not supported by this browser.");
+      setError("Geolocation is not supported by this browser.");
     }
   };
 
@@ -706,15 +804,15 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         ))}
       </Select>
 
-      <Label htmlFor="neighborhood">Neighborhood</Label>
+      <Label htmlFor="neighborhood">Dstricts/Towns</Label>
       <Select
         id="neighborhood"
         name="neighborhood"
         value={formData.neighborhood}
         onChange={handleChange("neighborhood")}
-        required
+        // required
       >
-        <option value="">Select Neighborhood</option>
+        <option value="">Select Dstricts/Towns</option>
         {neighborhoods.map((n) => (
           <option key={n.placeId} value={n.name}>
             {n.name}
@@ -755,15 +853,16 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
       <Input
         id="bedrooms"
         name="bedrooms"
+        type="number"
         value={formData.bedrooms}
         onChange={handleChange("bedrooms")}
       />
 
-      <Label htmlFor="length">Length</Label>
+      <Label htmlFor="length">Depth</Label>
       <Input
         id="length"
         name="length"
-        type="text"
+        type="number"
         value={formData.length}
         onChange={handleChange("length")}
       />
@@ -772,7 +871,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
       <Input
         id="width"
         name="width"
-        type="text"
+        type="number"
         value={formData.width}
         onChange={handleChange("width")}
       />
@@ -804,6 +903,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
       <Input
         id="budget"
         name="budget"
+        type="number"
         value={formData.budget}
         onChange={handleChange("budget")}
       />
@@ -812,6 +912,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
       <Input
         id="advancePayment"
         name="advancePayment"
+        type="number"
         value={formData.advancePayment}
         onChange={handleChange("advancePayment")}
       />
@@ -820,8 +921,10 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
       <Input
         id="timeForPayment"
         name="timeForPayment"
+        type="date"
         value={formData.timeForPayment}
         onChange={handleChange("timeForPayment")}
+        min={new Date().toISOString().split("T")[0]} // This restricts past dates
       />
 
       <Label htmlFor="closingDate">Closing Date</Label>
@@ -831,6 +934,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         type="date"
         value={formData.closingDate}
         onChange={handleChange("closingDate")}
+        min={new Date().toISOString().split("T")[0]} // This restricts past dates
       />
 
       <Label htmlFor="expected">Expected %</Label>
@@ -927,7 +1031,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         ))}
       </Select>
 
-      <Label htmlFor="neighborhood">Neighborhood</Label>
+      <Label htmlFor="neighborhood">Dstricts/Towns</Label>
       <Select
         id="neighborhood"
         name="neighborhood"
@@ -935,7 +1039,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         onChange={handleChange("neighborhood")}
         required
       >
-        <option value="">Select Neighborhood</option>
+        <option value="">Select Dstricts/Towns</option>
         {neighborhoods.map((n) => (
           <option key={n.placeId} value={n.name}>
             {n.name}
@@ -980,7 +1084,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         onChange={handleChange("bedrooms")}
       />
 
-      <Label htmlFor="length">Length</Label>
+      <Label htmlFor="length">Depth</Label>
       <Input
         id="length"
         name="length"
@@ -1041,6 +1145,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
       <Input
         id="timeForPayment"
         name="timeForPayment"
+        type="date"
         value={formData.timeForPayment}
         onChange={handleChange("timeForPayment")}
       />
@@ -1148,7 +1253,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         ))}
       </Select>
 
-      <Label htmlFor="neighborhood">Neighborhood</Label>
+      <Label htmlFor="neighborhood">Dstricts/Towns</Label>
       <Select
         id="neighborhood"
         name="neighborhood"
@@ -1156,7 +1261,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         onChange={handleChange("neighborhood")}
         required
       >
-        <option value="">Select Neighborhood</option>
+        <option value="">Select Dstricts/Towns</option>
         {neighborhoods.map((n) => (
           <option key={n.placeId} value={n.name}>
             {n.name}
@@ -1201,7 +1306,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         onChange={handleChange("bedrooms")}
       />
 
-      <Label htmlFor="length">Length</Label>
+      <Label htmlFor="length">Depth</Label>
       <Input
         id="length"
         name="length"
@@ -1262,6 +1367,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
       <Input
         id="timeForPayment"
         name="timeForPayment"
+        type="date"
         value={formData.timeForPayment}
         onChange={handleChange("timeForPayment")}
       />
@@ -1369,7 +1475,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         ))}
       </Select>
 
-      <Label htmlFor="neighborhood">Neighborhood</Label>
+      <Label htmlFor="neighborhood">Dstricts/Towns</Label>
       <Select
         id="neighborhood"
         name="neighborhood"
@@ -1377,7 +1483,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         onChange={handleChange("neighborhood")}
         required
       >
-        <option value="">Select Neighborhood</option>
+        <option value="">Select Dstricts/Towns</option>
         {neighborhoods.map((n) => (
           <option key={n.placeId} value={n.name}>
             {n.name}
@@ -1422,7 +1528,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         onChange={handleChange("bedrooms")}
       />
 
-      <Label htmlFor="length">Length</Label>
+      <Label htmlFor="length">Depth</Label>
       <Input
         id="length"
         name="length"
@@ -1483,6 +1589,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
       <Input
         id="timeForPayment"
         name="timeForPayment"
+        type="date"
         value={formData.timeForPayment}
         onChange={handleChange("timeForPayment")}
       />
@@ -1590,7 +1697,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         ))}
       </Select>
 
-      <Label htmlFor="neighborhood">Neighborhood</Label>
+      <Label htmlFor="neighborhood">Dstricts/Towns</Label>
       <Select
         id="neighborhood"
         name="neighborhood"
@@ -1598,7 +1705,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         onChange={handleChange("neighborhood")}
         required
       >
-        <option value="">Select Neighborhood</option>
+        <option value="">Select Dstricts/Towns</option>
         {neighborhoods.map((n) => (
           <option key={n.placeId} value={n.name}>
             {n.name}
@@ -1622,7 +1729,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         onChange={handleChange("phaseBlock")}
       />
 
-      <Label htmlFor="length">Length</Label>
+      <Label htmlFor="length">Depth</Label>
       <Input
         id="length"
         name="length"
@@ -1683,6 +1790,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
       <Input
         id="timeForPayment"
         name="timeForPayment"
+        type="date"
         value={formData.timeForPayment}
         onChange={handleChange("timeForPayment")}
       />
@@ -1780,7 +1888,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         ))}
       </Select>
 
-      <Label htmlFor="neighborhood">Neighborhood</Label>
+      <Label htmlFor="neighborhood">Dstricts/Towns</Label>
       <Select
         id="neighborhood"
         name="neighborhood"
@@ -1788,7 +1896,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         onChange={handleChange("neighborhood")}
         required
       >
-        <option value="">Select Neighborhood</option>
+        <option value="">Select Dstricts/Towns</option>
         {neighborhoods.map((n) => (
           <option key={n.placeId} value={n.name}>
             {n.name}
@@ -1812,7 +1920,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         onChange={handleChange("phaseBlock")}
       />
 
-      <Label htmlFor="length">Length</Label>
+      <Label htmlFor="length">Depth</Label>
       <Input
         id="length"
         name="length"
@@ -1873,6 +1981,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
       <Input
         id="timeForPayment"
         name="timeForPayment"
+        type="date"
         value={formData.timeForPayment}
         onChange={handleChange("timeForPayment")}
       />
@@ -1959,7 +2068,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         ))}
       </Select>
 
-      <Label htmlFor="neighborhood">Neighborhood</Label>
+      <Label htmlFor="neighborhood">Dstricts/Towns</Label>
       <Select
         id="neighborhood"
         name="neighborhood"
@@ -1967,7 +2076,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         onChange={handleChange("neighborhood")}
         required
       >
-        <option value="">Select Neighborhood</option>
+        <option value="">Select Dstricts/Towns</option>
         {neighborhoods.map((n) => (
           <option key={n.placeId} value={n.name}>
             {n.name}
@@ -1996,7 +2105,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         <option value="low">Low</option>
       </Select>
 
-      <Label htmlFor="length">Length</Label>
+      <Label htmlFor="length">Depth</Label>
       <Input
         id="length"
         name="length"
@@ -2057,6 +2166,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
       <Input
         id="timeForPayment"
         name="timeForPayment"
+        type="date"
         value={formData.timeForPayment}
         onChange={handleChange("timeForPayment")}
       />
@@ -2121,7 +2231,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         ))}
       </Select>
 
-      <Label htmlFor="neighborhood">Neighborhood</Label>
+      <Label htmlFor="neighborhood">Dstricts/Towns</Label>
       <Select
         id="neighborhood"
         name="neighborhood"
@@ -2129,7 +2239,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         onChange={handleChange("neighborhood")}
         required
       >
-        <option value="">Select Neighborhood</option>
+        <option value="">Select Dstricts/Towns</option>
         {neighborhoods.map((n) => (
           <option key={n.placeId} value={n.name}>
             {n.name}
@@ -2166,7 +2276,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         <option value="low">Low</option>
       </Select>
 
-      <Label htmlFor="length">Length</Label>
+      <Label htmlFor="length">Depth</Label>
       <Input
         id="length"
         name="length"
@@ -2227,6 +2337,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
       <Input
         id="timeForPayment"
         name="timeForPayment"
+        type="date"
         value={formData.timeForPayment}
         onChange={handleChange("timeForPayment")}
       />
@@ -2291,7 +2402,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         ))}
       </Select>
 
-      <Label htmlFor="neighborhood">Neighborhood</Label>
+      <Label htmlFor="neighborhood">Dstricts/Towns</Label>
       <Select
         id="neighborhood"
         name="neighborhood"
@@ -2299,7 +2410,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         onChange={handleChange("neighborhood")}
         required
       >
-        <option value="">Select Neighborhood</option>
+        <option value="">Select Dstricts/Towns</option>
         {neighborhoods.map((n) => (
           <option key={n.placeId} value={n.name}>
             {n.name}
@@ -2336,7 +2447,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         <option value="low">Low</option>
       </Select>
 
-      <Label htmlFor="length">Length</Label>
+      <Label htmlFor="length">Depth</Label>
       <Input
         id="length"
         name="length"
@@ -2397,6 +2508,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
       <Input
         id="timeForPayment"
         name="timeForPayment"
+        type="date"
         value={formData.timeForPayment}
         onChange={handleChange("timeForPayment")}
       />
@@ -2461,7 +2573,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         ))}
       </Select>
 
-      <Label htmlFor="neighborhood">Neighborhood</Label>
+      <Label htmlFor="neighborhood">Dstricts/Towns</Label>
       <Select
         id="neighborhood"
         name="neighborhood"
@@ -2469,7 +2581,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         onChange={handleChange("neighborhood")}
         required
       >
-        <option value="">Select Neighborhood</option>
+        <option value="">Select Dstricts/Towns</option>
         {neighborhoods.map((n) => (
           <option key={n.placeId} value={n.name}>
             {n.name}
@@ -2490,7 +2602,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         <option value="low">Low</option>
       </Select>
 
-      <Label htmlFor="length">Length</Label>
+      <Label htmlFor="length">Depth</Label>
       <Input
         id="length"
         name="length"
@@ -2551,6 +2663,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
       <Input
         id="timeForPayment"
         name="timeForPayment"
+        type="date"
         value={formData.timeForPayment}
         onChange={handleChange("timeForPayment")}
       />
@@ -2616,7 +2729,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         ))}
       </Select>
 
-      <Label htmlFor="neighborhood">Neighborhood</Label>
+      <Label htmlFor="neighborhood">Dstricts/Towns</Label>
       <Select
         id="neighborhood"
         name="neighborhood"
@@ -2624,7 +2737,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         onChange={handleChange("neighborhood")}
         required
       >
-        <option value="">Select Neighborhood</option>
+        <option value="">Select Dstricts/Towns</option>
         {neighborhoods.map((n) => (
           <option key={n.placeId} value={n.name}>
             {n.name}
@@ -2661,7 +2774,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         <option value="low">Low</option>
       </Select>
 
-      <Label htmlFor="length">Length</Label>
+      <Label htmlFor="length">Depth</Label>
       <Input
         id="length"
         name="length"
@@ -2722,6 +2835,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
       <Input
         id="timeForPayment"
         name="timeForPayment"
+        type="date"
         value={formData.timeForPayment}
         onChange={handleChange("timeForPayment")}
       />
@@ -2819,7 +2933,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         ))}
       </Select>
 
-      <Label htmlFor="neighborhood">Neighborhood</Label>
+      <Label htmlFor="neighborhood">Dstricts/Towns</Label>
       <Select
         id="neighborhood"
         name="neighborhood"
@@ -2827,7 +2941,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         onChange={handleChange("neighborhood")}
         required
       >
-        <option value="">Select Neighborhood</option>
+        <option value="">Select Dstricts/Towns</option>
         {neighborhoods.map((n) => (
           <option key={n.placeId} value={n.name}>
             {n.name}
@@ -2864,7 +2978,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         <option value="low">Low</option>
       </Select>
 
-      <Label htmlFor="length">Length</Label>
+      <Label htmlFor="length">Depth</Label>
       <Input
         id="length"
         name="length"
@@ -2925,6 +3039,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
       <Input
         id="timeForPayment"
         name="timeForPayment"
+        type="date"
         value={formData.timeForPayment}
         onChange={handleChange("timeForPayment")}
       />
@@ -2989,7 +3104,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         ))}
       </Select>
 
-      <Label htmlFor="neighborhood">Neighborhood</Label>
+      <Label htmlFor="neighborhood">Dstricts/Towns</Label>
       <Select
         id="neighborhood"
         name="neighborhood"
@@ -2997,7 +3112,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         onChange={handleChange("neighborhood")}
         required
       >
-        <option value="">Select Neighborhood</option>
+        <option value="">Select Dstricts/Towns</option>
         {neighborhoods.map((n) => (
           <option key={n.placeId} value={n.name}>
             {n.name}
@@ -3020,6 +3135,13 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         value={formData.phaseBlock}
         onChange={handleChange("phaseBlock")}
       />
+
+      <div>
+        <Button onClick={getCurrentLocation}>Detect Address</Button>
+        {loading && <p>Detecting your location...</p>}
+        {error && <p style={{ color: "red" }}>{error}</p>}
+        {address && <p>Your Address: {address}</p>}
+      </div>
 
       <Label htmlFor="houseNumber">Property Number</Label>
       <Input
@@ -3057,8 +3179,10 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         <option value="medium">Medium</option>
         <option value="low">Low</option>
       </Select>
-
-      <Label htmlFor="length">Length</Label>
+      <br />
+      <br />
+      <BoldLabel>Covered Area</BoldLabel>
+      <Label htmlFor="length">Depth</Label>
       <Input
         id="length"
         name="length"
@@ -3076,7 +3200,6 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         onChange={handleChange("width")}
       />
 
-      {/* New unit dropdown */}
       <Label htmlFor="unit">Unit</Label>
       <Select
         id="unit"
@@ -3089,14 +3212,69 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         <option value="yards">Yards</option>
       </Select>
 
-      {/* Display calculated total size */}
-      <Label htmlFor="totalSize">Total Size ({unit})</Label>
+      <Label htmlFor="coveredTotalSize">
+        Total Size (Covered Area - {unit})
+      </Label>
       <Input
-        id="totalSize"
-        name="totalSize"
+        id="coveredTotalSize"
+        name="coveredTotalSize"
         type="text"
-        value={totalSize}
-        readOnly // This field is read-only as it displays calculated value
+        value={coveredTotalSize}
+        readOnly
+      />
+
+      <br />
+      <br />
+
+      <BoldLabel>Land Area</BoldLabel>
+      <Label htmlFor="landlength">Depth</Label>
+      <Input
+        id="landlength"
+        name="landlength"
+        type="text"
+        value={formData.landlength}
+        onChange={handleChange("landlength")}
+      />
+
+      <Label htmlFor="landwidth">Width</Label>
+      <Input
+        id="landwidth"
+        name="landwidth"
+        type="text"
+        value={formData.landwidth}
+        onChange={handleChange("landwidth")}
+      />
+
+      <Label htmlFor="unit">Unit</Label>
+      <Select
+        id="unit"
+        name="unit"
+        value={unit}
+        onChange={(e) => setUnit(e.target.value)}
+      >
+        <option value="feet">Feet</option>
+        <option value="meters">Meters</option>
+        <option value="yards">Yards</option>
+      </Select>
+
+      <Label htmlFor="landTotalSize">Total Size (Land Area - {unit})</Label>
+      <Input
+        id="landTotalSize"
+        name="landTotalSize"
+        type="text"
+        value={landTotalSize}
+        readOnly
+      />
+
+      <Label htmlFor="images">
+        Upload a photos of property Front (JPG/PNG)
+      </Label>
+      <Input
+        id="images"
+        name="images"
+        type="file"
+        multiple
+        onChange={handleFileChange}
       />
 
       <Label htmlFor="images">
@@ -3218,7 +3396,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         ))}
       </Select>
 
-      <Label htmlFor="neighborhood">Neighborhood</Label>
+      <Label htmlFor="neighborhood">Dstricts/Towns</Label>
       <Select
         id="neighborhood"
         name="neighborhood"
@@ -3226,7 +3404,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         onChange={handleChange("neighborhood")}
         required
       >
-        <option value="">Select Neighborhood</option>
+        <option value="">Select Dstricts/Towns</option>
         {neighborhoods.map((n) => (
           <option key={n.placeId} value={n.name}>
             {n.name}
@@ -3249,6 +3427,13 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         value={formData.phaseBlock}
         onChange={handleChange("phaseBlock")}
       />
+
+      <div>
+        <Button onClick={getCurrentLocation}>Detect Address</Button>
+        {loading && <p>Detecting your location...</p>}
+        {error && <p style={{ color: "red" }}>{error}</p>}
+        {address && <p>Your Address: {address}</p>}
+      </div>
 
       <Label htmlFor="houseNumber">Property Number</Label>
       <Input
@@ -3287,7 +3472,10 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         <option value="low">Low</option>
       </Select>
 
-      <Label htmlFor="length">Length</Label>
+      <br />
+      <br />
+      <BoldLabel>Covered Area</BoldLabel>
+      <Label htmlFor="length">Depth</Label>
       <Input
         id="length"
         name="length"
@@ -3305,7 +3493,6 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         onChange={handleChange("width")}
       />
 
-      {/* New unit dropdown */}
       <Label htmlFor="unit">Unit</Label>
       <Select
         id="unit"
@@ -3318,14 +3505,69 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         <option value="yards">Yards</option>
       </Select>
 
-      {/* Display calculated total size */}
-      <Label htmlFor="totalSize">Total Size ({unit})</Label>
+      <Label htmlFor="coveredTotalSize">
+        Total Size (Covered Area - {unit})
+      </Label>
       <Input
-        id="totalSize"
-        name="totalSize"
+        id="coveredTotalSize"
+        name="coveredTotalSize"
         type="text"
-        value={totalSize}
-        readOnly // This field is read-only as it displays calculated value
+        value={coveredTotalSize}
+        readOnly
+      />
+
+      <br />
+      <br />
+
+      <BoldLabel>Land Area</BoldLabel>
+      <Label htmlFor="landlength">Depth</Label>
+      <Input
+        id="landlength"
+        name="landlength"
+        type="text"
+        value={formData.landlength}
+        onChange={handleChange("landlength")}
+      />
+
+      <Label htmlFor="landwidth">Width</Label>
+      <Input
+        id="landwidth"
+        name="landwidth"
+        type="text"
+        value={formData.landwidth}
+        onChange={handleChange("landwidth")}
+      />
+
+      <Label htmlFor="unit">Unit</Label>
+      <Select
+        id="unit"
+        name="unit"
+        value={unit}
+        onChange={(e) => setUnit(e.target.value)}
+      >
+        <option value="feet">Feet</option>
+        <option value="meters">Meters</option>
+        <option value="yards">Yards</option>
+      </Select>
+
+      <Label htmlFor="landTotalSize">Total Size (Land Area - {unit})</Label>
+      <Input
+        id="landTotalSize"
+        name="landTotalSize"
+        type="text"
+        value={landTotalSize}
+        readOnly
+      />
+
+      <Label htmlFor="images">
+        Upload a photos of property Front (JPG/PNG)
+      </Label>
+      <Input
+        id="images"
+        name="images"
+        type="file"
+        multiple
+        onChange={handleFileChange}
       />
 
       <Label htmlFor="images">
@@ -3447,15 +3689,14 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         ))}
       </Select>
 
-      <Label htmlFor="neighborhood">Neighborhood</Label>
+      <Label htmlFor="neighborhood">Dstricts/Towns</Label>
       <Select
         id="neighborhood"
         name="neighborhood"
         value={formData.neighborhood}
         onChange={handleChange("neighborhood")}
-        required
       >
-        <option value="">Select Neighborhood</option>
+        <option value="">Select Dstricts/Towns</option>
         {neighborhoods.map((n) => (
           <option key={n.placeId} value={n.name}>
             {n.name}
@@ -3478,6 +3719,13 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         value={formData.phaseBlock}
         onChange={handleChange("phaseBlock")}
       />
+
+      <div>
+        <Button onClick={getCurrentLocation}>Detect Address</Button>
+        {loading && <p>Detecting your location...</p>}
+        {error && <p style={{ color: "red" }}>{error}</p>}
+        {address && <p>Your Address: {address}</p>}
+      </div>
 
       <Label htmlFor="houseNumber">Property Number</Label>
       <Input
@@ -3516,7 +3764,10 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         <option value="low">Low</option>
       </Select>
 
-      <Label htmlFor="length">Length</Label>
+      <br />
+      <br />
+      <BoldLabel>Covered Area</BoldLabel>
+      <Label htmlFor="length">Depth</Label>
       <Input
         id="length"
         name="length"
@@ -3534,7 +3785,6 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         onChange={handleChange("width")}
       />
 
-      {/* New unit dropdown */}
       <Label htmlFor="unit">Unit</Label>
       <Select
         id="unit"
@@ -3547,14 +3797,69 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         <option value="yards">Yards</option>
       </Select>
 
-      {/* Display calculated total size */}
-      <Label htmlFor="totalSize">Total Size ({unit})</Label>
+      <Label htmlFor="coveredTotalSize">
+        Total Size (Covered Area - {unit})
+      </Label>
       <Input
-        id="totalSize"
-        name="totalSize"
+        id="coveredTotalSize"
+        name="coveredTotalSize"
         type="text"
-        value={totalSize}
-        readOnly // This field is read-only as it displays calculated value
+        value={coveredTotalSize}
+        readOnly
+      />
+
+      <br />
+      <br />
+
+      <BoldLabel>Land Area</BoldLabel>
+      <Label htmlFor="landlength">Depth</Label>
+      <Input
+        id="landlength"
+        name="landlength"
+        type="text"
+        value={formData.landlength}
+        onChange={handleChange("landlength")}
+      />
+
+      <Label htmlFor="landwidth">Width</Label>
+      <Input
+        id="landwidth"
+        name="landwidth"
+        type="text"
+        value={formData.landwidth}
+        onChange={handleChange("landwidth")}
+      />
+
+      <Label htmlFor="unit">Unit</Label>
+      <Select
+        id="unit"
+        name="unit"
+        value={unit}
+        onChange={(e) => setUnit(e.target.value)}
+      >
+        <option value="feet">Feet</option>
+        <option value="meters">Meters</option>
+        <option value="yards">Yards</option>
+      </Select>
+
+      <Label htmlFor="landTotalSize">Total Size (Land Area - {unit})</Label>
+      <Input
+        id="landTotalSize"
+        name="landTotalSize"
+        type="text"
+        value={landTotalSize}
+        readOnly
+      />
+
+      <Label htmlFor="images">
+        Upload a photos of property Front (JPG/PNG)
+      </Label>
+      <Input
+        id="images"
+        name="images"
+        type="file"
+        multiple
+        onChange={handleFileChange}
       />
 
       <Label htmlFor="images">
@@ -3676,7 +3981,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         ))}
       </Select>
 
-      <Label htmlFor="neighborhood">Neighborhood</Label>
+      <Label htmlFor="neighborhood">Dstricts/Towns</Label>
       <Select
         id="neighborhood"
         name="neighborhood"
@@ -3684,7 +3989,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         onChange={handleChange("neighborhood")}
         required
       >
-        <option value="">Select Neighborhood</option>
+        <option value="">Select Dstricts/Towns</option>
         {neighborhoods.map((n) => (
           <option key={n.placeId} value={n.name}>
             {n.name}
@@ -3707,6 +4012,13 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         value={formData.phaseBlock}
         onChange={handleChange("phaseBlock")}
       />
+
+      <div>
+        <Button onClick={getCurrentLocation}>Detect Address</Button>
+        {loading && <p>Detecting your location...</p>}
+        {error && <p style={{ color: "red" }}>{error}</p>}
+        {address && <p>Your Address: {address}</p>}
+      </div>
 
       <Label htmlFor="houseNumber">Property Number</Label>
       <Input
@@ -3745,7 +4057,10 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         <option value="low">Low</option>
       </Select>
 
-      <Label htmlFor="length">Length</Label>
+      <br />
+      <br />
+      <BoldLabel>Covered Area</BoldLabel>
+      <Label htmlFor="length">Depth</Label>
       <Input
         id="length"
         name="length"
@@ -3763,7 +4078,6 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         onChange={handleChange("width")}
       />
 
-      {/* New unit dropdown */}
       <Label htmlFor="unit">Unit</Label>
       <Select
         id="unit"
@@ -3776,14 +4090,69 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         <option value="yards">Yards</option>
       </Select>
 
-      {/* Display calculated total size */}
-      <Label htmlFor="totalSize">Total Size ({unit})</Label>
+      <Label htmlFor="coveredTotalSize">
+        Total Size (Covered Area - {unit})
+      </Label>
       <Input
-        id="totalSize"
-        name="totalSize"
+        id="coveredTotalSize"
+        name="coveredTotalSize"
         type="text"
-        value={totalSize}
-        readOnly // This field is read-only as it displays calculated value
+        value={coveredTotalSize}
+        readOnly
+      />
+
+      <br />
+      <br />
+
+      <BoldLabel>Land Area</BoldLabel>
+      <Label htmlFor="landlength">Depth</Label>
+      <Input
+        id="landlength"
+        name="landlength"
+        type="text"
+        value={formData.landlength}
+        onChange={handleChange("landlength")}
+      />
+
+      <Label htmlFor="landwidth">Width</Label>
+      <Input
+        id="landwidth"
+        name="landwidth"
+        type="text"
+        value={formData.landwidth}
+        onChange={handleChange("landwidth")}
+      />
+
+      <Label htmlFor="unit">Unit</Label>
+      <Select
+        id="unit"
+        name="unit"
+        value={unit}
+        onChange={(e) => setUnit(e.target.value)}
+      >
+        <option value="feet">Feet</option>
+        <option value="meters">Meters</option>
+        <option value="yards">Yards</option>
+      </Select>
+
+      <Label htmlFor="landTotalSize">Total Size (Land Area - {unit})</Label>
+      <Input
+        id="landTotalSize"
+        name="landTotalSize"
+        type="text"
+        value={landTotalSize}
+        readOnly
+      />
+
+      <Label htmlFor="images">
+        Upload a photos of property Front (JPG/PNG)
+      </Label>
+      <Input
+        id="images"
+        name="images"
+        type="file"
+        multiple
+        onChange={handleFileChange}
       />
 
       <Label htmlFor="images">
@@ -3796,7 +4165,6 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         multiple
         onChange={handleFileChange}
       />
-
       {/* <Label htmlFor="status">Status</Label>
       <Select
         id="status"
@@ -3905,7 +4273,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         ))}
       </Select>
 
-      <Label htmlFor="neighborhood">Neighborhood</Label>
+      <Label htmlFor="neighborhood">Dstricts/Towns</Label>
       <Select
         id="neighborhood"
         name="neighborhood"
@@ -3913,7 +4281,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         onChange={handleChange("neighborhood")}
         required
       >
-        <option value="">Select Neighborhood</option>
+        <option value="">Select Dstricts/Towns</option>
         {neighborhoods.map((n) => (
           <option key={n.placeId} value={n.name}>
             {n.name}
@@ -3936,6 +4304,13 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         value={formData.phaseBlock}
         onChange={handleChange("phaseBlock")}
       />
+
+      <div>
+        <Button onClick={getCurrentLocation}>Detect Address</Button>
+        {loading && <p>Detecting your location...</p>}
+        {error && <p style={{ color: "red" }}>{error}</p>}
+        {address && <p>Your Address: {address}</p>}
+      </div>
 
       <Label htmlFor="houseNumber">Property Number</Label>
       <Input
@@ -3974,7 +4349,10 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         <option value="low">Low</option>
       </Select>
 
-      <Label htmlFor="length">Length</Label>
+      <br />
+      <br />
+      <BoldLabel>Covered Area</BoldLabel>
+      <Label htmlFor="length">Depth</Label>
       <Input
         id="length"
         name="length"
@@ -3992,7 +4370,6 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         onChange={handleChange("width")}
       />
 
-      {/* New unit dropdown */}
       <Label htmlFor="unit">Unit</Label>
       <Select
         id="unit"
@@ -4005,14 +4382,69 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         <option value="yards">Yards</option>
       </Select>
 
-      {/* Display calculated total size */}
-      <Label htmlFor="totalSize">Total Size ({unit})</Label>
+      <Label htmlFor="coveredTotalSize">
+        Total Size (Covered Area - {unit})
+      </Label>
       <Input
-        id="totalSize"
-        name="totalSize"
+        id="coveredTotalSize"
+        name="coveredTotalSize"
         type="text"
-        value={totalSize}
-        readOnly // This field is read-only as it displays calculated value
+        value={coveredTotalSize}
+        readOnly
+      />
+
+      <br />
+      <br />
+
+      <BoldLabel>Land Area</BoldLabel>
+      <Label htmlFor="landlength">Depth</Label>
+      <Input
+        id="landlength"
+        name="landlength"
+        type="text"
+        value={formData.landlength}
+        onChange={handleChange("landlength")}
+      />
+
+      <Label htmlFor="landwidth">Width</Label>
+      <Input
+        id="landwidth"
+        name="landwidth"
+        type="text"
+        value={formData.landwidth}
+        onChange={handleChange("landwidth")}
+      />
+
+      <Label htmlFor="unit">Unit</Label>
+      <Select
+        id="unit"
+        name="unit"
+        value={unit}
+        onChange={(e) => setUnit(e.target.value)}
+      >
+        <option value="feet">Feet</option>
+        <option value="meters">Meters</option>
+        <option value="yards">Yards</option>
+      </Select>
+
+      <Label htmlFor="landTotalSize">Total Size (Land Area - {unit})</Label>
+      <Input
+        id="landTotalSize"
+        name="landTotalSize"
+        type="text"
+        value={landTotalSize}
+        readOnly
+      />
+
+      <Label htmlFor="images">
+        Upload a photos of property Front (JPG/PNG)
+      </Label>
+      <Input
+        id="images"
+        name="images"
+        type="file"
+        multiple
+        onChange={handleFileChange}
       />
 
       <Label htmlFor="images">
@@ -4124,7 +4556,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         ))}
       </Select>
 
-      <Label htmlFor="neighborhood">Neighborhood</Label>
+      <Label htmlFor="neighborhood">Dstricts/Towns</Label>
       <Select
         id="neighborhood"
         name="neighborhood"
@@ -4132,7 +4564,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         onChange={handleChange("neighborhood")}
         required
       >
-        <option value="">Select Neighborhood</option>
+        <option value="">Select Dstricts/Towns</option>
         {neighborhoods.map((n) => (
           <option key={n.placeId} value={n.name}>
             {n.name}
@@ -4155,6 +4587,13 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         value={formData.phaseBlock}
         onChange={handleChange("phaseBlock")}
       />
+
+      <div>
+        <Button onClick={getCurrentLocation}>Detect Address</Button>
+        {loading && <p>Detecting your location...</p>}
+        {error && <p style={{ color: "red" }}>{error}</p>}
+        {address && <p>Your Address: {address}</p>}
+      </div>
 
       <Label htmlFor="houseNumber">Property Number</Label>
       <Input
@@ -4193,7 +4632,10 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         <option value="low">Low</option>
       </Select>
 
-      <Label htmlFor="length">Length</Label>
+      <br />
+      <br />
+      <BoldLabel>Covered Area</BoldLabel>
+      <Label htmlFor="length">Depth</Label>
       <Input
         id="length"
         name="length"
@@ -4211,7 +4653,6 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         onChange={handleChange("width")}
       />
 
-      {/* New unit dropdown */}
       <Label htmlFor="unit">Unit</Label>
       <Select
         id="unit"
@@ -4224,14 +4665,69 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         <option value="yards">Yards</option>
       </Select>
 
-      {/* Display calculated total size */}
-      <Label htmlFor="totalSize">Total Size ({unit})</Label>
+      <Label htmlFor="coveredTotalSize">
+        Total Size (Covered Area - {unit})
+      </Label>
       <Input
-        id="totalSize"
-        name="totalSize"
+        id="coveredTotalSize"
+        name="coveredTotalSize"
         type="text"
-        value={totalSize}
-        readOnly // This field is read-only as it displays calculated value
+        value={coveredTotalSize}
+        readOnly
+      />
+
+      <br />
+      <br />
+
+      <BoldLabel>Land Area</BoldLabel>
+      <Label htmlFor="landlength">Depth</Label>
+      <Input
+        id="landlength"
+        name="landlength"
+        type="text"
+        value={formData.landlength}
+        onChange={handleChange("landlength")}
+      />
+
+      <Label htmlFor="landwidth">Width</Label>
+      <Input
+        id="landwidth"
+        name="landwidth"
+        type="text"
+        value={formData.landwidth}
+        onChange={handleChange("landwidth")}
+      />
+
+      <Label htmlFor="unit">Unit</Label>
+      <Select
+        id="unit"
+        name="unit"
+        value={unit}
+        onChange={(e) => setUnit(e.target.value)}
+      >
+        <option value="feet">Feet</option>
+        <option value="meters">Meters</option>
+        <option value="yards">Yards</option>
+      </Select>
+
+      <Label htmlFor="landTotalSize">Total Size (Land Area - {unit})</Label>
+      <Input
+        id="landTotalSize"
+        name="landTotalSize"
+        type="text"
+        value={landTotalSize}
+        readOnly
+      />
+
+      <Label htmlFor="images">
+        Upload a photos of property Front (JPG/PNG)
+      </Label>
+      <Input
+        id="images"
+        name="images"
+        type="file"
+        multiple
+        onChange={handleFileChange}
       />
 
       <Label htmlFor="images">
@@ -4343,7 +4839,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         ))}
       </Select>
 
-      <Label htmlFor="neighborhood">Neighborhood</Label>
+      <Label htmlFor="neighborhood">Dstricts/Towns</Label>
       <Select
         id="neighborhood"
         name="neighborhood"
@@ -4351,7 +4847,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         onChange={handleChange("neighborhood")}
         required
       >
-        <option value="">Select Neighborhood</option>
+        <option value="">Select Dstricts/Towns</option>
         {neighborhoods.map((n) => (
           <option key={n.placeId} value={n.name}>
             {n.name}
@@ -4374,6 +4870,13 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         value={formData.phaseBlock}
         onChange={handleChange("phaseBlock")}
       />
+
+      <div>
+        <Button onClick={getCurrentLocation}>Detect Address</Button>
+        {loading && <p>Detecting your location...</p>}
+        {error && <p style={{ color: "red" }}>{error}</p>}
+        {address && <p>Your Address: {address}</p>}
+      </div>
 
       <Label htmlFor="houseNumber">Property Number</Label>
       <Input
@@ -4412,7 +4915,10 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         <option value="low">Low</option>
       </Select>
 
-      <Label htmlFor="length">Length</Label>
+      <br />
+      <br />
+      <BoldLabel>Covered Area</BoldLabel>
+      <Label htmlFor="length">Depth</Label>
       <Input
         id="length"
         name="length"
@@ -4430,7 +4936,6 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         onChange={handleChange("width")}
       />
 
-      {/* New unit dropdown */}
       <Label htmlFor="unit">Unit</Label>
       <Select
         id="unit"
@@ -4443,14 +4948,68 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         <option value="yards">Yards</option>
       </Select>
 
-      {/* Display calculated total size */}
-      <Label htmlFor="totalSize">Total Size ({unit})</Label>
+      <Label htmlFor="coveredTotalSize">
+        Total Size (Covered Area - {unit})
+      </Label>
       <Input
-        id="totalSize"
-        name="totalSize"
+        id="coveredTotalSize"
+        name="coveredTotalSize"
         type="text"
-        value={totalSize}
-        readOnly // This field is read-only as it displays calculated value
+        value={coveredTotalSize}
+        readOnly
+      />
+
+      <br />
+      <br />
+
+      <BoldLabel>Land Area</BoldLabel>
+      <Label htmlFor="landlength">Depth</Label>
+      <Input
+        id="landlength"
+        name="landlength"
+        type="text"
+        value={formData.landlength}
+        onChange={handleChange("landlength")}
+      />
+
+      <Label htmlFor="landwidth">Width</Label>
+      <Input
+        id="landwidth"
+        name="landwidth"
+        type="text"
+        value={formData.landwidth}
+        onChange={handleChange("landwidth")}
+      />
+
+      <Label htmlFor="unit">Unit</Label>
+      <Select
+        id="unit"
+        name="unit"
+        value={unit}
+        onChange={(e) => setUnit(e.target.value)}
+      >
+        <option value="feet">Feet</option>
+        <option value="meters">Meters</option>
+        <option value="yards">Yards</option>
+      </Select>
+
+      <Label htmlFor="landTotalSize">Total Size (Land Area - {unit})</Label>
+      <Input
+        id="landTotalSize"
+        name="landTotalSize"
+        type="text"
+        value={landTotalSize}
+        readOnly
+      />
+      <Label htmlFor="images">
+        Upload a photos of property Front (JPG/PNG)
+      </Label>
+      <Input
+        id="images"
+        name="images"
+        type="file"
+        multiple
+        onChange={handleFileChange}
       />
 
       <Label htmlFor="images">
@@ -4463,7 +5022,6 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         multiple
         onChange={handleFileChange}
       />
-
       {/* <Label htmlFor="status">Status</Label>
       <Select
         id="status"
@@ -4552,7 +5110,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         ))}
       </Select>
 
-      <Label htmlFor="neighborhood">Neighborhood</Label>
+      <Label htmlFor="neighborhood">Dstricts/Towns</Label>
       <Select
         id="neighborhood"
         name="neighborhood"
@@ -4560,7 +5118,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         onChange={handleChange("neighborhood")}
         required
       >
-        <option value="">Select Neighborhood</option>
+        <option value="">Select Dstricts/Towns</option>
         {neighborhoods.map((n) => (
           <option key={n.placeId} value={n.name}>
             {n.name}
@@ -4583,6 +5141,13 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         value={formData.phaseBlock}
         onChange={handleChange("phaseBlock")}
       />
+
+      <div>
+        <Button onClick={getCurrentLocation}>Detect Address</Button>
+        {loading && <p>Detecting your location...</p>}
+        {error && <p style={{ color: "red" }}>{error}</p>}
+        {address && <p>Your Address: {address}</p>}
+      </div>
 
       <Label htmlFor="houseNumber">Property Number</Label>
       <Input
@@ -4621,7 +5186,10 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         <option value="low">Low</option>
       </Select>
 
-      <Label htmlFor="length">Length</Label>
+      <br />
+      <br />
+      <BoldLabel>Covered Area</BoldLabel>
+      <Label htmlFor="length">Depth</Label>
       <Input
         id="length"
         name="length"
@@ -4639,7 +5207,6 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         onChange={handleChange("width")}
       />
 
-      {/* New unit dropdown */}
       <Label htmlFor="unit">Unit</Label>
       <Select
         id="unit"
@@ -4652,14 +5219,69 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         <option value="yards">Yards</option>
       </Select>
 
-      {/* Display calculated total size */}
-      <Label htmlFor="totalSize">Total Size ({unit})</Label>
+      <Label htmlFor="coveredTotalSize">
+        Total Size (Covered Area - {unit})
+      </Label>
       <Input
-        id="totalSize"
-        name="totalSize"
+        id="coveredTotalSize"
+        name="coveredTotalSize"
         type="text"
-        value={totalSize}
-        readOnly // This field is read-only as it displays calculated value
+        value={coveredTotalSize}
+        readOnly
+      />
+
+      <br />
+      <br />
+
+      <BoldLabel>Land Area</BoldLabel>
+      <Label htmlFor="landlength">Depth</Label>
+      <Input
+        id="landlength"
+        name="landlength"
+        type="text"
+        value={formData.landlength}
+        onChange={handleChange("landlength")}
+      />
+
+      <Label htmlFor="landwidth">Width</Label>
+      <Input
+        id="landwidth"
+        name="landwidth"
+        type="text"
+        value={formData.landwidth}
+        onChange={handleChange("landwidth")}
+      />
+
+      <Label htmlFor="unit">Unit</Label>
+      <Select
+        id="unit"
+        name="unit"
+        value={unit}
+        onChange={(e) => setUnit(e.target.value)}
+      >
+        <option value="feet">Feet</option>
+        <option value="meters">Meters</option>
+        <option value="yards">Yards</option>
+      </Select>
+
+      <Label htmlFor="landTotalSize">Total Size (Land Area - {unit})</Label>
+      <Input
+        id="landTotalSize"
+        name="landTotalSize"
+        type="text"
+        value={landTotalSize}
+        readOnly
+      />
+
+      <Label htmlFor="images">
+        Upload a photos of property Front (JPG/PNG)
+      </Label>
+      <Input
+        id="images"
+        name="images"
+        type="file"
+        multiple
+        onChange={handleFileChange}
       />
 
       <Label htmlFor="images">
@@ -4672,7 +5294,6 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         multiple
         onChange={handleFileChange}
       />
-
       {/* <Label htmlFor="status">Status</Label>
       <Select
         id="status"
@@ -4761,7 +5382,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         ))}
       </Select>
 
-      <Label htmlFor="neighborhood">Neighborhood</Label>
+      <Label htmlFor="neighborhood">Dstricts/Towns</Label>
       <Select
         id="neighborhood"
         name="neighborhood"
@@ -4769,7 +5390,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         onChange={handleChange("neighborhood")}
         required
       >
-        <option value="">Select Neighborhood</option>
+        <option value="">Select Dstricts/Towns</option>
         {neighborhoods.map((n) => (
           <option key={n.placeId} value={n.name}>
             {n.name}
@@ -4792,6 +5413,13 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         value={formData.phaseBlock}
         onChange={handleChange("phaseBlock")}
       />
+
+      <div>
+        <Button onClick={getCurrentLocation}>Detect Address</Button>
+        {loading && <p>Detecting your location...</p>}
+        {error && <p style={{ color: "red" }}>{error}</p>}
+        {address && <p>Your Address: {address}</p>}
+      </div>
 
       <Label htmlFor="houseNumber">Property Number</Label>
       <Input
@@ -4830,7 +5458,10 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         <option value="low">Low</option>
       </Select>
 
-      <Label htmlFor="length">Length</Label>
+      <br />
+      <br />
+      <BoldLabel>Covered Area</BoldLabel>
+      <Label htmlFor="length">Depth</Label>
       <Input
         id="length"
         name="length"
@@ -4848,7 +5479,6 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         onChange={handleChange("width")}
       />
 
-      {/* New unit dropdown */}
       <Label htmlFor="unit">Unit</Label>
       <Select
         id="unit"
@@ -4861,14 +5491,69 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         <option value="yards">Yards</option>
       </Select>
 
-      {/* Display calculated total size */}
-      <Label htmlFor="totalSize">Total Size ({unit})</Label>
+      <Label htmlFor="coveredTotalSize">
+        Total Size (Covered Area - {unit})
+      </Label>
       <Input
-        id="totalSize"
-        name="totalSize"
+        id="coveredTotalSize"
+        name="coveredTotalSize"
         type="text"
-        value={totalSize}
-        readOnly // This field is read-only as it displays calculated value
+        value={coveredTotalSize}
+        readOnly
+      />
+
+      <br />
+      <br />
+
+      <BoldLabel>Land Area</BoldLabel>
+      <Label htmlFor="landlength">Depth</Label>
+      <Input
+        id="landlength"
+        name="landlength"
+        type="text"
+        value={formData.landlength}
+        onChange={handleChange("landlength")}
+      />
+
+      <Label htmlFor="landwidth">Width</Label>
+      <Input
+        id="landwidth"
+        name="landwidth"
+        type="text"
+        value={formData.landwidth}
+        onChange={handleChange("landwidth")}
+      />
+
+      <Label htmlFor="unit">Unit</Label>
+      <Select
+        id="unit"
+        name="unit"
+        value={unit}
+        onChange={(e) => setUnit(e.target.value)}
+      >
+        <option value="feet">Feet</option>
+        <option value="meters">Meters</option>
+        <option value="yards">Yards</option>
+      </Select>
+
+      <Label htmlFor="landTotalSize">Total Size (Land Area - {unit})</Label>
+      <Input
+        id="landTotalSize"
+        name="landTotalSize"
+        type="text"
+        value={landTotalSize}
+        readOnly
+      />
+
+      <Label htmlFor="images">
+        Upload a photos of property Front (JPG/PNG)
+      </Label>
+      <Input
+        id="images"
+        name="images"
+        type="file"
+        multiple
+        onChange={handleFileChange}
       />
 
       <Label htmlFor="images">
@@ -4970,7 +5655,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         ))}
       </Select>
 
-      <Label htmlFor="neighborhood">Neighborhood</Label>
+      <Label htmlFor="neighborhood">Dstricts/Towns</Label>
       <Select
         id="neighborhood"
         name="neighborhood"
@@ -4978,7 +5663,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         onChange={handleChange("neighborhood")}
         required
       >
-        <option value="">Select Neighborhood</option>
+        <option value="">Select Dstricts/Towns</option>
         {neighborhoods.map((n) => (
           <option key={n.placeId} value={n.name}>
             {n.name}
@@ -5001,6 +5686,13 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         value={formData.phaseBlock}
         onChange={handleChange("phaseBlock")}
       />
+
+      <div>
+        <Button onClick={getCurrentLocation}>Detect Address</Button>
+        {loading && <p>Detecting your location...</p>}
+        {error && <p style={{ color: "red" }}>{error}</p>}
+        {address && <p>Your Address: {address}</p>}
+      </div>
 
       <Label htmlFor="houseNumber">Property Number</Label>
       <Input
@@ -5039,7 +5731,10 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         <option value="low">Low</option>
       </Select>
 
-      <Label htmlFor="length">Length</Label>
+      <br />
+      <br />
+      <BoldLabel>Covered Area</BoldLabel>
+      <Label htmlFor="length">Depth</Label>
       <Input
         id="length"
         name="length"
@@ -5057,7 +5752,6 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         onChange={handleChange("width")}
       />
 
-      {/* New unit dropdown */}
       <Label htmlFor="unit">Unit</Label>
       <Select
         id="unit"
@@ -5070,14 +5764,69 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         <option value="yards">Yards</option>
       </Select>
 
-      {/* Display calculated total size */}
-      <Label htmlFor="totalSize">Total Size ({unit})</Label>
+      <Label htmlFor="coveredTotalSize">
+        Total Size (Covered Area - {unit})
+      </Label>
       <Input
-        id="totalSize"
-        name="totalSize"
+        id="coveredTotalSize"
+        name="coveredTotalSize"
         type="text"
-        value={totalSize}
-        readOnly // This field is read-only as it displays calculated value
+        value={coveredTotalSize}
+        readOnly
+      />
+
+      <br />
+      <br />
+
+      <BoldLabel>Land Area</BoldLabel>
+      <Label htmlFor="landlength">Depth</Label>
+      <Input
+        id="landlength"
+        name="landlength"
+        type="text"
+        value={formData.landlength}
+        onChange={handleChange("landlength")}
+      />
+
+      <Label htmlFor="landwidth">Width</Label>
+      <Input
+        id="landwidth"
+        name="landwidth"
+        type="text"
+        value={formData.landwidth}
+        onChange={handleChange("landwidth")}
+      />
+
+      <Label htmlFor="unit">Unit</Label>
+      <Select
+        id="unit"
+        name="unit"
+        value={unit}
+        onChange={(e) => setUnit(e.target.value)}
+      >
+        <option value="feet">Feet</option>
+        <option value="meters">Meters</option>
+        <option value="yards">Yards</option>
+      </Select>
+
+      <Label htmlFor="landTotalSize">Total Size (Land Area - {unit})</Label>
+      <Input
+        id="landTotalSize"
+        name="landTotalSize"
+        type="text"
+        value={landTotalSize}
+        readOnly
+      />
+
+      <Label htmlFor="images">
+        Upload a photos of property Front (JPG/PNG)
+      </Label>
+      <Input
+        id="images"
+        name="images"
+        type="file"
+        multiple
+        onChange={handleFileChange}
       />
 
       <Label htmlFor="images">
@@ -5179,7 +5928,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         ))}
       </Select>
 
-      <Label htmlFor="neighborhood">Neighborhood</Label>
+      <Label htmlFor="neighborhood">Dstricts/Towns</Label>
       <Select
         id="neighborhood"
         name="neighborhood"
@@ -5187,7 +5936,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         onChange={handleChange("neighborhood")}
         required
       >
-        <option value="">Select Neighborhood</option>
+        <option value="">Select Dstricts/Towns</option>
         {neighborhoods.map((n) => (
           <option key={n.placeId} value={n.name}>
             {n.name}
@@ -5210,6 +5959,13 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         value={formData.phaseBlock}
         onChange={handleChange("phaseBlock")}
       />
+
+      <div>
+        <Button onClick={getCurrentLocation}>Detect Address</Button>
+        {loading && <p>Detecting your location...</p>}
+        {error && <p style={{ color: "red" }}>{error}</p>}
+        {address && <p>Your Address: {address}</p>}
+      </div>
 
       <Label htmlFor="houseNumber">Property Number</Label>
       <Input
@@ -5240,7 +5996,10 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         <option value="low">Low</option>
       </Select>
 
-      <Label htmlFor="length">Length</Label>
+      <br />
+      <br />
+      <BoldLabel>Covered Area</BoldLabel>
+      <Label htmlFor="length">Depth</Label>
       <Input
         id="length"
         name="length"
@@ -5258,7 +6017,6 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         onChange={handleChange("width")}
       />
 
-      {/* New unit dropdown */}
       <Label htmlFor="unit">Unit</Label>
       <Select
         id="unit"
@@ -5271,14 +6029,69 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         <option value="yards">Yards</option>
       </Select>
 
-      {/* Display calculated total size */}
-      <Label htmlFor="totalSize">Total Size ({unit})</Label>
+      <Label htmlFor="coveredTotalSize">
+        Total Size (Covered Area - {unit})
+      </Label>
       <Input
-        id="totalSize"
-        name="totalSize"
+        id="coveredTotalSize"
+        name="coveredTotalSize"
         type="text"
-        value={totalSize}
-        readOnly // This field is read-only as it displays calculated value
+        value={coveredTotalSize}
+        readOnly
+      />
+
+      <br />
+      <br />
+
+      <BoldLabel>Land Area</BoldLabel>
+      <Label htmlFor="landlength">Depth</Label>
+      <Input
+        id="landlength"
+        name="landlength"
+        type="text"
+        value={formData.landlength}
+        onChange={handleChange("landlength")}
+      />
+
+      <Label htmlFor="landwidth">Width</Label>
+      <Input
+        id="landwidth"
+        name="landwidth"
+        type="text"
+        value={formData.landwidth}
+        onChange={handleChange("landwidth")}
+      />
+
+      <Label htmlFor="unit">Unit</Label>
+      <Select
+        id="unit"
+        name="unit"
+        value={unit}
+        onChange={(e) => setUnit(e.target.value)}
+      >
+        <option value="feet">Feet</option>
+        <option value="meters">Meters</option>
+        <option value="yards">Yards</option>
+      </Select>
+
+      <Label htmlFor="landTotalSize">Total Size (Land Area - {unit})</Label>
+      <Input
+        id="landTotalSize"
+        name="landTotalSize"
+        type="text"
+        value={landTotalSize}
+        readOnly
+      />
+
+      <Label htmlFor="images">
+        Upload a photos of property Front (JPG/PNG)
+      </Label>
+      <Input
+        id="images"
+        name="images"
+        type="file"
+        multiple
+        onChange={handleFileChange}
       />
 
       <Label htmlFor="images">
@@ -5291,7 +6104,6 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         multiple
         onChange={handleFileChange}
       />
-
       {/* <Label htmlFor="status">Status</Label>
       <Select
         id="status"
@@ -5358,7 +6170,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         ))}
       </Select>
 
-      <Label htmlFor="neighborhood">Neighborhood</Label>
+      <Label htmlFor="neighborhood">Dstricts/Towns</Label>
       <Select
         id="neighborhood"
         name="neighborhood"
@@ -5366,7 +6178,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         onChange={handleChange("neighborhood")}
         required
       >
-        <option value="">Select Neighborhood</option>
+        <option value="">Select Dstricts/Towns</option>
         {neighborhoods.map((n) => (
           <option key={n.placeId} value={n.name}>
             {n.name}
@@ -5436,7 +6248,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         <option value="low">Low</option>
       </Select>
 
-      <Label htmlFor="length">Length</Label>
+      <Label htmlFor="length">Depth</Label>
       <Input
         id="length"
         name="length"
@@ -5550,7 +6362,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
       <Input
         id="contractTime"
         name="contractTime"
-        type="text"
+        type="date"
         value={formData.contractTime}
         onChange={handleChange("contractTime")}
       />
@@ -5590,7 +6402,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         ))}
       </Select>
 
-      <Label htmlFor="neighborhood">Neighborhood</Label>
+      <Label htmlFor="neighborhood">Dstricts/Towns</Label>
       <Select
         id="neighborhood"
         name="neighborhood"
@@ -5598,7 +6410,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         onChange={handleChange("neighborhood")}
         required
       >
-        <option value="">Select Neighborhood</option>
+        <option value="">Select Dstricts/Towns</option>
         {neighborhoods.map((n) => (
           <option key={n.placeId} value={n.name}>
             {n.name}
@@ -5668,7 +6480,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         <option value="low">Low</option>
       </Select>
 
-      <Label htmlFor="length">Length</Label>
+      <Label htmlFor="length">Depth</Label>
       <Input
         id="length"
         name="length"
@@ -5782,7 +6594,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
       <Input
         id="contractTime"
         name="contractTime"
-        type="text"
+        type="date"
         value={formData.contractTime}
         onChange={handleChange("contractTime")}
       />
@@ -5822,7 +6634,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         ))}
       </Select>
 
-      <Label htmlFor="neighborhood">Neighborhood</Label>
+      <Label htmlFor="neighborhood">Dstricts/Towns</Label>
       <Select
         id="neighborhood"
         name="neighborhood"
@@ -5830,7 +6642,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         onChange={handleChange("neighborhood")}
         required
       >
-        <option value="">Select Neighborhood</option>
+        <option value="">Select Dstricts/Towns</option>
         {neighborhoods.map((n) => (
           <option key={n.placeId} value={n.name}>
             {n.name}
@@ -5900,7 +6712,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         <option value="low">Low</option>
       </Select>
 
-      <Label htmlFor="length">Length</Label>
+      <Label htmlFor="length">Depth</Label>
       <Input
         id="length"
         name="length"
@@ -6014,7 +6826,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
       <Input
         id="contractTime"
         name="contractTime"
-        type="text"
+        type="date"
         value={formData.contractTime}
         onChange={handleChange("contractTime")}
       />
@@ -6054,7 +6866,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         ))}
       </Select>
 
-      <Label htmlFor="neighborhood">Neighborhood</Label>
+      <Label htmlFor="neighborhood">Dstricts/Towns</Label>
       <Select
         id="neighborhood"
         name="neighborhood"
@@ -6062,7 +6874,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         onChange={handleChange("neighborhood")}
         required
       >
-        <option value="">Select Neighborhood</option>
+        <option value="">Select Dstricts/Towns</option>
         {neighborhoods.map((n) => (
           <option key={n.placeId} value={n.name}>
             {n.name}
@@ -6132,7 +6944,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         <option value="low">Low</option>
       </Select>
 
-      <Label htmlFor="length">Length</Label>
+      <Label htmlFor="length">Depth</Label>
       <Input
         id="length"
         name="length"
@@ -6246,7 +7058,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
       <Input
         id="contractTime"
         name="contractTime"
-        type="text"
+        type="date"
         value={formData.contractTime}
         onChange={handleChange("contractTime")}
       />
@@ -6286,7 +7098,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         ))}
       </Select>
 
-      <Label htmlFor="neighborhood">Neighborhood</Label>
+      <Label htmlFor="neighborhood">Dstricts/Towns</Label>
       <Select
         id="neighborhood"
         name="neighborhood"
@@ -6294,7 +7106,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         onChange={handleChange("neighborhood")}
         required
       >
-        <option value="">Select Neighborhood</option>
+        <option value="">Select Dstricts/Towns</option>
         {neighborhoods.map((n) => (
           <option key={n.placeId} value={n.name}>
             {n.name}
@@ -6355,7 +7167,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         <option value="low">Low</option>
       </Select>
 
-      <Label htmlFor="length">Length</Label>
+      <Label htmlFor="length">Depth</Label>
       <Input
         id="length"
         name="length"
@@ -6460,7 +7272,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
       <Input
         id="contractTime"
         name="contractTime"
-        type="text"
+        type="date"
         value={formData.contractTime}
         onChange={handleChange("contractTime")}
       />
@@ -6500,7 +7312,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         ))}
       </Select>
 
-      <Label htmlFor="neighborhood">Neighborhood</Label>
+      <Label htmlFor="neighborhood">Dstricts/Towns</Label>
       <Select
         id="neighborhood"
         name="neighborhood"
@@ -6508,7 +7320,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         onChange={handleChange("neighborhood")}
         required
       >
-        <option value="">Select Neighborhood</option>
+        <option value="">Select Dstricts/Towns</option>
         {neighborhoods.map((n) => (
           <option key={n.placeId} value={n.name}>
             {n.name}
@@ -6569,7 +7381,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         <option value="low">Low</option>
       </Select>
 
-      <Label htmlFor="length">Length</Label>
+      <Label htmlFor="length">Depth</Label>
       <Input
         id="length"
         name="length"
@@ -6663,7 +7475,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
       <Input
         id="contractTime"
         name="contractTime"
-        type="text"
+        type="date"
         value={formData.contractTime}
         onChange={handleChange("contractTime")}
       />
@@ -6703,7 +7515,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         ))}
       </Select>
 
-      <Label htmlFor="neighborhood">Neighborhood</Label>
+      <Label htmlFor="neighborhood">Dstricts/Towns</Label>
       <Select
         id="neighborhood"
         name="neighborhood"
@@ -6711,7 +7523,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         onChange={handleChange("neighborhood")}
         required
       >
-        <option value="">Select Neighborhood</option>
+        <option value="">Select Dstricts/Towns</option>
         {neighborhoods.map((n) => (
           <option key={n.placeId} value={n.name}>
             {n.name}
@@ -6772,7 +7584,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         <option value="low">Low</option>
       </Select>
 
-      <Label htmlFor="length">Length</Label>
+      <Label htmlFor="length">Depth</Label>
       <Input
         id="length"
         name="length"
@@ -6867,7 +7679,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
       <Input
         id="contractTime"
         name="contractTime"
-        type="text"
+        type="date"
         value={formData.contractTime}
         onChange={handleChange("contractTime")}
       />
@@ -6907,7 +7719,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         ))}
       </Select>
 
-      <Label htmlFor="neighborhood">Neighborhood</Label>
+      <Label htmlFor="neighborhood">Dstricts/Towns</Label>
       <Select
         id="neighborhood"
         name="neighborhood"
@@ -6915,7 +7727,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         onChange={handleChange("neighborhood")}
         required
       >
-        <option value="">Select Neighborhood</option>
+        <option value="">Select Dstricts/Towns</option>
         {neighborhoods.map((n) => (
           <option key={n.placeId} value={n.name}>
             {n.name}
@@ -6976,7 +7788,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         <option value="low">Low</option>
       </Select>
 
-      <Label htmlFor="length">Length</Label>
+      <Label htmlFor="length">Depth</Label>
       <Input
         id="length"
         name="length"
@@ -7071,7 +7883,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
       <Input
         id="contractTime"
         name="contractTime"
-        type="text"
+        type="date"
         value={formData.contractTime}
         onChange={handleChange("contractTime")}
       />
@@ -7111,7 +7923,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         ))}
       </Select>
 
-      <Label htmlFor="neighborhood">Neighborhood</Label>
+      <Label htmlFor="neighborhood">Dstricts/Towns</Label>
       <Select
         id="neighborhood"
         name="neighborhood"
@@ -7119,7 +7931,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         onChange={handleChange("neighborhood")}
         required
       >
-        <option value="">Select Neighborhood</option>
+        <option value="">Select Dstricts/Towns</option>
         {neighborhoods.map((n) => (
           <option key={n.placeId} value={n.name}>
             {n.name}
@@ -7142,6 +7954,13 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         value={formData.phaseBlock}
         onChange={handleChange("phaseBlock")}
       />
+
+      <div>
+        <Button onClick={getCurrentLocation}>Detect Address</Button>
+        {loading && <p>Detecting your location...</p>}
+        {error && <p style={{ color: "red" }}>{error}</p>}
+        {address && <p>Your Address: {address}</p>}
+      </div>
 
       <Label htmlFor="houseNumber">Property Number</Label>
       <Input
@@ -7172,7 +7991,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         <option value="low">Low</option>
       </Select>
 
-      <Label htmlFor="length">Length</Label>
+      <Label htmlFor="length">Depth</Label>
       <Input
         id="length"
         name="length"
@@ -7244,7 +8063,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
       <Input
         id="contractTime"
         name="contractTime"
-        type="text"
+        type="date"
         value={formData.contractTime}
         onChange={handleChange("contractTime")}
       />
@@ -7284,7 +8103,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         ))}
       </Select>
 
-      <Label htmlFor="neighborhood">Neighborhood</Label>
+      <Label htmlFor="neighborhood">Dstricts/Towns</Label>
       <Select
         id="neighborhood"
         name="neighborhood"
@@ -7292,7 +8111,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         onChange={handleChange("neighborhood")}
         required
       >
-        <option value="">Select Neighborhood</option>
+        <option value="">Select Dstricts/Towns</option>
         {neighborhoods.map((n) => (
           <option key={n.placeId} value={n.name}>
             {n.name}
@@ -7345,7 +8164,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         <option value="low">Low</option>
       </Select>
 
-      <Label htmlFor="length">Length</Label>
+      <Label htmlFor="length">Depth</Label>
       <Input
         id="length"
         name="length"
@@ -7417,7 +8236,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
       <Input
         id="contractTime"
         name="contractTime"
-        type="text"
+        type="date"
         value={formData.contractTime}
         onChange={handleChange("contractTime")}
       />
@@ -7457,7 +8276,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         ))}
       </Select>
 
-      <Label htmlFor="neighborhood">Neighborhood</Label>
+      <Label htmlFor="neighborhood">Dstricts/Towns</Label>
       <Select
         id="neighborhood"
         name="neighborhood"
@@ -7465,7 +8284,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         onChange={handleChange("neighborhood")}
         required
       >
-        <option value="">Select Neighborhood</option>
+        <option value="">Select Dstricts/Towns</option>
         {neighborhoods.map((n) => (
           <option key={n.placeId} value={n.name}>
             {n.name}
@@ -7526,7 +8345,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         <option value="low">Low</option>
       </Select>
 
-      <Label htmlFor="length">Length</Label>
+      <Label htmlFor="length">Depth</Label>
       <Input
         id="length"
         name="length"
@@ -7640,7 +8459,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
       <Input
         id="contractTime"
         name="contractTime"
-        type="text"
+        type="date"
         value={formData.contractTime}
         onChange={handleChange("contractTime")}
       />
@@ -7680,7 +8499,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         ))}
       </Select>
 
-      <Label htmlFor="neighborhood">Neighborhood</Label>
+      <Label htmlFor="neighborhood">Dstricts/Towns</Label>
       <Select
         id="neighborhood"
         name="neighborhood"
@@ -7688,7 +8507,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         onChange={handleChange("neighborhood")}
         required
       >
-        <option value="">Select Neighborhood</option>
+        <option value="">Select Dstricts/Towns</option>
         {neighborhoods.map((n) => (
           <option key={n.placeId} value={n.name}>
             {n.name}
@@ -7749,7 +8568,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         <option value="low">Low</option>
       </Select>
 
-      <Label htmlFor="length">Length</Label>
+      <Label htmlFor="length">Depth</Label>
       <Input
         id="length"
         name="length"
@@ -7843,7 +8662,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
       <Input
         id="contractTime"
         name="contractTime"
-        type="text"
+        type="date"
         value={formData.contractTime}
         onChange={handleChange("contractTime")}
       />
@@ -7883,7 +8702,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         ))}
       </Select>
 
-      <Label htmlFor="neighborhood">Neighborhood</Label>
+      <Label htmlFor="neighborhood">Dstricts/Towns</Label>
       <Select
         id="neighborhood"
         name="neighborhood"
@@ -7891,7 +8710,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         onChange={handleChange("neighborhood")}
         required
       >
-        <option value="">Select Neighborhood</option>
+        <option value="">Select Dstricts/Towns</option>
         {neighborhoods.map((n) => (
           <option key={n.placeId} value={n.name}>
             {n.name}
@@ -7936,7 +8755,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         <option value="low">Low</option>
       </Select>
 
-      <Label htmlFor="length">Length</Label>
+      <Label htmlFor="length">Depth</Label>
       <Input
         id="length"
         name="length"
@@ -8050,7 +8869,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
       <Input
         id="contractTime"
         name="contractTime"
-        type="text"
+        type="date"
         value={formData.contractTime}
         onChange={handleChange("contractTime")}
       />
@@ -8090,7 +8909,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         ))}
       </Select>
 
-      <Label htmlFor="neighborhood">Neighborhood</Label>
+      <Label htmlFor="neighborhood">Dstricts/Towns</Label>
       <Select
         id="neighborhood"
         name="neighborhood"
@@ -8098,7 +8917,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         onChange={handleChange("neighborhood")}
         required
       >
-        <option value="">Select Neighborhood</option>
+        <option value="">Select Dstricts/Towns</option>
         {neighborhoods.map((n) => (
           <option key={n.placeId} value={n.name}>
             {n.name}
@@ -8121,6 +8940,13 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         value={formData.phaseBlock}
         onChange={handleChange("phaseBlock")}
       />
+
+      <div>
+        <Button onClick={getCurrentLocation}>Detect Address</Button>
+        {loading && <p>Detecting your location...</p>}
+        {error && <p style={{ color: "red" }}>{error}</p>}
+        {address && <p>Your Address: {address}</p>}
+      </div>
 
       <Label htmlFor="houseNumber">Property Number</Label>
       <Input
@@ -8168,7 +8994,10 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         <option value="low">Low</option>
       </Select>
 
-      <Label htmlFor="length">Length</Label>
+      <br />
+      <br />
+      <BoldLabel>Covered Area</BoldLabel>
+      <Label htmlFor="length">Depth</Label>
       <Input
         id="length"
         name="length"
@@ -8186,7 +9015,6 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         onChange={handleChange("width")}
       />
 
-      {/* New unit dropdown */}
       <Label htmlFor="unit">Unit</Label>
       <Select
         id="unit"
@@ -8199,14 +9027,58 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         <option value="yards">Yards</option>
       </Select>
 
-      {/* Display calculated total size */}
-      <Label htmlFor="totalSize">Total Size ({unit})</Label>
+      <Label htmlFor="coveredTotalSize">
+        Total Size (Covered Area - {unit})
+      </Label>
       <Input
-        id="totalSize"
-        name="totalSize"
+        id="coveredTotalSize"
+        name="coveredTotalSize"
         type="text"
-        value={totalSize}
-        readOnly // This field is read-only as it displays calculated value
+        value={coveredTotalSize}
+        readOnly
+      />
+
+      <br />
+      <br />
+
+      <BoldLabel>Land Area</BoldLabel>
+      <Label htmlFor="landlength">Depth</Label>
+      <Input
+        id="landlength"
+        name="landlength"
+        type="text"
+        value={formData.landlength}
+        onChange={handleChange("landlength")}
+      />
+
+      <Label htmlFor="landwidth">Width</Label>
+      <Input
+        id="landwidth"
+        name="landwidth"
+        type="text"
+        value={formData.landwidth}
+        onChange={handleChange("landwidth")}
+      />
+
+      <Label htmlFor="unit">Unit</Label>
+      <Select
+        id="unit"
+        name="unit"
+        value={unit}
+        onChange={(e) => setUnit(e.target.value)}
+      >
+        <option value="feet">Feet</option>
+        <option value="meters">Meters</option>
+        <option value="yards">Yards</option>
+      </Select>
+
+      <Label htmlFor="landTotalSize">Total Size (Land Area - {unit})</Label>
+      <Input
+        id="landTotalSize"
+        name="landTotalSize"
+        type="text"
+        value={landTotalSize}
+        readOnly
       />
 
       {/* Checkbox Features */}
@@ -8250,6 +9122,17 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         />
         <Label htmlFor="nearMasjid">Near Masjid</Label>
       </div>
+
+      <Label htmlFor="images">
+        Upload a photos of property Front (JPG/PNG)
+      </Label>
+      <Input
+        id="images"
+        name="images"
+        type="file"
+        multiple
+        onChange={handleFileChange}
+      />
 
       <Label htmlFor="images">
         Upload atleast 3 photos of property (JPG/PNG)
@@ -8315,7 +9198,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         ))}
       </Select>
 
-      <Label htmlFor="neighborhood">Neighborhood</Label>
+      <Label htmlFor="neighborhood">Dstricts/Towns</Label>
       <Select
         id="neighborhood"
         name="neighborhood"
@@ -8323,7 +9206,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         onChange={handleChange("neighborhood")}
         required
       >
-        <option value="">Select Neighborhood</option>
+        <option value="">Select Dstricts/Towns</option>
         {neighborhoods.map((n) => (
           <option key={n.placeId} value={n.name}>
             {n.name}
@@ -8346,6 +9229,13 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         value={formData.phaseBlock}
         onChange={handleChange("phaseBlock")}
       />
+
+      <div>
+        <Button onClick={getCurrentLocation}>Detect Address</Button>
+        {loading && <p>Detecting your location...</p>}
+        {error && <p style={{ color: "red" }}>{error}</p>}
+        {address && <p>Your Address: {address}</p>}
+      </div>
 
       <Label htmlFor="houseNumber">Property Number</Label>
       <Input
@@ -8393,7 +9283,10 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         <option value="low">Low</option>
       </Select>
 
-      <Label htmlFor="length">Length</Label>
+      <br />
+      <br />
+      <BoldLabel>Covered Area</BoldLabel>
+      <Label htmlFor="length">Depth</Label>
       <Input
         id="length"
         name="length"
@@ -8411,7 +9304,6 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         onChange={handleChange("width")}
       />
 
-      {/* New unit dropdown */}
       <Label htmlFor="unit">Unit</Label>
       <Select
         id="unit"
@@ -8424,14 +9316,58 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         <option value="yards">Yards</option>
       </Select>
 
-      {/* Display calculated total size */}
-      <Label htmlFor="totalSize">Total Size ({unit})</Label>
+      <Label htmlFor="coveredTotalSize">
+        Total Size (Covered Area - {unit})
+      </Label>
       <Input
-        id="totalSize"
-        name="totalSize"
+        id="coveredTotalSize"
+        name="coveredTotalSize"
         type="text"
-        value={totalSize}
-        readOnly // This field is read-only as it displays calculated value
+        value={coveredTotalSize}
+        readOnly
+      />
+
+      <br />
+      <br />
+
+      <BoldLabel>Land Area</BoldLabel>
+      <Label htmlFor="landlength">Depth</Label>
+      <Input
+        id="landlength"
+        name="landlength"
+        type="text"
+        value={formData.landlength}
+        onChange={handleChange("landlength")}
+      />
+
+      <Label htmlFor="landwidth">Width</Label>
+      <Input
+        id="landwidth"
+        name="landwidth"
+        type="text"
+        value={formData.landwidth}
+        onChange={handleChange("landwidth")}
+      />
+
+      <Label htmlFor="unit">Unit</Label>
+      <Select
+        id="unit"
+        name="unit"
+        value={unit}
+        onChange={(e) => setUnit(e.target.value)}
+      >
+        <option value="feet">Feet</option>
+        <option value="meters">Meters</option>
+        <option value="yards">Yards</option>
+      </Select>
+
+      <Label htmlFor="landTotalSize">Total Size (Land Area - {unit})</Label>
+      <Input
+        id="landTotalSize"
+        name="landTotalSize"
+        type="text"
+        value={landTotalSize}
+        readOnly
       />
 
       {/* Checkbox Features */}
@@ -8475,6 +9411,17 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         />
         <Label htmlFor="nearMasjid">Near Masjid</Label>
       </div>
+
+      <Label htmlFor="images">
+        Upload a photos of property Front (JPG/PNG)
+      </Label>
+      <Input
+        id="images"
+        name="images"
+        type="file"
+        multiple
+        onChange={handleFileChange}
+      />
 
       <Label htmlFor="images">
         Upload atleast 3 photos of property (JPG/PNG)
@@ -8540,7 +9487,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         ))}
       </Select>
 
-      <Label htmlFor="neighborhood">Neighborhood</Label>
+      <Label htmlFor="neighborhood">Dstricts/Towns</Label>
       <Select
         id="neighborhood"
         name="neighborhood"
@@ -8548,7 +9495,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         onChange={handleChange("neighborhood")}
         required
       >
-        <option value="">Select Neighborhood</option>
+        <option value="">Select Dstricts/Towns</option>
         {neighborhoods.map((n) => (
           <option key={n.placeId} value={n.name}>
             {n.name}
@@ -8571,6 +9518,13 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         value={formData.phaseBlock}
         onChange={handleChange("phaseBlock")}
       />
+
+      <div>
+        <Button onClick={getCurrentLocation}>Detect Address</Button>
+        {loading && <p>Detecting your location...</p>}
+        {error && <p style={{ color: "red" }}>{error}</p>}
+        {address && <p>Your Address: {address}</p>}
+      </div>
 
       <Label htmlFor="houseNumber">Property Number</Label>
       <Input
@@ -8618,7 +9572,10 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         <option value="low">Low</option>
       </Select>
 
-      <Label htmlFor="length">Length</Label>
+      <br />
+      <br />
+      <BoldLabel>Covered Area</BoldLabel>
+      <Label htmlFor="length">Depth</Label>
       <Input
         id="length"
         name="length"
@@ -8636,7 +9593,6 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         onChange={handleChange("width")}
       />
 
-      {/* New unit dropdown */}
       <Label htmlFor="unit">Unit</Label>
       <Select
         id="unit"
@@ -8649,14 +9605,58 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         <option value="yards">Yards</option>
       </Select>
 
-      {/* Display calculated total size */}
-      <Label htmlFor="totalSize">Total Size ({unit})</Label>
+      <Label htmlFor="coveredTotalSize">
+        Total Size (Covered Area - {unit})
+      </Label>
       <Input
-        id="totalSize"
-        name="totalSize"
+        id="coveredTotalSize"
+        name="coveredTotalSize"
         type="text"
-        value={totalSize}
-        readOnly // This field is read-only as it displays calculated value
+        value={coveredTotalSize}
+        readOnly
+      />
+
+      <br />
+      <br />
+
+      <BoldLabel>Land Area</BoldLabel>
+      <Label htmlFor="landlength">Depth</Label>
+      <Input
+        id="landlength"
+        name="landlength"
+        type="text"
+        value={formData.landlength}
+        onChange={handleChange("landlength")}
+      />
+
+      <Label htmlFor="landwidth">Width</Label>
+      <Input
+        id="landwidth"
+        name="landwidth"
+        type="text"
+        value={formData.landwidth}
+        onChange={handleChange("landwidth")}
+      />
+
+      <Label htmlFor="unit">Unit</Label>
+      <Select
+        id="unit"
+        name="unit"
+        value={unit}
+        onChange={(e) => setUnit(e.target.value)}
+      >
+        <option value="feet">Feet</option>
+        <option value="meters">Meters</option>
+        <option value="yards">Yards</option>
+      </Select>
+
+      <Label htmlFor="landTotalSize">Total Size (Land Area - {unit})</Label>
+      <Input
+        id="landTotalSize"
+        name="landTotalSize"
+        type="text"
+        value={landTotalSize}
+        readOnly
       />
 
       {/* Checkbox Features */}
@@ -8700,6 +9700,17 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         />
         <Label htmlFor="nearMasjid">Near Masjid</Label>
       </div>
+
+      <Label htmlFor="images">
+        Upload a photos of property Front (JPG/PNG)
+      </Label>
+      <Input
+        id="images"
+        name="images"
+        type="file"
+        multiple
+        onChange={handleFileChange}
+      />
 
       <Label htmlFor="images">
         Upload atleast 3 photos of property (JPG/PNG)
@@ -8765,7 +9776,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         ))}
       </Select>
 
-      <Label htmlFor="neighborhood">Neighborhood</Label>
+      <Label htmlFor="neighborhood">Dstricts/Towns</Label>
       <Select
         id="neighborhood"
         name="neighborhood"
@@ -8773,7 +9784,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         onChange={handleChange("neighborhood")}
         required
       >
-        <option value="">Select Neighborhood</option>
+        <option value="">Select Dstricts/Towns</option>
         {neighborhoods.map((n) => (
           <option key={n.placeId} value={n.name}>
             {n.name}
@@ -8796,6 +9807,13 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         value={formData.phaseBlock}
         onChange={handleChange("phaseBlock")}
       />
+
+      <div>
+        <Button onClick={getCurrentLocation}>Detect Address</Button>
+        {loading && <p>Detecting your location...</p>}
+        {error && <p style={{ color: "red" }}>{error}</p>}
+        {address && <p>Your Address: {address}</p>}
+      </div>
 
       <Label htmlFor="houseNumber">Property Number</Label>
       <Input
@@ -8843,7 +9861,10 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         <option value="low">Low</option>
       </Select>
 
-      <Label htmlFor="length">Length</Label>
+      <br />
+      <br />
+      <BoldLabel>Covered Area</BoldLabel>
+      <Label htmlFor="length">Depth</Label>
       <Input
         id="length"
         name="length"
@@ -8861,7 +9882,6 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         onChange={handleChange("width")}
       />
 
-      {/* New unit dropdown */}
       <Label htmlFor="unit">Unit</Label>
       <Select
         id="unit"
@@ -8874,14 +9894,58 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         <option value="yards">Yards</option>
       </Select>
 
-      {/* Display calculated total size */}
-      <Label htmlFor="totalSize">Total Size ({unit})</Label>
+      <Label htmlFor="coveredTotalSize">
+        Total Size (Covered Area - {unit})
+      </Label>
       <Input
-        id="totalSize"
-        name="totalSize"
+        id="coveredTotalSize"
+        name="coveredTotalSize"
         type="text"
-        value={totalSize}
-        readOnly // This field is read-only as it displays calculated value
+        value={coveredTotalSize}
+        readOnly
+      />
+
+      <br />
+      <br />
+
+      <BoldLabel>Land Area</BoldLabel>
+      <Label htmlFor="landlength">Depth</Label>
+      <Input
+        id="landlength"
+        name="landlength"
+        type="text"
+        value={formData.landlength}
+        onChange={handleChange("landlength")}
+      />
+
+      <Label htmlFor="landwidth">Width</Label>
+      <Input
+        id="landwidth"
+        name="landwidth"
+        type="text"
+        value={formData.landwidth}
+        onChange={handleChange("landwidth")}
+      />
+
+      <Label htmlFor="unit">Unit</Label>
+      <Select
+        id="unit"
+        name="unit"
+        value={unit}
+        onChange={(e) => setUnit(e.target.value)}
+      >
+        <option value="feet">Feet</option>
+        <option value="meters">Meters</option>
+        <option value="yards">Yards</option>
+      </Select>
+
+      <Label htmlFor="landTotalSize">Total Size (Land Area - {unit})</Label>
+      <Input
+        id="landTotalSize"
+        name="landTotalSize"
+        type="text"
+        value={landTotalSize}
+        readOnly
       />
 
       {/* Checkbox Features */}
@@ -8925,6 +9989,17 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         />
         <Label htmlFor="nearMasjid">Near Masjid</Label>
       </div>
+
+      <Label htmlFor="images">
+        Upload a photos of property Front (JPG/PNG)
+      </Label>
+      <Input
+        id="images"
+        name="images"
+        type="file"
+        multiple
+        onChange={handleFileChange}
+      />
 
       <Label htmlFor="images">
         Upload atleast 3 photos of property (JPG/PNG)
@@ -8990,7 +10065,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         ))}
       </Select>
 
-      <Label htmlFor="neighborhood">Neighborhood</Label>
+      <Label htmlFor="neighborhood">Dstricts/Towns</Label>
       <Select
         id="neighborhood"
         name="neighborhood"
@@ -8998,7 +10073,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         onChange={handleChange("neighborhood")}
         required
       >
-        <option value="">Select Neighborhood</option>
+        <option value="">Select Dstricts/Towns</option>
         {neighborhoods.map((n) => (
           <option key={n.placeId} value={n.name}>
             {n.name}
@@ -9021,6 +10096,13 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         value={formData.phaseBlock}
         onChange={handleChange("phaseBlock")}
       />
+
+      <div>
+        <Button onClick={getCurrentLocation}>Detect Address</Button>
+        {loading && <p>Detecting your location...</p>}
+        {error && <p style={{ color: "red" }}>{error}</p>}
+        {address && <p>Your Address: {address}</p>}
+      </div>
 
       <Label htmlFor="houseNumber">Property Number</Label>
       <Input
@@ -9059,7 +10141,10 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         <option value="low">Low</option>
       </Select>
 
-      <Label htmlFor="length">Length</Label>
+      <br />
+      <br />
+      <BoldLabel>Covered Area</BoldLabel>
+      <Label htmlFor="length">Depth</Label>
       <Input
         id="length"
         name="length"
@@ -9077,7 +10162,6 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         onChange={handleChange("width")}
       />
 
-      {/* New unit dropdown */}
       <Label htmlFor="unit">Unit</Label>
       <Select
         id="unit"
@@ -9090,14 +10174,58 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         <option value="yards">Yards</option>
       </Select>
 
-      {/* Display calculated total size */}
-      <Label htmlFor="totalSize">Total Size ({unit})</Label>
+      <Label htmlFor="coveredTotalSize">
+        Total Size (Covered Area - {unit})
+      </Label>
       <Input
-        id="totalSize"
-        name="totalSize"
+        id="coveredTotalSize"
+        name="coveredTotalSize"
         type="text"
-        value={totalSize}
-        readOnly // This field is read-only as it displays calculated value
+        value={coveredTotalSize}
+        readOnly
+      />
+
+      <br />
+      <br />
+
+      <BoldLabel>Land Area</BoldLabel>
+      <Label htmlFor="landlength">Depth</Label>
+      <Input
+        id="landlength"
+        name="landlength"
+        type="text"
+        value={formData.landlength}
+        onChange={handleChange("landlength")}
+      />
+
+      <Label htmlFor="landwidth">Width</Label>
+      <Input
+        id="landwidth"
+        name="landwidth"
+        type="text"
+        value={formData.landwidth}
+        onChange={handleChange("landwidth")}
+      />
+
+      <Label htmlFor="unit">Unit</Label>
+      <Select
+        id="unit"
+        name="unit"
+        value={unit}
+        onChange={(e) => setUnit(e.target.value)}
+      >
+        <option value="feet">Feet</option>
+        <option value="meters">Meters</option>
+        <option value="yards">Yards</option>
+      </Select>
+
+      <Label htmlFor="landTotalSize">Total Size (Land Area - {unit})</Label>
+      <Input
+        id="landTotalSize"
+        name="landTotalSize"
+        type="text"
+        value={landTotalSize}
+        readOnly
       />
 
       {/* Checkbox Features */}
@@ -9121,6 +10249,17 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         />
         <Label htmlFor="mainRoad">Main Road</Label>
       </div>
+
+      <Label htmlFor="images">
+        Upload a photos of property Front (JPG/PNG)
+      </Label>
+      <Input
+        id="images"
+        name="images"
+        type="file"
+        multiple
+        onChange={handleFileChange}
+      />
 
       <Label htmlFor="images">
         Upload atleast 3 photos of property (JPG/PNG)
@@ -9186,7 +10325,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         ))}
       </Select>
 
-      <Label htmlFor="neighborhood">Neighborhood</Label>
+      <Label htmlFor="neighborhood">Dstricts/Towns</Label>
       <Select
         id="neighborhood"
         name="neighborhood"
@@ -9194,7 +10333,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         onChange={handleChange("neighborhood")}
         required
       >
-        <option value="">Select Neighborhood</option>
+        <option value="">Select Dstricts/Towns</option>
         {neighborhoods.map((n) => (
           <option key={n.placeId} value={n.name}>
             {n.name}
@@ -9217,6 +10356,13 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         value={formData.phaseBlock}
         onChange={handleChange("phaseBlock")}
       />
+
+      <div>
+        <Button onClick={getCurrentLocation}>Detect Address</Button>
+        {loading && <p>Detecting your location...</p>}
+        {error && <p style={{ color: "red" }}>{error}</p>}
+        {address && <p>Your Address: {address}</p>}
+      </div>
 
       <Label htmlFor="houseNumber">Property Number</Label>
       <Input
@@ -9255,7 +10401,10 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         <option value="low">Low</option>
       </Select>
 
-      <Label htmlFor="length">Length</Label>
+      <br />
+      <br />
+      <BoldLabel>Covered Area</BoldLabel>
+      <Label htmlFor="length">Depth</Label>
       <Input
         id="length"
         name="length"
@@ -9273,7 +10422,6 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         onChange={handleChange("width")}
       />
 
-      {/* New unit dropdown */}
       <Label htmlFor="unit">Unit</Label>
       <Select
         id="unit"
@@ -9286,14 +10434,58 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         <option value="yards">Yards</option>
       </Select>
 
-      {/* Display calculated total size */}
-      <Label htmlFor="totalSize">Total Size ({unit})</Label>
+      <Label htmlFor="coveredTotalSize">
+        Total Size (Covered Area - {unit})
+      </Label>
       <Input
-        id="totalSize"
-        name="totalSize"
+        id="coveredTotalSize"
+        name="coveredTotalSize"
         type="text"
-        value={totalSize}
-        readOnly // This field is read-only as it displays calculated value
+        value={coveredTotalSize}
+        readOnly
+      />
+
+      <br />
+      <br />
+
+      <BoldLabel>Land Area</BoldLabel>
+      <Label htmlFor="landlength">Depth</Label>
+      <Input
+        id="landlength"
+        name="landlength"
+        type="text"
+        value={formData.landlength}
+        onChange={handleChange("landlength")}
+      />
+
+      <Label htmlFor="landwidth">Width</Label>
+      <Input
+        id="landwidth"
+        name="landwidth"
+        type="text"
+        value={formData.landwidth}
+        onChange={handleChange("landwidth")}
+      />
+
+      <Label htmlFor="unit">Unit</Label>
+      <Select
+        id="unit"
+        name="unit"
+        value={unit}
+        onChange={(e) => setUnit(e.target.value)}
+      >
+        <option value="feet">Feet</option>
+        <option value="meters">Meters</option>
+        <option value="yards">Yards</option>
+      </Select>
+
+      <Label htmlFor="landTotalSize">Total Size (Land Area - {unit})</Label>
+      <Input
+        id="landTotalSize"
+        name="landTotalSize"
+        type="text"
+        value={landTotalSize}
+        readOnly
       />
 
       {/* Checkbox Features */}
@@ -9317,6 +10509,17 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         />
         <Label htmlFor="mainRoad">Main Road</Label>
       </div>
+
+      <Label htmlFor="images">
+        Upload a photos of property Front (JPG/PNG)
+      </Label>
+      <Input
+        id="images"
+        name="images"
+        type="file"
+        multiple
+        onChange={handleFileChange}
+      />
 
       <Label htmlFor="images">
         Upload atleast 3 photos of property (JPG/PNG)
@@ -9382,7 +10585,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         ))}
       </Select>
 
-      <Label htmlFor="neighborhood">Neighborhood</Label>
+      <Label htmlFor="neighborhood">Dstricts/Towns</Label>
       <Select
         id="neighborhood"
         name="neighborhood"
@@ -9390,7 +10593,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         onChange={handleChange("neighborhood")}
         required
       >
-        <option value="">Select Neighborhood</option>
+        <option value="">Select Dstricts/Towns</option>
         {neighborhoods.map((n) => (
           <option key={n.placeId} value={n.name}>
             {n.name}
@@ -9413,6 +10616,13 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         value={formData.phaseBlock}
         onChange={handleChange("phaseBlock")}
       />
+
+      <div>
+        <Button onClick={getCurrentLocation}>Detect Address</Button>
+        {loading && <p>Detecting your location...</p>}
+        {error && <p style={{ color: "red" }}>{error}</p>}
+        {address && <p>Your Address: {address}</p>}
+      </div>
 
       <Label htmlFor="houseNumber">Property Number</Label>
       <Input
@@ -9451,7 +10661,10 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         <option value="low">Low</option>
       </Select>
 
-      <Label htmlFor="length">Length</Label>
+      <br />
+      <br />
+      <BoldLabel>Covered Area</BoldLabel>
+      <Label htmlFor="length">Depth</Label>
       <Input
         id="length"
         name="length"
@@ -9469,7 +10682,6 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         onChange={handleChange("width")}
       />
 
-      {/* New unit dropdown */}
       <Label htmlFor="unit">Unit</Label>
       <Select
         id="unit"
@@ -9482,14 +10694,58 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         <option value="yards">Yards</option>
       </Select>
 
-      {/* Display calculated total size */}
-      <Label htmlFor="totalSize">Total Size ({unit})</Label>
+      <Label htmlFor="coveredTotalSize">
+        Total Size (Covered Area - {unit})
+      </Label>
       <Input
-        id="totalSize"
-        name="totalSize"
+        id="coveredTotalSize"
+        name="coveredTotalSize"
         type="text"
-        value={totalSize}
-        readOnly // This field is read-only as it displays calculated value
+        value={coveredTotalSize}
+        readOnly
+      />
+
+      <br />
+      <br />
+
+      <BoldLabel>Land Area</BoldLabel>
+      <Label htmlFor="landlength">Depth</Label>
+      <Input
+        id="landlength"
+        name="landlength"
+        type="text"
+        value={formData.landlength}
+        onChange={handleChange("landlength")}
+      />
+
+      <Label htmlFor="landwidth">Width</Label>
+      <Input
+        id="landwidth"
+        name="landwidth"
+        type="text"
+        value={formData.landwidth}
+        onChange={handleChange("landwidth")}
+      />
+
+      <Label htmlFor="unit">Unit</Label>
+      <Select
+        id="unit"
+        name="unit"
+        value={unit}
+        onChange={(e) => setUnit(e.target.value)}
+      >
+        <option value="feet">Feet</option>
+        <option value="meters">Meters</option>
+        <option value="yards">Yards</option>
+      </Select>
+
+      <Label htmlFor="landTotalSize">Total Size (Land Area - {unit})</Label>
+      <Input
+        id="landTotalSize"
+        name="landTotalSize"
+        type="text"
+        value={landTotalSize}
+        readOnly
       />
 
       {/* Checkbox Features */}
@@ -9513,6 +10769,17 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         />
         <Label htmlFor="mainRoad">Main Road</Label>
       </div>
+
+      <Label htmlFor="images">
+        Upload a photos of property Front (JPG/PNG)
+      </Label>
+      <Input
+        id="images"
+        name="images"
+        type="file"
+        multiple
+        onChange={handleFileChange}
+      />
 
       <Label htmlFor="images">
         Upload atleast 3 photos of property (JPG/PNG)
@@ -9578,7 +10845,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         ))}
       </Select>
 
-      <Label htmlFor="neighborhood">Neighborhood</Label>
+      <Label htmlFor="neighborhood">Dstricts/Towns</Label>
       <Select
         id="neighborhood"
         name="neighborhood"
@@ -9586,7 +10853,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         onChange={handleChange("neighborhood")}
         required
       >
-        <option value="">Select Neighborhood</option>
+        <option value="">Select Dstricts/Towns</option>
         {neighborhoods.map((n) => (
           <option key={n.placeId} value={n.name}>
             {n.name}
@@ -9609,6 +10876,13 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         value={formData.phaseBlock}
         onChange={handleChange("phaseBlock")}
       />
+
+      <div>
+        <Button onClick={getCurrentLocation}>Detect Address</Button>
+        {loading && <p>Detecting your location...</p>}
+        {error && <p style={{ color: "red" }}>{error}</p>}
+        {address && <p>Your Address: {address}</p>}
+      </div>
 
       <Label htmlFor="houseNumber">Property Number</Label>
       <Input
@@ -9647,7 +10921,10 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         <option value="low">Low</option>
       </Select>
 
-      <Label htmlFor="length">Length</Label>
+      <br />
+      <br />
+      <BoldLabel>Covered Area</BoldLabel>
+      <Label htmlFor="length">Depth</Label>
       <Input
         id="length"
         name="length"
@@ -9665,7 +10942,6 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         onChange={handleChange("width")}
       />
 
-      {/* New unit dropdown */}
       <Label htmlFor="unit">Unit</Label>
       <Select
         id="unit"
@@ -9678,14 +10954,69 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         <option value="yards">Yards</option>
       </Select>
 
-      {/* Display calculated total size */}
-      <Label htmlFor="totalSize">Total Size ({unit})</Label>
+      <Label htmlFor="coveredTotalSize">
+        Total Size (Covered Area - {unit})
+      </Label>
       <Input
-        id="totalSize"
-        name="totalSize"
+        id="coveredTotalSize"
+        name="coveredTotalSize"
         type="text"
-        value={totalSize}
-        readOnly // This field is read-only as it displays calculated value
+        value={coveredTotalSize}
+        readOnly
+      />
+
+      <br />
+      <br />
+
+      <BoldLabel>Land Area</BoldLabel>
+      <Label htmlFor="landlength">Depth</Label>
+      <Input
+        id="landlength"
+        name="landlength"
+        type="text"
+        value={formData.landlength}
+        onChange={handleChange("landlength")}
+      />
+
+      <Label htmlFor="landwidth">Width</Label>
+      <Input
+        id="landwidth"
+        name="landwidth"
+        type="text"
+        value={formData.landwidth}
+        onChange={handleChange("landwidth")}
+      />
+
+      <Label htmlFor="unit">Unit</Label>
+      <Select
+        id="unit"
+        name="unit"
+        value={unit}
+        onChange={(e) => setUnit(e.target.value)}
+      >
+        <option value="feet">Feet</option>
+        <option value="meters">Meters</option>
+        <option value="yards">Yards</option>
+      </Select>
+
+      <Label htmlFor="landTotalSize">Total Size (Land Area - {unit})</Label>
+      <Input
+        id="landTotalSize"
+        name="landTotalSize"
+        type="text"
+        value={landTotalSize}
+        readOnly
+      />
+
+      <Label htmlFor="images">
+        Upload a photos of property Front (JPG/PNG)
+      </Label>
+      <Input
+        id="images"
+        name="images"
+        type="file"
+        multiple
+        onChange={handleFileChange}
       />
 
       <Label htmlFor="images">
@@ -9752,7 +11083,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         ))}
       </Select>
 
-      <Label htmlFor="neighborhood">Neighborhood</Label>
+      <Label htmlFor="neighborhood">Dstricts/Towns</Label>
       <Select
         id="neighborhood"
         name="neighborhood"
@@ -9760,7 +11091,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         onChange={handleChange("neighborhood")}
         required
       >
-        <option value="">Select Neighborhood</option>
+        <option value="">Select Dstricts/Towns</option>
         {neighborhoods.map((n) => (
           <option key={n.placeId} value={n.name}>
             {n.name}
@@ -9783,6 +11114,13 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         value={formData.phaseBlock}
         onChange={handleChange("phaseBlock")}
       />
+
+      <div>
+        <Button onClick={getCurrentLocation}>Detect Address</Button>
+        {loading && <p>Detecting your location...</p>}
+        {error && <p style={{ color: "red" }}>{error}</p>}
+        {address && <p>Your Address: {address}</p>}
+      </div>
 
       <Label htmlFor="houseNumber">Property Number</Label>
       <Input
@@ -9821,7 +11159,10 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         <option value="low">Low</option>
       </Select>
 
-      <Label htmlFor="length">Length</Label>
+      <br />
+      <br />
+      <BoldLabel>Covered Area</BoldLabel>
+      <Label htmlFor="length">Depth</Label>
       <Input
         id="length"
         name="length"
@@ -9839,7 +11180,6 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         onChange={handleChange("width")}
       />
 
-      {/* New unit dropdown */}
       <Label htmlFor="unit">Unit</Label>
       <Select
         id="unit"
@@ -9852,14 +11192,69 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         <option value="yards">Yards</option>
       </Select>
 
-      {/* Display calculated total size */}
-      <Label htmlFor="totalSize">Total Size ({unit})</Label>
+      <Label htmlFor="coveredTotalSize">
+        Total Size (Covered Area - {unit})
+      </Label>
       <Input
-        id="totalSize"
-        name="totalSize"
+        id="coveredTotalSize"
+        name="coveredTotalSize"
         type="text"
-        value={totalSize}
-        readOnly // This field is read-only as it displays calculated value
+        value={coveredTotalSize}
+        readOnly
+      />
+
+      <br />
+      <br />
+
+      <BoldLabel>Land Area</BoldLabel>
+      <Label htmlFor="landlength">Depth</Label>
+      <Input
+        id="landlength"
+        name="landlength"
+        type="text"
+        value={formData.landlength}
+        onChange={handleChange("landlength")}
+      />
+
+      <Label htmlFor="landwidth">Width</Label>
+      <Input
+        id="landwidth"
+        name="landwidth"
+        type="text"
+        value={formData.landwidth}
+        onChange={handleChange("landwidth")}
+      />
+
+      <Label htmlFor="unit">Unit</Label>
+      <Select
+        id="unit"
+        name="unit"
+        value={unit}
+        onChange={(e) => setUnit(e.target.value)}
+      >
+        <option value="feet">Feet</option>
+        <option value="meters">Meters</option>
+        <option value="yards">Yards</option>
+      </Select>
+
+      <Label htmlFor="landTotalSize">Total Size (Land Area - {unit})</Label>
+      <Input
+        id="landTotalSize"
+        name="landTotalSize"
+        type="text"
+        value={landTotalSize}
+        readOnly
+      />
+
+      <Label htmlFor="images">
+        Upload a photos of property Front (JPG/PNG)
+      </Label>
+      <Input
+        id="images"
+        name="images"
+        type="file"
+        multiple
+        onChange={handleFileChange}
       />
 
       <Label htmlFor="images">
@@ -9926,7 +11321,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         ))}
       </Select>
 
-      <Label htmlFor="neighborhood">Neighborhood</Label>
+      <Label htmlFor="neighborhood">Dstricts/Towns</Label>
       <Select
         id="neighborhood"
         name="neighborhood"
@@ -9934,7 +11329,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         onChange={handleChange("neighborhood")}
         required
       >
-        <option value="">Select Neighborhood</option>
+        <option value="">Select Dstricts/Towns</option>
         {neighborhoods.map((n) => (
           <option key={n.placeId} value={n.name}>
             {n.name}
@@ -9957,6 +11352,13 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         value={formData.phaseBlock}
         onChange={handleChange("phaseBlock")}
       />
+
+      <div>
+        <Button onClick={getCurrentLocation}>Detect Address</Button>
+        {loading && <p>Detecting your location...</p>}
+        {error && <p style={{ color: "red" }}>{error}</p>}
+        {address && <p>Your Address: {address}</p>}
+      </div>
 
       <Label htmlFor="houseNumber">Property Number</Label>
       <Input
@@ -9995,7 +11397,10 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         <option value="low">Low</option>
       </Select>
 
-      <Label htmlFor="length">Length</Label>
+      <br />
+      <br />
+      <BoldLabel>Covered Area</BoldLabel>
+      <Label htmlFor="length">Depth</Label>
       <Input
         id="length"
         name="length"
@@ -10013,7 +11418,6 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         onChange={handleChange("width")}
       />
 
-      {/* New unit dropdown */}
       <Label htmlFor="unit">Unit</Label>
       <Select
         id="unit"
@@ -10026,14 +11430,69 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         <option value="yards">Yards</option>
       </Select>
 
-      {/* Display calculated total size */}
-      <Label htmlFor="totalSize">Total Size ({unit})</Label>
+      <Label htmlFor="coveredTotalSize">
+        Total Size (Covered Area - {unit})
+      </Label>
       <Input
-        id="totalSize"
-        name="totalSize"
+        id="coveredTotalSize"
+        name="coveredTotalSize"
         type="text"
-        value={totalSize}
-        readOnly // This field is read-only as it displays calculated value
+        value={coveredTotalSize}
+        readOnly
+      />
+
+      <br />
+      <br />
+
+      <BoldLabel>Land Area</BoldLabel>
+      <Label htmlFor="landlength">Depth</Label>
+      <Input
+        id="landlength"
+        name="landlength"
+        type="text"
+        value={formData.landlength}
+        onChange={handleChange("landlength")}
+      />
+
+      <Label htmlFor="landwidth">Width</Label>
+      <Input
+        id="landwidth"
+        name="landwidth"
+        type="text"
+        value={formData.landwidth}
+        onChange={handleChange("landwidth")}
+      />
+
+      <Label htmlFor="unit">Unit</Label>
+      <Select
+        id="unit"
+        name="unit"
+        value={unit}
+        onChange={(e) => setUnit(e.target.value)}
+      >
+        <option value="feet">Feet</option>
+        <option value="meters">Meters</option>
+        <option value="yards">Yards</option>
+      </Select>
+
+      <Label htmlFor="landTotalSize">Total Size (Land Area - {unit})</Label>
+      <Input
+        id="landTotalSize"
+        name="landTotalSize"
+        type="text"
+        value={landTotalSize}
+        readOnly
+      />
+
+      <Label htmlFor="images">
+        Upload a photos of property Front (JPG/PNG)
+      </Label>
+      <Input
+        id="images"
+        name="images"
+        type="file"
+        multiple
+        onChange={handleFileChange}
       />
 
       <Label htmlFor="images">
@@ -10100,7 +11559,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         ))}
       </Select>
 
-      <Label htmlFor="neighborhood">Neighborhood</Label>
+      <Label htmlFor="neighborhood">Dstricts/Towns</Label>
       <Select
         id="neighborhood"
         name="neighborhood"
@@ -10108,7 +11567,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         onChange={handleChange("neighborhood")}
         required
       >
-        <option value="">Select Neighborhood</option>
+        <option value="">Select Dstricts/Towns</option>
         {neighborhoods.map((n) => (
           <option key={n.placeId} value={n.name}>
             {n.name}
@@ -10131,6 +11590,13 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         value={formData.phaseBlock}
         onChange={handleChange("phaseBlock")}
       />
+
+      <div>
+        <Button onClick={getCurrentLocation}>Detect Address</Button>
+        {loading && <p>Detecting your location...</p>}
+        {error && <p style={{ color: "red" }}>{error}</p>}
+        {address && <p>Your Address: {address}</p>}
+      </div>
 
       <Label htmlFor="houseNumber">Property Number</Label>
       <Input
@@ -10169,7 +11635,10 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         <option value="low">Low</option>
       </Select>
 
-      <Label htmlFor="length">Length</Label>
+      <br />
+      <br />
+      <BoldLabel>Covered Area</BoldLabel>
+      <Label htmlFor="length">Depth</Label>
       <Input
         id="length"
         name="length"
@@ -10187,7 +11656,6 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         onChange={handleChange("width")}
       />
 
-      {/* New unit dropdown */}
       <Label htmlFor="unit">Unit</Label>
       <Select
         id="unit"
@@ -10200,14 +11668,69 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         <option value="yards">Yards</option>
       </Select>
 
-      {/* Display calculated total size */}
-      <Label htmlFor="totalSize">Total Size ({unit})</Label>
+      <Label htmlFor="coveredTotalSize">
+        Total Size (Covered Area - {unit})
+      </Label>
       <Input
-        id="totalSize"
-        name="totalSize"
+        id="coveredTotalSize"
+        name="coveredTotalSize"
         type="text"
-        value={totalSize}
-        readOnly // This field is read-only as it displays calculated value
+        value={coveredTotalSize}
+        readOnly
+      />
+
+      <br />
+      <br />
+
+      <BoldLabel>Land Area</BoldLabel>
+      <Label htmlFor="landlength">Depth</Label>
+      <Input
+        id="landlength"
+        name="landlength"
+        type="text"
+        value={formData.landlength}
+        onChange={handleChange("landlength")}
+      />
+
+      <Label htmlFor="landwidth">Width</Label>
+      <Input
+        id="landwidth"
+        name="landwidth"
+        type="text"
+        value={formData.landwidth}
+        onChange={handleChange("landwidth")}
+      />
+
+      <Label htmlFor="unit">Unit</Label>
+      <Select
+        id="unit"
+        name="unit"
+        value={unit}
+        onChange={(e) => setUnit(e.target.value)}
+      >
+        <option value="feet">Feet</option>
+        <option value="meters">Meters</option>
+        <option value="yards">Yards</option>
+      </Select>
+
+      <Label htmlFor="landTotalSize">Total Size (Land Area - {unit})</Label>
+      <Input
+        id="landTotalSize"
+        name="landTotalSize"
+        type="text"
+        value={landTotalSize}
+        readOnly
+      />
+
+      <Label htmlFor="images">
+        Upload a photos of property Front (JPG/PNG)
+      </Label>
+      <Input
+        id="images"
+        name="images"
+        type="file"
+        multiple
+        onChange={handleFileChange}
       />
 
       <Label htmlFor="images">
@@ -10274,7 +11797,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         ))}
       </Select>
 
-      <Label htmlFor="neighborhood">Neighborhood</Label>
+      <Label htmlFor="neighborhood">Dstricts/Towns</Label>
       <Select
         id="neighborhood"
         name="neighborhood"
@@ -10282,7 +11805,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         onChange={handleChange("neighborhood")}
         required
       >
-        <option value="">Select Neighborhood</option>
+        <option value="">Select Dstricts/Towns</option>
         {neighborhoods.map((n) => (
           <option key={n.placeId} value={n.name}>
             {n.name}
@@ -10305,6 +11828,13 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         value={formData.phaseBlock}
         onChange={handleChange("phaseBlock")}
       />
+
+      <div>
+        <Button onClick={getCurrentLocation}>Detect Address</Button>
+        {loading && <p>Detecting your location...</p>}
+        {error && <p style={{ color: "red" }}>{error}</p>}
+        {address && <p>Your Address: {address}</p>}
+      </div>
 
       <Label htmlFor="houseNumber">Property Number</Label>
       <Input
@@ -10335,7 +11865,10 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         <option value="low">Low</option>
       </Select>
 
-      <Label htmlFor="length">Length</Label>
+      <br />
+      <br />
+      <BoldLabel>Covered Area</BoldLabel>
+      <Label htmlFor="length">Depth</Label>
       <Input
         id="length"
         name="length"
@@ -10353,7 +11886,6 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         onChange={handleChange("width")}
       />
 
-      {/* New unit dropdown */}
       <Label htmlFor="unit">Unit</Label>
       <Select
         id="unit"
@@ -10366,14 +11898,69 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
         <option value="yards">Yards</option>
       </Select>
 
-      {/* Display calculated total size */}
-      <Label htmlFor="totalSize">Total Size ({unit})</Label>
+      <Label htmlFor="coveredTotalSize">
+        Total Size (Covered Area - {unit})
+      </Label>
       <Input
-        id="totalSize"
-        name="totalSize"
+        id="coveredTotalSize"
+        name="coveredTotalSize"
         type="text"
-        value={totalSize}
-        readOnly // This field is read-only as it displays calculated value
+        value={coveredTotalSize}
+        readOnly
+      />
+
+      <br />
+      <br />
+
+      <BoldLabel>Land Area</BoldLabel>
+      <Label htmlFor="landlength">Depth</Label>
+      <Input
+        id="landlength"
+        name="landlength"
+        type="text"
+        value={formData.landlength}
+        onChange={handleChange("landlength")}
+      />
+
+      <Label htmlFor="landwidth">Width</Label>
+      <Input
+        id="landwidth"
+        name="landwidth"
+        type="text"
+        value={formData.landwidth}
+        onChange={handleChange("landwidth")}
+      />
+
+      <Label htmlFor="unit">Unit</Label>
+      <Select
+        id="unit"
+        name="unit"
+        value={unit}
+        onChange={(e) => setUnit(e.target.value)}
+      >
+        <option value="feet">Feet</option>
+        <option value="meters">Meters</option>
+        <option value="yards">Yards</option>
+      </Select>
+
+      <Label htmlFor="landTotalSize">Total Size (Land Area - {unit})</Label>
+      <Input
+        id="landTotalSize"
+        name="landTotalSize"
+        type="text"
+        value={landTotalSize}
+        readOnly
+      />
+
+      <Label htmlFor="images">
+        Upload a photos of property Front (JPG/PNG)
+      </Label>
+      <Input
+        id="images"
+        name="images"
+        type="file"
+        multiple
+        onChange={handleFileChange}
       />
 
       <Label htmlFor="images">

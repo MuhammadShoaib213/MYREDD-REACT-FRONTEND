@@ -79,7 +79,7 @@ const AgentList = () => {
     const agencyId = decoded.userId;  // Assuming 'userId' is being used as 'agencyId'
 
     try {
-      const response = await axios.get(`http://195.179.231.102:6003/api/auth/agents/${agencyId}`, {
+      const response = await axios.get(`http://localhost:5000/api/auth/agents/${agencyId}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setAgents(response.data);
@@ -94,7 +94,7 @@ const AgentList = () => {
     const agencyId = decoded.userId;
 
     try {
-      await axios.delete(`http://195.179.231.102:6003/api/auth/agents/${agencyId}/${agentId}`, {
+      await axios.delete(`http://localhost:5000/api/auth/agents/${agencyId}/${agentId}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       fetchAgents();  // Refresh the list after deleting
@@ -113,7 +113,7 @@ const AgentList = () => {
     if (!updatedName) return;  // Do nothing if no name is entered
 
     try {
-      await axios.put(`http://195.179.231.102:6003/api/auth/agents/${agencyId}/${agentId}`, { firstName: updatedName }, {
+      await axios.put(`http://localhost:5000/api/auth/agents/${agencyId}/${agentId}`, { firstName: updatedName }, {
         headers: { Authorization: `Bearer ${token}` }
       });
       fetchAgents();  // Refresh the list after updating

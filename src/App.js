@@ -58,6 +58,9 @@ import LeadTracker from './components/LeadTracker';
 import ProtectedRoute from './components/ProtectedRoute';
 import PropertyAd from './components/PropertyAd';
 import PropertyMatches from './components/PropertyMatches';
+import PropertyBank from './components/PropertyBank';
+import PropertyBankDetails from './components/PropertyBankDetails';
+import PropertyList from './components/PropertyList';
 
 const stripePromise = loadStripe('pk_test_51NPVZGJSiT0U6CqFk8KzITi5LilCEfscsbsUCIUxpDiEdMx2DOMzatnUPHdCiFhQXoorpP4yA6UaNaLKSt7sF06400gjhlHI8y');
 
@@ -101,6 +104,9 @@ function App() {
           <Route path="/addCustomer" element={<AddCustomerForm />} />
           <Route path="/CustomerView" element={<CustomerView />} />
           <Route path="/PropertyView" element={<PropertyView />} />
+          <Route path="/PropertyBank" element={<PropertyBank />} />
+          <Route path="/properties/:inquiryType/:propertyType" element={<PropertyBankDetails />} />
+          <Route path="/property-list/:inquiryType/:propertyType/:propertySubType" element={<PropertyList />} />
           <Route path="/InquiryForm" element={<InquiryForm />} />
           <Route path="/ChatComponent" element={<ChatComponent />} />
           <Route path="/AttendanceModule" element={<AttendanceModule />} />

@@ -85,7 +85,7 @@
 //   useEffect(() => {
 //     const fetchCustomerDetail = async () => {
 //       try {
-//         const response = await fetch(`http://195.179.231.102:6003/api/customers/detail/${id}`);
+//         const response = await fetch(`http://localhost:5000/api/customers/detail/${id}`);
 //         if (!response.ok) {
 //           throw new Error('Failed to fetch customer details');
 //         }
@@ -104,7 +104,7 @@
 //   return (
 //     <PageContainer>
 //       <MainContent>
-//         <DetailImage src={customer.profilePicture ? `http://195.179.231.102:6003/${customer.profilePicture}` : 'https://via.placeholder.com/200'} alt={customer.fullName} />
+//         <DetailImage src={customer.profilePicture ? `http://localhost:5000/${customer.profilePicture}` : 'https://via.placeholder.com/200'} alt={customer.fullName} />
 //         <DetailText><Label>Name:</Label> {customer.fullName}</DetailText>
 //         <DetailText><Label>Mobile:</Label> {customer.officialMobile}</DetailText>
 //         <DetailText><Label>WhatsApp:</Label> {customer.whatsappMobile}</DetailText>
@@ -328,11 +328,12 @@ const CustomerDetail = () => {
   useEffect(() => {
     const fetchCustomerDetail = async () => {
       try {
-        const response = await fetch(`http://195.179.231.102:6003/api/customers/detail/${id}`);
+        const response = await fetch(`http://localhost:5000/api/customers/detail/${id}`);
         if (!response.ok) {
           throw new Error('Failed to fetch customer details');
         }
         const data = await response.json();
+        console.log(data);
         setCustomer(data);
       } catch (error) {
         console.error('Error fetching customer details:', error.message);
@@ -348,12 +349,12 @@ const CustomerDetail = () => {
     <PageContainer>
       <BackButton onClick={() => navigate(-1)}>← Back</BackButton>
       <MainContent>
-        <DetailImage src={customer.profilePicture ? `http://195.179.231.102:6003/${customer.profilePicture}` : 'https://via.placeholder.com/200'} alt={customer.fullName} />
+        <DetailImage src={customer.profilePicture ? `http://localhost:5000/${customer.profilePicture}` : 'https://via.placeholder.com/200'} alt={customer.fullName} />
         <DetailText><Label>Name:</Label> {customer.fullName}</DetailText>
         <DetailText><Label>Mobile:</Label> {customer.officialMobile}</DetailText>
         <DetailText><Label>WhatsApp:</Label> {customer.whatsappMobile}</DetailText>
         <DetailText><Label>Member Since:</Label> {new Date(customer.createdAt).toLocaleDateString()}</DetailText>
-        <DetailText><Label>Address:</Label> {customer.currentAddress}</DetailText>
+        <DetailText><Label>Address:</Label> {customer.currentAddress}, {customer.currentCity}, {customer.country}</DetailText>
       </MainContent>
       <SidePanel>
         <DetailEntry><Label>Citizen ID:</Label> {customer.cnicNumber}</DetailEntry>

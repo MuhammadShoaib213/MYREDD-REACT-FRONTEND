@@ -450,7 +450,7 @@
 //   useEffect(() => {
 //     const fetchFriendRequests = async () => {
 //       try {
-//         const response = await axios.get('http://195.179.231.102:6003/api/friend/requests', {
+//         const response = await axios.get('http://localhost:5000/api/friend/requests', {
 //           headers: { Authorization: `Bearer ${token}` }
 //         });
 //         setFriendRequests(response.data);
@@ -466,7 +466,7 @@
   
 //   const handleAcceptFriendRequest = async (requestId) => {
 //     try {
-//       await axios.put('http://195.179.231.102:6003/api/friend/update', { 
+//       await axios.put('http://localhost:5000/api/friend/update', { 
 //         friendsId: requestId,
 //         action: 'accept'
 //       }, {
@@ -483,7 +483,7 @@
   
 //   const handleDeclineFriendRequest = async (requestId) => {
 //     try {
-//       await axios.put('http://195.179.231.102:6003/api/friend/update', { 
+//       await axios.put('http://localhost:5000/api/friend/update', { 
 //         friendsId: requestId,
 //         action: 'decline'
 //       }, {
@@ -797,7 +797,7 @@ const BackButton = styled.button`
 const TopBar = ({ activeTab, setActiveTab, friendRequestCount }) => (
   <StyledTopBar>
     <Tab onClick={() => setActiveTab('main')} style={activeTab === 'main' ? { borderBottom: '3px solid #0073B1' } : null}>
-      Friends
+      Associates
     </Tab>
     <Tab onClick={() => setActiveTab('catchUp')} style={activeTab === 'catchUp' ? { borderBottom: '3px solid #0073B1' } : null}>
       Catch up
@@ -861,7 +861,7 @@ const MainTabContent = ({ onSearchSubmit, searchResults, onAddFriend }) => {
           name={`${user.firstName} ${user.lastName}`}
           role={user.email}
           onConnect={() => onAddFriend(user._id)}
-          buttonText="Add Friend"
+          buttonText="Send Connection Request"
         />
       ))}
     </StyledMainContent>
@@ -872,7 +872,7 @@ const CatchUpContent = ({ friendRequests, handleAcceptFriendRequest, handleDecli
   if (friendRequests.length === 0) {
     return (
       <StyledCatchUpContent>
-        <NoRequestsMessage>No friend requests available.</NoRequestsMessage>
+        <NoRequestsMessage>No Connection Request available.</NoRequestsMessage>
       </StyledCatchUpContent>
     );
   }
@@ -904,7 +904,7 @@ const BusinessAssociatesPage = () => {
   // useEffect(() => {
   //   const fetchFriendRequests = async () => {
   //     try {
-  //       const response = await axios.get('http://195.179.231.102:6003/api/friend/requests', {
+  //       const response = await axios.get('http://localhost:5000/api/friend/requests', {
   //         headers: { Authorization: `Bearer ${token}` }
   //       });
   //       setFriendRequests(response.data);
@@ -920,7 +920,7 @@ const BusinessAssociatesPage = () => {
   useEffect(() => {
     const fetchFriendRequests = async () => {
         try {
-            const response = await axios.get('http://195.179.231.102:6003/api/friend/requests', {
+            const response = await axios.get('http://localhost:5000/api/friend/requests', {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setFriendRequests(response.data);
@@ -939,7 +939,7 @@ const BusinessAssociatesPage = () => {
 
   const handleAcceptFriendRequest = async (requestId) => {
     try {
-      await axios.put('http://195.179.231.102:6003/api/friend/update', { 
+      await axios.put('http://localhost:5000/api/friend/update', { 
         friendsId: requestId,
         action: 'accept'
       }, {
@@ -955,7 +955,7 @@ const BusinessAssociatesPage = () => {
 
   const handleDeclineFriendRequest = async (requestId) => {
     try {
-      await axios.put('http://195.179.231.102:6003/api/friend/update', { 
+      await axios.put('http://localhost:5000/api/friend/update', { 
         friendsId: requestId,
         action: 'decline'
       }, {
