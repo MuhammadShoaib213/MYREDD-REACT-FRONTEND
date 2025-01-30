@@ -128,7 +128,7 @@
 //         const decoded = jwtDecode(token);
 //         const userId = decoded.userId;
 
-//         const response = await axios.get('http://localhost:5000/api/properties/all', { params: { userId: userId } });
+//         const response = await axios.get('http://195.179.231.102:6003/api/properties/all', { params: { userId: userId } });
 //         setProperties(response.data);
 //         setLoading(false);
 //       } catch (error) {
@@ -364,7 +364,7 @@ const PropertyBankDetails = () => {
         const decoded = jwtDecode(token);
         const userId = decoded.userId;
 
-        const response = await axios.get('http://localhost:5000/api/properties/all', {
+        const response = await axios.get('http://195.179.231.102:6003/api/properties/all', {
           params: { userId: userId },
         });
         setProperties(response.data);

@@ -61,7 +61,9 @@ import PropertyMatches from './components/PropertyMatches';
 import PropertyBank from './components/PropertyBank';
 import PropertyBankDetails from './components/PropertyBankDetails';
 import PropertyList from './components/PropertyList';
-
+import MainForm from './components/InquiryForm/InquiryForm';
+import LocationAutocomplete from './components/InquiryForm/common/area/LocationAutocomplete';
+import StepOne from './components/InquiryForm/steps/StepOne';
 const stripePromise = loadStripe('pk_test_51NPVZGJSiT0U6CqFk8KzITi5LilCEfscsbsUCIUxpDiEdMx2DOMzatnUPHdCiFhQXoorpP4yA6UaNaLKSt7sF06400gjhlHI8y');
 
 
@@ -99,15 +101,18 @@ function App() {
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/login" element={<LoginPage />} />
+          <Route path="/StepOne" element={<StepOne />} />
           <Route path="/signup" element={<SignupPage />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/addCustomer" element={<AddCustomerForm />} />
+          <Route path="/LocationAutocomplete" element={<LocationAutocomplete />} />
           <Route path="/CustomerView" element={<CustomerView />} />
           <Route path="/PropertyView" element={<PropertyView />} />
+          <Route path="/InquiryForm" element={<MainForm />} />
           <Route path="/PropertyBank" element={<PropertyBank />} />
           <Route path="/properties/:inquiryType/:propertyType" element={<PropertyBankDetails />} />
           <Route path="/property-list/:inquiryType/:propertyType/:propertySubType" element={<PropertyList />} />
-          <Route path="/InquiryForm" element={<InquiryForm />} />
+          <Route path="/InquiryFormOld" element={<InquiryForm />} />
           <Route path="/ChatComponent" element={<ChatComponent />} />
           <Route path="/AttendanceModule" element={<AttendanceModule />} />
           <Route path="/AgencyAgentSignup" element={<AgencyAgentSignup />} />
