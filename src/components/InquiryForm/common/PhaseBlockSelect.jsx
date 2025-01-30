@@ -19,6 +19,11 @@ const Input = styled.input`
   font-size: 16px; // Ensures text size matches that of the select
 `;
 
+const RequiredAsterisk = styled.span`
+  color: red;
+  margin-left: 4px;
+`;
+
 function PhaseBlockSelect({ onChange, isRequired = false  }) {
   const [typedPhaseBlock, setTypedPhaseBlock] = useState('');
 
@@ -35,7 +40,7 @@ function PhaseBlockSelect({ onChange, isRequired = false  }) {
 
   return (
     <div>
-      <Label htmlFor="phaseBlockInput">Phase/Block</Label>
+      <Label htmlFor="phaseBlockInput">Phase/Block  {isRequired && <RequiredAsterisk>*</RequiredAsterisk>}</Label>
       <Input
         id="phaseBlockInput"
         name="phaseBlock"

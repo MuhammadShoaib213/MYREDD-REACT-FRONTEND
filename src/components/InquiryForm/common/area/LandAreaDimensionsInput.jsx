@@ -30,6 +30,12 @@ const StyledSelect = styled.select`
   font-size: 16px;  // Matching font size with inputs
 `;
 
+const RequiredAsterisk = styled.span`
+  color: red;
+  margin-left: 4px;
+`;
+
+
 const LandAreaDimensionsInput = ({ onChange, dimensions, isRequired = false  }) => {
   const [unit, setUnit] = useState('feet');
 
@@ -44,7 +50,7 @@ const LandAreaDimensionsInput = ({ onChange, dimensions, isRequired = false  }) 
 
   return (
     <Container>
-      <Label>Land Area Dimensions</Label>
+      <Label>Land Area Dimensions  {isRequired && <RequiredAsterisk>*</RequiredAsterisk>}</Label>
       <StyledInput
         type="number"
         name="landWidth"

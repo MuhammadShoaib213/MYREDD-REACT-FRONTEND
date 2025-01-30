@@ -31,6 +31,12 @@ const Label = styled.label`
   color: #333;
 `;
 
+const RequiredAsterisk = styled.span`
+  color: red;
+  margin-left: 4px;
+`;
+
+
 const SizeInput = ({ value, sizeUnit, onValueChange, onUnitChange, isRequired = false  }) => {
   const handleInputChange = (event) => {
     const { value } = event.target;
@@ -42,7 +48,7 @@ const SizeInput = ({ value, sizeUnit, onValueChange, onUnitChange, isRequired = 
 
   return (
     <div>
-      <Label htmlFor="size">Size</Label>
+      <Label htmlFor="size">Size {isRequired && <RequiredAsterisk>*</RequiredAsterisk>}</Label>
       <StyledWrapper>
         <Input
           type="number"

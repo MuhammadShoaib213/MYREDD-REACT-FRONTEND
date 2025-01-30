@@ -16,6 +16,11 @@ const StyledSelectWrapper = styled.div`
   padding: 10px 0; // Suitable top and bottom padding
 `;
 
+const RequiredAsterisk = styled.span`
+  color: red;
+  margin-left: 4px;
+`;
+
 function DistrictSelect({ selectedCityName, area, onAreaChange, isRequired = false }) {
   const [areas, setAreas] = useState([]);
   const [selectedOption, setSelectedOption] = useState(null);
@@ -92,7 +97,7 @@ function DistrictSelect({ selectedCityName, area, onAreaChange, isRequired = fal
 
   return (
     <>
-      <Label htmlFor="area-select">District / Area</Label>
+      <Label htmlFor="area-select">District / Area  {isRequired && <RequiredAsterisk>*</RequiredAsterisk>}</Label>
       <StyledSelectWrapper>
         <CreatableSelect
           id="area-select"

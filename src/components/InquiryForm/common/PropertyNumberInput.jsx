@@ -26,10 +26,15 @@ const Container = styled.div`
   margin-top: 15px;
   `;
 
+  const RequiredAsterisk = styled.span`
+  color: red;
+  margin-left: 4px;
+`;
+
 const PropertyNumberInput = ({ label, name, value, onChange, isRequired = false  }) => {
   return (
     <Container>
-      <Label htmlFor={name}>{label}</Label>
+      <Label htmlFor={name}>{label} {isRequired && <RequiredAsterisk>*</RequiredAsterisk>}</Label>
       <StyledWrapper>
         <Input
           type="text"

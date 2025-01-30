@@ -115,8 +115,21 @@ const SecondaryButton = styled.button`
   }
 `;
 
+const Label = styled.label`
+  display: block;
+  margin-bottom: 8px;
+  font-size: 16px;
+  color: #333;
+`;
+
+
+const RequiredAsterisk = styled.span`
+  color: red;
+  margin-left: 4px;
+`;
+
 /* --- COMPONENT --- */
-const FloorFeatureSelector = ({ floors = [], onFloorChange }) => {
+const FloorFeatureSelector = ({ floors = [], onFloorChange, isRequired = false }) => {
   const [localFloors, setLocalFloors] = useState(floors);
 
   const predefinedFeatures = [
@@ -186,6 +199,8 @@ const FloorFeatureSelector = ({ floors = [], onFloorChange }) => {
   };
 
   return (
+    <>
+     <Label htmlFor="floor"> Click to Enter Floor Feaures {isRequired && <RequiredAsterisk>*</RequiredAsterisk>}</Label>
     <Container>
       {localFloors.map((floor, index) => (
         <FloorCard key={index}>
@@ -237,10 +252,11 @@ const FloorFeatureSelector = ({ floors = [], onFloorChange }) => {
         </FloorCard>
       ))}
 
-      <PrimaryButton type="button" onClick={addFloor}>
+      <PrimaryButton type="button" onClick={addFloor} required={isRequired} >
         + Add Floor
       </PrimaryButton>
     </Container>
+    </>
   );
 };
 

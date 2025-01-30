@@ -25,7 +25,12 @@ const Select = styled.select`
   font-size: 16px;
 `;
 
-const PrioritySelect = ({ priority = '', onPriorityChange }) => {
+const RequiredAsterisk = styled.span`
+  color: red;
+  margin-left: 4px;
+`;
+
+const PrioritySelect = ({ priority = '', onPriorityChange, isRequired = false }) => {
   const handleChange = (e) => {
     const { value } = e.target;
 
@@ -37,8 +42,8 @@ const PrioritySelect = ({ priority = '', onPriorityChange }) => {
 
   return (
     <Container>
-      <Label htmlFor="priority">Select Priority</Label>
-      <Select id="priority" value={priority} onChange={handleChange}>
+      <Label htmlFor="priority">Select Priority  {isRequired && <RequiredAsterisk>*</RequiredAsterisk>}</Label>
+      <Select id="priority" value={priority} onChange={handleChange}  required={isRequired}>
         <option value="">-- Select Priority --</option>
         <option value="thisMonth">This Month</option>
         <option value="thisQuarter">This Quarter</option>

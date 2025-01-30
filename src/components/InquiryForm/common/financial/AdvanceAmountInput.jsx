@@ -25,7 +25,13 @@ const Input = styled.input`
   background-color: white;
 `;
 
-const AdvanceAmountInput = ({ advanceAmount = '', onAdvanceChange }) => {
+const RequiredAsterisk = styled.span`
+  color: red;
+  margin-left: 4px;
+`;
+
+
+const AdvanceAmountInput = ({ advanceAmount = '', onAdvanceChange, isRequired = false }) => {
   const [amount, setAmount] = useState(advanceAmount);
 
   const handleChange = (e) => {
@@ -44,13 +50,14 @@ const AdvanceAmountInput = ({ advanceAmount = '', onAdvanceChange }) => {
 
   return (
     <Container>
-      <Label htmlFor="advanceAmount">Advance Amount</Label>
+      <Label htmlFor="advanceAmount">Advance Amount  {isRequired && <RequiredAsterisk>*</RequiredAsterisk>}</Label>
       <Input
         type="text"
         id="advanceAmount"
         value={amount}
         onChange={handleChange}
         placeholder="Enter advance amount"
+        required={isRequired}
       />
     </Container>
   );

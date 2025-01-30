@@ -25,7 +25,13 @@ const Input = styled.input`
   box-sizing: border-box;
 `;
 
-const DemandPerMonth = ({ demand, onDemandChange }) => {
+const RequiredAsterisk = styled.span`
+  color: red;
+  margin-left: 4px;
+`;
+
+
+const DemandPerMonth = ({ demand, onDemandChange, isRequired = false }) => {
   const handleChange = (e) => {
     const { value } = e.target;
 
@@ -37,13 +43,14 @@ const DemandPerMonth = ({ demand, onDemandChange }) => {
 
   return (
     <Container>
-      <Label htmlFor="demand">Demand (Price) Per Month</Label>
+      <Label htmlFor="demand">Demand (Price) Per Month {isRequired && <RequiredAsterisk>*</RequiredAsterisk>}</Label>
       <Input
         type="text" // Keep the input type as text for flexible validation
         id="demand"
         value={demand || ''} // Ensure the value is never undefined
         onChange={handleChange}
         placeholder="Enter demand (price)"
+        required={isRequired}
       />
     </Container>
   );

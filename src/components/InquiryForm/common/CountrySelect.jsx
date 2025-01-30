@@ -7,6 +7,19 @@ const StyledSelectWrapper = styled.div`
   padding: 10px 0; // Suitable top and bottom padding
 `;
 
+const RequiredAsterisk = styled.span`
+  color: red;
+  margin-left: 4px;
+`;
+
+const Label = styled.label`
+  display: block;
+  margin-bottom: 8px;
+  font-size: 16px;
+  color: #333;
+`;
+
+
 const CountrySelect = ({ selectedCountry, onCountryChange, isRequired = false }) => {
   const [countries, setCountries] = useState([]);
   const [selectedOption, setSelectedOption] = useState(null);
@@ -36,6 +49,8 @@ const CountrySelect = ({ selectedCountry, onCountryChange, isRequired = false })
   };
 
   return (
+    <>
+     <Label htmlFor="cityInput"> Country {isRequired && <RequiredAsterisk>*</RequiredAsterisk>}</Label>
     <StyledSelectWrapper>
       <Select
         value={selectedOption}
@@ -45,6 +60,7 @@ const CountrySelect = ({ selectedCountry, onCountryChange, isRequired = false })
         required={isRequired}
       />
     </StyledSelectWrapper>
+    </>
   );
 };
 

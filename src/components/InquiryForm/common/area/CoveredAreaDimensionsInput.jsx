@@ -26,6 +26,12 @@ const Select = styled.select`
   border: 1px solid #ccc;
 `;
 
+const RequiredAsterisk = styled.span`
+  color: red;
+  margin-left: 4px;
+`;
+
+
 const CoveredAreaDimensionsInput = ({ onChange, dimensions, isRequired = false  }) => {
   const [unit, setUnit] = useState('feet');
 
@@ -41,7 +47,7 @@ const CoveredAreaDimensionsInput = ({ onChange, dimensions, isRequired = false  
 
   return (
     <Container>
-      <Label>Covered Area Dimensions</Label>
+      <Label>Covered Area Dimensions  {isRequired && <RequiredAsterisk>*</RequiredAsterisk>}</Label>
       <Input
         type="number"
         name="coveredWidth"

@@ -29,7 +29,13 @@ const Input = styled.input`
   }
 `;
 
-const BudgetRangeInput = ({ min = '', max = '', onBudgetChange }) => {
+const RequiredAsterisk = styled.span`
+  color: red;
+  margin-left: 4px;
+`;
+
+
+const BudgetRangeInput = ({ min = '', max = '', onBudgetChange, isRequired = false }) => {
   const [budget, setBudget] = useState({ min, max });
 
   const handleChange = (e) => {
@@ -47,7 +53,7 @@ const BudgetRangeInput = ({ min = '', max = '', onBudgetChange }) => {
 
   return (
     <Container>
-      <Label>Budget Range</Label>
+      <Label>Budget Range {isRequired && <RequiredAsterisk>*</RequiredAsterisk>}</Label>
       <div>
         <Input
           type="number"
@@ -56,6 +62,7 @@ const BudgetRangeInput = ({ min = '', max = '', onBudgetChange }) => {
           onChange={handleChange}
           placeholder="Min Budget"
           min="0"
+          required={isRequired}
         />
         <Input
           type="number"
@@ -64,6 +71,7 @@ const BudgetRangeInput = ({ min = '', max = '', onBudgetChange }) => {
           onChange={handleChange}
           placeholder="Max Budget"
           min="0"
+          required={isRequired}
         />
       </div>
     </Container>

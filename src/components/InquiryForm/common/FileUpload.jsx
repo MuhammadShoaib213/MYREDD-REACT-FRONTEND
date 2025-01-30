@@ -33,6 +33,11 @@ const InfoText = styled.p`
   color: #666; // Grey text for subtle info display
 `;
 
+const RequiredAsterisk = styled.span`
+  color: red;
+  margin-left: 4px;
+`;
+
 const FileUploadComponent = ({ label, name, multiple, maxFiles, onFilesChange, isRequired = false  }) => {
   const handleFileChange = (event) => {
     if (event.target.files.length > maxFiles) {
@@ -45,7 +50,7 @@ const FileUploadComponent = ({ label, name, multiple, maxFiles, onFilesChange, i
 
   return (
     <FileInputContainer>
-      <Label htmlFor={name}>{label}</Label>
+      <Label htmlFor={name}>{label}  {isRequired && <RequiredAsterisk>*</RequiredAsterisk>}</Label>
       <StyledInput
         type="file"
         id={name}
@@ -55,7 +60,7 @@ const FileUploadComponent = ({ label, name, multiple, maxFiles, onFilesChange, i
         accept="image/*" // Accept only images (adjust according to need)
         required={isRequired}
       />
-      <InfoText>Upload up to {maxFiles} images.</InfoText> 
+      <InfoText>Upload up to {maxFiles} images. </InfoText> 
     </FileInputContainer>
   );
 };

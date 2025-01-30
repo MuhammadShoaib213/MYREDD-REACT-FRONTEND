@@ -23,6 +23,10 @@ const Input = styled.input`
   font-size: 16px; // Ensures text size matches that of the select
 `;
 
+const RequiredAsterisk = styled.span`
+  color: red;
+  margin-left: 4px;
+`;
 
 function AreaSocietySelect({ onAreaSocietyChange, isRequired = false  }) {
   const [typedArea, setTypedArea] = useState('');
@@ -38,7 +42,7 @@ function AreaSocietySelect({ onAreaSocietyChange, isRequired = false  }) {
 
   return (
     <div>
-      <Label htmlFor="areaSocietyInput">Area/Society</Label>
+      <Label htmlFor="areaSocietyInput">Area/Society {isRequired && <RequiredAsterisk>*</RequiredAsterisk>}</Label>
       <StyledInputWrapper>
         <Input
           id="areaSocietyInput"

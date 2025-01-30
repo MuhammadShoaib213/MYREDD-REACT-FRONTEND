@@ -42,7 +42,13 @@ const RadioLabel = styled.label`
   }
 `;
 
-const CommissionInput = ({ commission = { type: 'percentage', value: '' }, onCommissionChange }) => {
+const RequiredAsterisk = styled.span`
+  color: red;
+  margin-left: 4px;
+`;
+
+
+const CommissionInput = ({ commission = { type: 'percentage', value: '' }, onCommissionChange, isRequired = false }) => {
   const [commissionData, setCommissionData] = useState(commission);
 
   const handleTypeChange = (e) => {
@@ -71,7 +77,7 @@ const CommissionInput = ({ commission = { type: 'percentage', value: '' }, onCom
 
   return (
     <Container>
-      <Label>Commission</Label>
+      <Label>Commission {isRequired && <RequiredAsterisk>*</RequiredAsterisk>}</Label>
       <RadioGroup>
         <RadioLabel>
           <input
@@ -99,6 +105,7 @@ const CommissionInput = ({ commission = { type: 'percentage', value: '' }, onCom
         placeholder={`Enter commission ${commissionData.type === 'percentage' ? '(%)' : '(Value)'}`}
         value={commissionData.value}
         onChange={handleValueChange}
+        required={isRequired}
       />
     </Container>
   );

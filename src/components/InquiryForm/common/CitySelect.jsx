@@ -13,6 +13,11 @@ const StyledSelectWrapper = styled.div`
   padding: 10px 0;
 `;
 
+const RequiredAsterisk = styled.span`
+  color: red;
+  margin-left: 4px;
+`;
+
 function CitySelect({ selectedCountry, city, onCityChange, isRequired = false }) {
   const [cities, setCities] = useState([]);
   const [selectedOption, setSelectedOption] = useState(null);
@@ -85,7 +90,7 @@ function CitySelect({ selectedCountry, city, onCityChange, isRequired = false })
 
   return (
     <>
-      <Label htmlFor="cityInput">City</Label>
+      <Label htmlFor="cityInput"> City{isRequired && <RequiredAsterisk>*</RequiredAsterisk>}</Label>
       <StyledSelectWrapper>
         <CreatableSelect
           id="cityInput"

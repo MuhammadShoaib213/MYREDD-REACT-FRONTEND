@@ -22,10 +22,15 @@ const Label = styled.label`
   color: #333;
 `;
 
+const RequiredAsterisk = styled.span`
+  color: red;
+  margin-left: 4px;
+`;
+
 const StreetInput = ({ label, name, value, onChange, placeholder, isRequired = false  }) => {
   return (
     <Container>
-      <Label htmlFor={name}>{label}</Label>
+      <Label htmlFor={name}>{label} {isRequired && <RequiredAsterisk>*</RequiredAsterisk>}</Label>
       <Input
         type="text"
         id={name}
