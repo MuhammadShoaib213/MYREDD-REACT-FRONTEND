@@ -5,6 +5,7 @@ import {jwtDecode} from 'jwt-decode';
 import bgImage from '../images/bg.jpg';
 import { useNavigate } from 'react-router-dom';
 
+// Full screen background and container styling
 const FullScreenContainer = styled.div`
   background-image: url(${bgImage});
   background-size: cover;
@@ -27,6 +28,7 @@ const PageWrapper = styled.div`
   align-items: center;
 `;
 
+// Main white container for content
 const Container = styled.div`
   padding: 20px;
   max-width: 800px;
@@ -36,10 +38,12 @@ const Container = styled.div`
   box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1);
 `;
 
+// Section container
 const Section = styled.div`
   margin-bottom: 40px;
 `;
 
+// Section header styling
 const SectionHeader = styled.h2`
   font-size: 1.8em;
   color: #333;
@@ -48,46 +52,52 @@ const SectionHeader = styled.h2`
   padding-bottom: 10px;
 `;
 
-const LeadList = styled.ul`
-  list-style-type: none;
-  padding: 0;
-`;
-
-const LeadItem = styled.li`
-  background-color: #fafafa;
-  padding: 15px;
-  margin-bottom: 10px;
-  border-radius: 8px;
-  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
-  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-
-  &:hover {
-    transform: translateY(-3px);
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
-  }
-`;
-
-const LeadDetails = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-
-  span {
-    font-weight: bold;
-    color: #2c3e50;
-  }
-`;
-
-const LeadDate = styled.small`
-  color: #999;
-`;
-
+// Error message styling
 const ErrorMessage = styled.p`
   color: #e74c3c;
   background-color: #f9d6d5;
   padding: 10px;
   border-radius: 8px;
   text-align: center;
+`;
+
+// Table container for responsive behavior and shadow
+const TableContainer = styled.div`
+  overflow-x: auto;
+  margin-top: 20px;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1);
+`;
+
+// Styled table elements
+const StyledTable = styled.table`
+  width: 100%;
+  border-collapse: collapse;
+`;
+
+const TableHeader = styled.th`
+  background-color: #3498db;
+  color: #fff;
+  padding: 12px;
+  border: 1px solid #ddd;
+  text-align: left;
+`;
+
+const TableRow = styled.tr`
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+  &:nth-child(even) {
+    background-color: #f2f2f2;
+  }
+  &:hover {
+    background-color: #ddd;
+  }
+`;
+
+const TableData = styled.td`
+  padding: 12px;
+  border: 1px solid #ddd;
 `;
 
 const LeadTracker = () => {
@@ -105,22 +115,21 @@ const LeadTracker = () => {
 
         try {
           // Fetch shared leads
-          const sharedResponse = await axios.get(`/shared-leads/shared?userId=${userId}`, {
+          const sharedResponse = await axios.get(`http://195.179.231.102:6003/api/shared-leads/shared?userId=${userId}`, {
             headers: { Authorization: `Bearer ${token}` }
           });
           setSharedLeads(sharedResponse.data);
-          console.log(sharedResponse.data);
+          console.log('Shared Leads:', sharedResponse.data);
 
           // Fetch received leads
-          const receivedResponse = await axios.get(`/shared-leads/received?userId=${userId}`, {
+          const receivedResponse = await axios.get(`http://195.179.231.102:6003/api/shared-leads/received?userId=${userId}`, {
             headers: { Authorization: `Bearer ${token}` }
           });
           setReceivedLeads(receivedResponse.data);
-          console.log(receivedResponse.data);
-
+          console.log('Received Leads:', receivedResponse.data);
         } catch (error) {
-        //   console.error('Error fetching leads:', error);
-        //   setError('Failed to fetch leads. Please try again later.');
+          console.error('Error fetching leads:', error);
+          setError('No received leads available. Please try again later.');
         }
       }
     };
@@ -129,55 +138,75 @@ const LeadTracker = () => {
   }, []);
 
   const handleRowClick = (id) => {
-    console.log('Navigating to LeadDetailPage with ID:', id); // Log to verify the ID before navigation
+    console.log('Navigating to LeadDetailPage with ID:', id);
     navigate(`/LeadDetailPage/${id}`);
-};
+  };
 
   return (
     <FullScreenContainer>
-    <PageWrapper>
-      <Container>
-        {error && <ErrorMessage>{error}</ErrorMessage>}
+      <PageWrapper>
+        <Container>
+          {error && <ErrorMessage>{error}</ErrorMessage>}
 
-        <Section>
-          <SectionHeader>Leads You Shared</SectionHeader>
-          {sharedLeads.length > 0 ? (
-            <LeadList>
-              {sharedLeads.map(lead => (
-                <LeadItem key={lead._id} onClick={() => handleRowClick(lead.leadId)}>
-                  <LeadDetails>
-                    <span>{lead.title}</span>
-                    <LeadDate>{new Date(lead.sharedDate).toLocaleDateString()}</LeadDate>
-                  </LeadDetails>
-                  <p>Shared with: {lead.sharedWithNames.join(', ')}</p>
-                </LeadItem>
-              ))}
-            </LeadList>
-          ) : (
-            <p>You haven't shared any leads yet.</p>
-          )}
-        </Section>
+          {/* Shared Leads Section */}
+          <Section>
+            <SectionHeader>Leads You Shared</SectionHeader>
+            {sharedLeads.length > 0 ? (
+              <TableContainer>
+                <StyledTable>
+                  <thead>
+                    <tr>
+                      <TableHeader>Title</TableHeader>
+                      <TableHeader>Shared Date</TableHeader>
+                      <TableHeader>Shared With</TableHeader>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {sharedLeads.map(lead => (
+                      <TableRow key={lead._id} onClick={() => handleRowClick(lead.leadId)}>
+                        <TableData>{lead.title}</TableData>
+                        <TableData>{new Date(lead.sharedDate).toLocaleDateString()}</TableData>
+                        <TableData>{lead.sharedWithNames.join(', ')}</TableData>
+                      </TableRow>
+                    ))}
+                  </tbody>
+                </StyledTable>
+              </TableContainer>
+            ) : (
+              <p>You haven't shared any leads yet.</p>
+            )}
+          </Section>
 
-        <Section>
-          <SectionHeader>Leads You Received</SectionHeader>
-          {receivedLeads.length > 0 ? (
-            <LeadList>
-              {receivedLeads.map(lead => (
-                <LeadItem key={lead._id}>
-                  <LeadDetails>
-                    <span>{lead.title}</span>
-                    <LeadDate>{new Date(lead.receivedDate).toLocaleDateString()}</LeadDate>
-                  </LeadDetails>
-                  <p>Received from: {lead.sharedByName}</p>
-                </LeadItem>
-              ))}
-            </LeadList>
-          ) : (
-            <p>You haven't received any leads yet.</p>
-          )}
-        </Section>
-      </Container>
-    </PageWrapper>
+          {/* Received Leads Section */}
+          <Section>
+            <SectionHeader>Leads You Received</SectionHeader>
+            {receivedLeads.length > 0 ? (
+              <TableContainer>
+                <StyledTable>
+                  <thead>
+                    <tr>
+                      <TableHeader>Title</TableHeader>
+                      <TableHeader>Received Date</TableHeader>
+                      <TableHeader>Received From</TableHeader>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {receivedLeads.map(lead => (
+                      <TableRow key={lead._id} onClick={() => handleRowClick(lead.leadId)}>
+                        <TableData>{lead.title}</TableData>
+                        <TableData>{new Date(lead.receivedDate).toLocaleDateString()}</TableData>
+                        <TableData>{lead.sharedByName}</TableData>
+                      </TableRow>
+                    ))}
+                  </tbody>
+                </StyledTable>
+              </TableContainer>
+            ) : (
+              <p>You haven't received any leads yet.</p>
+            )}
+          </Section>
+        </Container>
+      </PageWrapper>
     </FullScreenContainer>
   );
 };

@@ -85,11 +85,11 @@ const FacilitySelector = ({ facilities = [], onFacilitiesChange }) => {
   const predefinedFacilities = [
     'Water',
     'Gas',
-    'Electricity',
     '24/7 Electricity',
     'Telephone',
     'Mobile Coverage',
     '24/7 Security',
+    'Separate Entrance',
   ];
 
   // Build initial local facilities from props or use defaults

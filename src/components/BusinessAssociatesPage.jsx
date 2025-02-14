@@ -766,30 +766,27 @@ const NoRequestsMessage = styled.div`
 const BackButton = styled.button`
   position: absolute;
   left: 20px;
-  top: 135px;
-  background-color: #333;
-  border: 2px solid #ff0000;
-  color: white;
-  font-size: 16px;
+  top: 120px;
+  background-color: #ffffff;
+  border: 2px solid #e74c3c;
+  color: #e74c3c;
+  font-size: 14px;
   cursor: pointer;
-  padding: 15px 20px;
-  border-radius: 10px;
+  padding: 10px 15px;
+  border-radius: 5px;
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-  width: 200px;
-  height: 60px;
-  transition: background-color 0.3s, transform 0.3s;
-  z-index: 10; // Bring the button above other elements
-  
+  transition: background-color 0.3s, color 0.3s, transform 0.3s;
+
   &:hover {
-    background-color: #ff0000;
+    background-color: #e74c3c;
+    color: #ffffff;
     transform: translateY(-2px);
   }
 
   @media (max-width: 768px) {
-    font-size: 14px;
-    width: 100%;
-    height: auto;
     left: 10px;
+    width: 100%;
+    text-align: center;
   }
 `;
 
@@ -800,7 +797,7 @@ const TopBar = ({ activeTab, setActiveTab, friendRequestCount }) => (
       Associates
     </Tab>
     <Tab onClick={() => setActiveTab('catchUp')} style={activeTab === 'catchUp' ? { borderBottom: '3px solid #0073B1' } : null}>
-      Catch up
+      Connection Requests
       {friendRequestCount > 0 && <Badge>{friendRequestCount}</Badge>}
     </Tab>
   </StyledTopBar>

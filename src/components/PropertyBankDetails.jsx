@@ -1,230 +1,3 @@
-// import React, { useState, useEffect } from 'react';
-// import axios from 'axios';
-// import { jwtDecode } from 'jwt-decode';
-// import { useParams, useNavigate } from 'react-router-dom';
-// import styled from 'styled-components';
-// import bgImage from '../images/bg.jpg';
-
-// // Styled components
-// const PageContainer = styled.div`
-//   background-image: url(${bgImage});
-//   background-size: cover;
-//   background-position: center;
-//   background-blend-mode: overlay;
-//   background-color: rgba(0, 0, 0, 0.7);
-//   min-height: 100vh;
-//   display: flex;
-//   flex-direction: column;
-//   align-items: center;
-//   padding: 20px;
-//   padding-top: 135px;
-//   overflow: auto;
-// `;
-
-// const HeaderContainer = styled.div`
-//   display: flex;
-//   justify-content: center;
-//   align-items: center;
-//   position: relative;
-//   width: 100%;
-//   padding: 20px;
-//   @media (max-width: 768px) {
-//     flex-direction: column;
-//     padding: 10px;
-//   }
-// `;
-
-// const Header = styled.h1`
-//   color: white;
-//   margin: 0;
-// `;
-
-// const BackButton = styled.button`
-//   position: absolute;
-//   left: 20px;
-//   background-color: #333;
-//   border: 2px solid #ff0000;
-//   color: white;
-//   font-size: 16px;
-//   cursor: pointer;
-//   padding: 15px 20px;
-//   border-radius: 10px;
-//   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-//   width: 200px;
-//   height: 60px;
-//   transition: background-color 0.3s, transform 0.3s;
-//   &:hover {
-//     background-color: #ff0000;
-//     transform: translateY(-2px);
-//   }
-//   @media (max-width: 768px) {
-//     font-size: 14px;
-//     width: 100%;
-//     height: auto;
-//     left: 10px;
-//   }
-// `;
-
-// const Table = styled.div`
-//   display: grid;
-//   grid-template-columns: repeat(4, 1fr);
-//   gap: 10px;
-//   width: 80%;
-//   max-width: 960px;
-//   background-color: #f8f9fa;
-//   padding: 10px;
-//   border-radius: 5px;
-//   margin: 20px auto;
-// `;
-
-// const TableRow = styled.div`
-//   display: contents;
-// `;
-
-// const TableHeader = styled.div`
-//   font-weight: bold;
-//   text-align: center;
-//   padding: 10px;
-//   border-radius: 5px;
-//   background-color: ${props => getHeaderColor(props.type)};
-//   color: white;
-// `;
-
-// const TableCell = styled.div`
-//   text-align: center;
-//   padding: 5px 10px;
-//   background-color: #ddd;
-//   border-radius: 5px;
-// `;
-
-// // Color mapping function
-// const getHeaderColor = (type) => {
-//   switch (type) {
-//     case 'forSale':
-//       return '#007bff'; // Blue
-//     case 'forPurchase':
-//       return '#6f42c1'; // Green
-//     case 'forRent':
-//       return '#28a745'; // Yellow
-//     case 'onRent':
-//       return '#dc3545'; // Red
-//     default:
-//       return '#6c757d'; // Default grey
-//   }
-// };
-
-// // Component implementation
-// const PropertyBankDetails = () => {
-//   const { inquiryType, propertyType } = useParams();
-//   const [properties, setProperties] = useState([]);
-//   const [propertyData, setPropertyData] = useState({});
-//   const [loading, setLoading] = useState(true);
-//   const navigate = useNavigate();
-
-//   useEffect(() => {
-//     const fetchProperties = async () => {
-//       try {
-//         const token = localStorage.getItem('token');
-//         const decoded = jwtDecode(token);
-//         const userId = decoded.userId;
-
-//         const response = await axios.get('http://195.179.231.102:6003/api/properties/all', { params: { userId: userId } });
-//         setProperties(response.data);
-//         setLoading(false);
-//       } catch (error) {
-//         console.error('Error fetching properties:', error);
-//         setLoading(false);
-//       }
-//     };
-
-//     fetchProperties();
-//   }, [inquiryType, propertyType]);
-
-//   useEffect(() => {
-//     const processPropertyData = () => {
-//       const newPropertyData = {};
-//       const now = new Date();
-//       const currentMonth = now.getMonth();
-//       const currentYear = now.getFullYear();
-
-//       properties.filter(property => {
-//         return (inquiryType ? property.inquiryType[inquiryType] : true) &&
-//                (propertyType ? property.propertyType[propertyType] : true);
-//       }).forEach(property => {
-//         const createdAt = new Date(property.createdAt);
-//         const propertyMonth = createdAt.getMonth();
-//         const propertyYear = createdAt.getFullYear();
-//         const propertySubTypes = Object.entries(property.propertySubType || {}).filter(([, value]) => value).map(([key]) => key);
-
-//         propertySubTypes.forEach(subType => {
-//           if (!newPropertyData[subType]) {
-//             newPropertyData[subType] = [0, 0, 0]; // [This Month, This Year, Last Year]
-//           }
-//           if (propertyYear === currentYear) {
-//             if (propertyMonth === currentMonth) {
-//               newPropertyData[subType][0]++; // This Month
-//             }
-//             newPropertyData[subType][1]++; // This Year
-//           }
-//           if (propertyYear === currentYear - 1) {
-//             newPropertyData[subType][2]++; // Last Year
-//           }
-//         });
-//       });
-
-//       setPropertyData(newPropertyData);
-//     };
-
-//     if (properties.length > 0) {
-//       processPropertyData();
-//     }
-//   }, [properties, inquiryType, propertyType]);
-
-//   if (loading) {
-//     return (
-//       <PageContainer>
-//         <HeaderContainer>
-//           <Header>Loading...</Header>
-//         </HeaderContainer>
-//       </PageContainer>
-//     );
-//   }
-
-//   return (
-//     <PageContainer>
-//       <HeaderContainer>
-//         <BackButton onClick={() => navigate(-1)}>← Back</BackButton>
-//         <Header>{inquiryType} - {propertyType}</Header>
-//       </HeaderContainer>
-//       {Object.keys(propertyData).length === 0 ? (
-//         <Header>No properties found.</Header>
-//       ) : (
-//         <Table>
-//           <TableRow>
-//             <TableHeader type='forSale'>Property Subtype</TableHeader>
-//             <TableHeader type='forPurchase'>This Month</TableHeader>
-//             <TableHeader type='forRent'>This Year</TableHeader>
-//             <TableHeader type='onRent'>Last Year</TableHeader>
-//           </TableRow>
-//           {Object.entries(propertyData).map(([subType, counts]) => (
-//             <TableRow key={subType}>
-//               <TableCell>{subType}</TableCell>
-//               <TableCell>{counts[0]}</TableCell>
-//               <TableCell>{counts[1]}</TableCell>
-//               <TableCell>{counts[2]}</TableCell>
-//             </TableRow>
-//           ))}
-//         </Table>
-//       )}
-//     </PageContainer>
-//   );
-// };
-
-// export default PropertyBankDetails;
-
-
-// src/components/PropertyBankDetails.jsx
-
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import {jwtDecode} from 'jwt-decode';
@@ -232,20 +5,21 @@ import { useParams, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import bgImage from '../images/bg.jpg';
 
-// Styled components
+// --- Styled Components --- //
+
 const PageContainer = styled.div`
   background-image: url(${bgImage});
   background-size: cover;
   background-position: center;
   background-blend-mode: overlay;
-  background-color: rgba(0, 0, 0, 0.7); // Creates a dark overlay effect
-  min-height: 100vh; // Allows content to expand vertically
+  background-color: rgba(0, 0, 0, 0.7); /* Dark overlay effect */
+  min-height: 100vh; /* Allows content to expand vertically */
   display: flex;
   flex-direction: column;
   align-items: center;
   padding: 20px;
   padding-top: 135px;
-  overflow: auto; // Ensures content can scroll if it exceeds the viewport height
+  overflow: auto; /* Enables scrolling if needed */
 `;
 
 const HeaderContainer = styled.div`
@@ -270,28 +44,27 @@ const Header = styled.h1`
 const BackButton = styled.button`
   position: absolute;
   left: 20px;
-  background-color: #333; // Subtle dark background
-  border: 2px solid #ff0000; // Border to match red theme
-  color: white;
-  font-size: 16px;
+  top: 5px;
+  background-color: #ffffff;
+  border: 2px solid #e74c3c;
+  color: #e74c3c;
+  font-size: 14px;
   cursor: pointer;
-  padding: 15px 20px; // Adjusted padding for better appearance
-  border-radius: 10px; // More rounded corners
-  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); // Soft shadow for depth
-  width: 200px; // Match the width of other buttons
-  height: 60px; // Match the height of other buttons
-  transition: background-color 0.3s, transform 0.3s; // Smooth transition effects
+  padding: 10px 15px;
+  border-radius: 5px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s, color 0.3s, transform 0.3s;
 
   &:hover {
-    background-color: #ff0000; // Match hover effect with the red theme
-    transform: translateY(-2px); // Slight lift on hover
+    background-color: #e74c3c;
+    color: #ffffff;
+    transform: translateY(-2px);
   }
 
   @media (max-width: 768px) {
-    font-size: 14px;
-    width: 100%;
-    height: auto;
     left: 10px;
+    width: 100%;
+    text-align: center;
   }
 `;
 
@@ -299,20 +72,20 @@ const Table = styled.div`
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 10px;
-  width: 80%; // You can adjust this percentage to match the table width in PropertyBank
-  max-width: 960px; // Optional: max width to prevent it from getting too wide on larger screens
+  width: 80%;
+  max-width: 960px;
   background-color: #f8f9fa;
   padding: 10px;
   border-radius: 5px;
-  margin: 20px auto; // Centers the table and adds vertical margin
+  margin: 20px auto;
 `;
 
 const TableRow = styled.div`
   display: contents;
-  cursor: pointer; // Indicates that the row is clickable
+  cursor: pointer;
   
   &:hover {
-    background-color: #e2e6ea; // Light hover effect for better UX
+    background-color: #e2e6ea;
   }
 `;
 
@@ -332,23 +105,43 @@ const TableCell = styled.div`
   border-radius: 5px;
 `;
 
-// Color mapping function
+// --- Color Mapping Function --- //
+
 const getHeaderColor = (type) => {
-  switch (type) {
-    case 'forSale':
+  const lower = type.toLowerCase();
+  switch (lower) {
+    case 'forsale':
+    case 'for sale':
       return '#007bff'; // Blue
-    case 'forPurchase':
+    case 'forpurchase':
+    case 'for purchase':
       return '#28a745'; // Green
-    case 'forRent':
+    case 'forrent':
+    case 'for rent':
       return '#ffc107'; // Yellow
-    case 'onRent':
+    case 'onrent':
+    case 'on rent':
       return '#dc3545'; // Red
     default:
-      return '#6c757d'; // Default grey
+      return '#6c757d'; // Grey
   }
 };
 
-// Component implementation
+// --- Helper Function to Extract Created Date --- //
+
+const getCreatedDate = (property) => {
+  if (property.createdAt && property.createdAt.$date) {
+    if (property.createdAt.$date.$numberLong) {
+      return new Date(parseInt(property.createdAt.$date.$numberLong, 10));
+    } else {
+      return new Date(property.createdAt.$date);
+    }
+  }
+  return new Date(property.createdAt);
+};
+
+// --- Main Component --- //
+
 const PropertyBankDetails = () => {
   const { inquiryType, propertyType } = useParams();
   const navigate = useNavigate();
@@ -356,7 +149,7 @@ const PropertyBankDetails = () => {
   const [propertyData, setPropertyData] = useState({});
   const [loading, setLoading] = useState(true);
 
-  // Fetch all properties
+  // Fetch all properties from the backend
   useEffect(() => {
     const fetchProperties = async () => {
       try {
@@ -365,7 +158,7 @@ const PropertyBankDetails = () => {
         const userId = decoded.userId;
 
         const response = await axios.get('http://195.179.231.102:6003/api/properties/all', {
-          params: { userId: userId },
+          params: { userId },
         });
         setProperties(response.data);
         setLoading(false);
@@ -388,31 +181,42 @@ const PropertyBankDetails = () => {
 
       properties
         .filter(property => {
-          const matchesInquiry = inquiryType ? property.inquiryType[inquiryType] : true;
-          const matchesType = propertyType ? property.propertyType[propertyType] : true;
+          // Use string equality for filtering (case-insensitive)
+          const matchesInquiry = inquiryType
+            ? property.inquiryType.toLowerCase() === inquiryType.toLowerCase()
+            : true;
+          const matchesType = propertyType
+            ? property.propertyType.toLowerCase() === propertyType.toLowerCase()
+            : true;
           return matchesInquiry && matchesType;
         })
         .forEach(property => {
-          const createdAt = new Date(property.createdAt);
+          const createdAt = getCreatedDate(property);
           const propertyMonth = createdAt.getMonth();
           const propertyYear = createdAt.getFullYear();
-          const propertySubTypes = Object.entries(property.propertySubType || {})
-            .filter(([, value]) => value)
-            .map(([key]) => key);
+
+          // Handle propertySubType as either an object or a string.
+          let propertySubTypes = [];
+          if (typeof property.propertySubType === 'object' && property.propertySubType !== null) {
+            propertySubTypes = Object.entries(property.propertySubType)
+              .filter(([, value]) => value)
+              .map(([key]) => key);
+          } else if (typeof property.propertySubType === 'string') {
+            propertySubTypes = [property.propertySubType];
+          }
 
           propertySubTypes.forEach(subType => {
             if (!newPropertyData[subType]) {
               newPropertyData[subType] = [0, 0, 0]; // [This Month, This Year, Last Year]
             }
-
             if (propertyYear === currentYear && propertyMonth === currentMonth) {
-              newPropertyData[subType][0]++; // This Month
+              newPropertyData[subType][0]++;
             }
             if (propertyYear === currentYear) {
-              newPropertyData[subType][1]++; // This Year
+              newPropertyData[subType][1]++;
             }
             if (propertyYear === currentYear - 1) {
-              newPropertyData[subType][2]++; // Last Year
+              newPropertyData[subType][2]++;
             }
           });
         });
@@ -427,7 +231,7 @@ const PropertyBankDetails = () => {
     }
   }, [properties, inquiryType, propertyType]);
 
-  // Handle row click to navigate to PropertyList
+  // Handle row click to navigate to a detailed property list view
   const handleRowClick = (subType) => {
     navigate(`/property-list/${inquiryType}/${propertyType}/${subType}`);
   };
@@ -445,18 +249,20 @@ const PropertyBankDetails = () => {
   return (
     <PageContainer>
       <HeaderContainer>
-        <BackButton onClick={() => navigate(-1)}>← Back</BackButton>
-        <Header>{formatInquiryType(inquiryType)} - {formatPropertyType(propertyType)}</Header>
+      <BackButton onClick={() => navigate(-1)}>← Back</BackButton>
+        <Header>
+          {formatInquiryType(inquiryType)} - {formatPropertyType(propertyType)}
+        </Header>
       </HeaderContainer>
       {Object.keys(propertyData).length === 0 ? (
         <Header>No properties found.</Header>
       ) : (
         <Table>
           <TableRow>
-            <TableHeader type='forSale'>Property Subtype</TableHeader>
-            <TableHeader type='forPurchase'>This Month</TableHeader>
-            <TableHeader type='forRent'>This Year</TableHeader>
-            <TableHeader type='onRent'>Last Year</TableHeader>
+            <TableHeader type="forSale">Property Subtype</TableHeader>
+            <TableHeader type="forPurchase">This Month</TableHeader>
+            <TableHeader type="forRent">This Year</TableHeader>
+            <TableHeader type="onRent">Last Year</TableHeader>
           </TableRow>
           {Object.entries(propertyData).map(([subType, counts]) => (
             <TableRow key={subType} onClick={() => handleRowClick(subType)}>
@@ -472,7 +278,8 @@ const PropertyBankDetails = () => {
   );
 };
 
-// Helper functions to format strings
+// --- Helper Functions to Format Strings --- //
+
 const formatInquiryType = (type) => {
   return type.replace(/([A-Z])/g, ' $1').replace(/^./, (str) => str.toUpperCase());
 };

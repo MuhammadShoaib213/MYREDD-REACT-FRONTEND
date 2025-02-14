@@ -146,69 +146,6 @@ const ContactItem = styled.div`
 `;
 
 
-// // Styled Components
-// const Container = styled.div`
-//   display: flex;
-//   height: 100vh;
-//   background: #f0f0f0;
-// `;
-
-// const Sidebar = styled.div`
-//   width: 25%;
-//   background: #ddd;
-//   padding: 20px;
-//   overflow-y: auto;
-// `;
-
-// const ChatWindow = styled.div`
-//   flex-grow: 1;
-//   padding: 20px;
-//   overflow-y: auto;
-// `;
-
-// const Message = styled.div`
-//   padding: 10px;
-//   margin: 5px;
-//   background-color: ${({ sentByMe }) => (sentByMe ? '#aaf' : '#faa')};
-//   align-self: ${({ sentByMe }) => (sentByMe ? 'flex-end' : 'flex-start')};
-//   border-radius: 10px;
-// `;
-
-// const InputArea = styled.form`
-//   display: flex;
-//   padding: 10px;
-//   background: #ccc;
-// `;
-
-// const Input = styled.input`
-//   flex-grow: 1;
-//   padding: 10px;
-//   margin-right: 10px;
-//   border: 2px solid #bbb;
-// `;
-
-// const Button = styled.button`
-//   padding: 10px 20px;
-//   border-radius: 5px;
-//   cursor: pointer;
-//   &:hover {
-//     background-color: #007BFF;
-//   }
-// `;
-
-// const FriendRequestList = styled.div`
-//   padding: 10px;
-//   margin-top: 20px;
-// `;
-
-// const FriendRequestItem = styled.div`
-//   background-color: #fff;
-//   border: 1px solid #ccc;
-//   padding: 10px;
-//   margin-bottom: 5px;
-//   cursor: pointer;
-// `;
-
 // Setup axios instance with token
 axios.defaults.baseURL = 'http://195.179.231.102:6003/api';
 axios.interceptors.request.use(config => {
@@ -307,43 +244,6 @@ const [showRequestsModal, setShowRequestsModal] = useState(false);
     }
   };
   
-//   const handleSelectContact = contact => {
-//     setCurrentChat({
-//         ...contact,
-//         messages: contact.messages || [], // Ensure messages is always an array
-//         recipientId: contact._id // Store the recipient's ID when a contact is selected
-//     });
-// };
-
-// const handleSelectContact = contact => {
-//     // Assuming the current user's ID is globally available or stored in state/context
-//     const otherUser = contact.users.find(u => u.userId !== currentUserId);
-//     if (!otherUser) {
-//       console.error('No other user found in contact:', contact);
-//       return;
-//     }
-  
-//     setCurrentChat({
-//       ...currentChat,
-//       contactId: otherUser.userId,
-//       name: otherUser.name,
-//       messages: []  // This initializes the message array when a new contact is selected
-//     });
-  
-//     // Here you would call fetchMessages or any similar function if you have chatId already
-//     fetchMessages(contact.id);  // Assuming `contact.id` is your `chatId`
-//   };
-  
-//   // Assuming you have a function to fetch messages
-//   const fetchMessages = async (chatId) => {
-//     try {
-//       const { data } = await axios.get(`/api/messages/${chatId}`);
-//       setCurrentChat(prev => ({ ...prev, messages: data }));
-//     } catch (error) {
-//       console.error('Failed to fetch messages:', error);
-//     }
-//   };
-
 const handleSelectContact = async (contact) => {
     const senderId = contact.users[0].id; // Assuming the first user is always the sender
     const receiverId = contact.users[1].id; // Assuming the second user is always the receiver
@@ -419,65 +319,6 @@ const handleSendMessage = async (event) => {
 
 
   return (
-//     <Container>
-//       {/* <Sidebar> */}
-
-
-//       <Sidebar className={isSidebarVisible ? 'active' : ''} isVisible={isSidebarVisible}>
-
-//       <h3>Contacts</h3>
-//       {contacts.map(contact => contact.users && contact.users[0] && (
-//   <div key={contact.id} onClick={() => handleSelectContact(contact)}>
-//     {contact.users[0].name}
-//   </div>
-// ))}
-
-//         <InputArea onSubmit={handleAddContact}>
-//           <Input
-//             type="text"
-//             placeholder="Add new contact..."
-//             value={newContact}
-//             onChange={e => setNewContact(e.target.value)}
-//           />
-//           <Button type="submit">Add</Button>
-//         </InputArea>
-//         <FriendRequestList>
-//           <h4>Friend Requests</h4>
-//           {friendRequests.map(request => (
-//             <FriendRequestItem key={request._id}>
-//               {request.requester.email} wants to be your friend.
-//               <Button onClick={() => acceptFriendRequest(request._id)}>Accept</Button>
-//             </FriendRequestItem>
-//           ))}
-//         </FriendRequestList>
-//       </Sidebar>
-      // <ChatWindow>
-      //   {currentChat ? (
-      //     <>
-      //       <h2>Chat with {currentChat.name}</h2>
-      //       <div>
-      //         {currentChat.messages.map((msg, index) => (
-      //           <Message key={index} sentByMe={msg.sentByMe}>
-      //             {msg.content}
-      //           </Message>
-      //         ))}
-      //       </div>
-      //       <InputArea onSubmit={handleSendMessage}>
-      //         <Input
-      //           type="text"
-      //           value={message}
-      //           onChange={e => setMessage(e.target.value)}
-      //           placeholder="Type a message..."
-      //         />
-      //         <Button type="submit">Send</Button>
-      //       </InputArea>
-      //     </>
-      //   ) : (
-      //     <div>Please select a contact to start chatting.</div>
-      //   )}
-      // </ChatWindow>
-//     </Container>
-
   <Container>
      <ToastContainer position="top-right" autoClose={5000} hideProgressBar={false} newestOnTop={false} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover />
     <Sidebar className={isSidebarVisible ? 'active' : ''} isVisible={isSidebarVisible}>

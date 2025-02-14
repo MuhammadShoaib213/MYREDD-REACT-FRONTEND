@@ -110,17 +110,6 @@ const ChaletForPurchase = ({
         onConditionChange={handlePropertyConditionChange}
       />
 
-
-      {/* Features & Facilities */}
-      {/* <FloorFeatureSelector
-        floors={formData.floors}
-        onFloorChange={handleFloorChange}
-      />
-      <FacilitySelector
-        facilities={formData.facilities}
-        onFacilitiesChange={handleFacilitiesChange}
-      /> */}
-
       {/* Financial Details */}
        <BudgetRangeInput
            min={formData.budget.min}
@@ -145,13 +134,6 @@ const ChaletForPurchase = ({
            onCommissionChange={handleCommissionChange}
            isRequired={true}
       />
-
-      <AddedValueInput
-           addedValue={formData.addedValue}
-           onAddedValueChange={handleAddedValueChange}
-      />
-
-
 
       {/* No button here—submit is in StepFour */}
     </FormContainer>

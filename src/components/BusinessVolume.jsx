@@ -1,150 +1,27 @@
-// import React from 'react';
-// import styled from 'styled-components';
-// import bgImage from '../images/bg.jpg';  // Ensure the correct path
-
-// const PageContainer = styled.div`
-//   background-image: url(${bgImage});
-//   background-size: cover;
-//   background-position: center;
-//   background-blend-mode: overlay;
-//   background-color: rgba(0, 0, 0, 0.7);
-//   height: 100vh;
-//   display: flex;
-//   flex-direction: column;
-//   align-items: center;
-//   color: white;
-//   padding: 20px;
-//   overflow: auto;
-// `;
-
-// const Header = styled.div`
-//   display: flex;
-//   justify-content: space-between;
-//   align-items: center;
-//   width: 100%;
-//   font-size: 2rem;
-//   padding: 20px 0;
-// `;
-
-// const CategoryContainer = styled.div`
-//   display: flex;
-//   justify-content: space-around;
-//   flex-wrap: wrap;
-//   width: 100%;
-// `;
-
-// const CategoryBlock = styled.div`
-//   background: rgba(255, 255, 255, 0.1);
-//   border-radius: 10px;
-//   margin: 20px;
-//   padding: 20px;
-//   width: 300px;
-//   display: flex;
-//   flex-direction: column;
-//   align-items: center;
-// `;
-
-// const Button = styled.button`
-//   background-color: ${props => props.color};
-//   color: white;
-//   padding: 10px 20px;
-//   border: none;
-//   border-radius: 5px;
-//   cursor: pointer;
-//   width: 100%;
-//   margin-bottom: 20px;
-// `;
-
-// const DataGroup = styled.div`
-//   width: 100%;
-// `;
-
-// const DataRow = styled.div`
-//   display: flex;
-//   justify-content: space-between;
-//   align-items: center;
-//   margin: 5px 0;
-// `;
-
-// const DataLabel = styled.div`
-//   flex: 1;
-//   text-align: left;
-//   font-weight: bold;
-// `;
-
-// const DataValue = styled.div`
-//   padding: 5px 10px;
-//   border-radius: 5px;
-//   width: 100px;
-//   text-align: center;
-// `;
-
-// const HeaderRow = styled(DataRow)`
-//   font-weight: bold;
-//   text-decoration: underline;
-// `;
-
-// const businessData = [
-//   { type: 'For Sale', color: '#4169e1', data: { residential: "Rs 250,000.00", commercial: "Rs 0.00", land: "Rs 0.00" } },
-//   { type: 'For Purchase', color: '#6a5acd', data: { residential: "Rs 250,000.00", commercial: "Rs 0.00", land: "Rs 0.00" } },
-//   { type: 'On Rent (Tenant)', color: '#4682b4', data: { residential: "Rs 10,000.00", commercial: "Rs 0.00", land: "Rs 0.00" } },
-//   { type: 'For Rent (Owner)', color: '#32cd32', data: { residential: "Rs 10,000.00", commercial: "Rs 0.00", land: "Rs 0.00" } }
-// ];
-
-// function BusinessVolume() {
-//   return (
-//     <PageContainer>
-//       <Header>
-//         <h1>Dashboard</h1>
-//         <h1>Business Volume</h1>
-//       </Header>
-//       <CategoryContainer>
-//         {businessData.map((item, index) => (
-//           <CategoryBlock key={index}>
-//             <Button color={item.color}>{item.type}</Button>
-//             <HeaderRow>
-//               <DataLabel>Category</DataLabel>
-//               <DataLabel>Amount Earned</DataLabel>
-//             </HeaderRow>
-//             {Object.keys(item.data).map((category) => (
-//               <DataRow key={category}>
-//                 <DataLabel>{category.charAt(0).toUpperCase() + category.slice(1)}</DataLabel>
-//                 <DataValue>{item.data[category]}</DataValue>
-//               </DataRow>
-//             ))}
-//           </CategoryBlock>
-//         ))}
-//       </CategoryContainer>
-//     </PageContainer>
-//   );
-// }
-
-// export default BusinessVolume;
-
-
-
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import {jwtDecode} from 'jwt-decode';
+import { jwtDecode } from 'jwt-decode';
 import styled from 'styled-components';
 import bgImage from '../images/bg.jpg';
-import {  useNavigate } from 'react-router-dom';
 
+// ----------------------
+// Styled Components
+// ----------------------
 
 const PageContainer = styled.div`
   background-image: url(${bgImage});
   background-size: cover;
   background-position: center;
   background-blend-mode: overlay;
-  background-color: rgba(0, 0, 0, 0.7); // This creates a dark overlay effect
+  background-color: rgba(0, 0, 0, 0.7); /* Dark overlay effect */
   height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
-
   padding: 20px;
   padding-top: 135px;
-  overflow: auto;  // Ensures content can scroll if it exceeds the viewport height
+  overflow: auto;
 `;
 
 const Header = styled.h1`
@@ -215,45 +92,94 @@ const LearnMoreButton = styled.button`
 const BackButton = styled.button`
   position: absolute;
   left: 20px;
-  top: 135px;
-  background-color: #333; // Subtle dark background
-  border: 2px solid #ff0000; // Border to match red theme
-  color: white;
-  font-size: 16px;
+  top: 120px;
+  background-color: #ffffff;
+  border: 2px solid #e74c3c;
+  color: #e74c3c;
+  font-size: 14px;
   cursor: pointer;
-  padding: 15px 20px; // Adjusted padding for better appearance
-  border-radius: 10px; // More rounded corners
-  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); // Soft shadow for depth
-  width: 200px; // Match the width of other buttons
-  height: 60px; // Match the height of other buttons
-  transition: background-color 0.3s, transform 0.3s; // Smooth transition effects
-
+  padding: 10px 15px;
+  border-radius: 5px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s, color 0.3s, transform 0.3s;
   &:hover {
-    background-color: #ff0000; // Match hover effect with the red theme
-    transform: translateY(-2px); // Slight lift on hover
+    background-color: #e74c3c;
+    color: #ffffff;
+    transform: translateY(-2px);
   }
-
   @media (max-width: 768px) {
-    font-size: 14px;
-    width: 100%;
-    height: auto;
     left: 10px;
+    width: 100%;
+    text-align: center;
   }
 `;
+
+// ----------------------
+// Helper Functions
+// ----------------------
+
+// Normalize a string: lowercase and remove spaces.
+const normalize = (str) => str.toLowerCase().replace(/\s/g, '');
+
+// Updated aggregation function using the new data structure.
+// We assume item.inquiryType and item.propertyType are strings.
+const aggregateData = (data) => {
+  // Define volumes using normalized keys.
+  const volumes = {
+    forsale: { residential: 0, commercial: 0, land: 0 },
+    forpurchase: { residential: 0, commercial: 0, land: 0 },
+    onrent: { residential: 0, commercial: 0, land: 0 },
+    forrent: { residential: 0, commercial: 0, land: 0 }
+  };
+
+  data.forEach(item => {
+    if (item.status && item.status.toLowerCase() === "sold") {
+      const inquiryKey = item.inquiryType ? normalize(item.inquiryType) : "";
+      const propertyKey = item.propertyType ? item.propertyType.toLowerCase() : "";
+      if (volumes[inquiryKey] && volumes[inquiryKey][propertyKey] !== undefined) {
+        const payment = Number(item.advancePayment) || 0;
+        volumes[inquiryKey][propertyKey] += payment;
+      }
+    }
+  });
+  return volumes;
+};
+
+// Updated getColor to handle normalized keys.
+const getColor = (type) => {
+  const normalized = normalize(type);
+  switch (normalized) {
+    case 'forsale':
+      return '#007bff'; // Blue
+    case 'forpurchase':
+      return '#6f42c1'; // Purple
+    case 'onrent':
+      return '#28a745'; // Green
+    case 'forrent':
+      return '#dc3545'; // Red
+    default:
+      return '#6c757d'; // Grey
+  }
+};
+
+// ----------------------
+// Main Component: BusinessVolume
+// ----------------------
 
 function BusinessVolume() {
   const [businessData, setBusinessData] = useState({});
   const token = localStorage.getItem('token');
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
       if (!token) return;
       try {
         const decoded = jwtDecode(token);
-        const response = await axios.get(`http://195.179.231.102:6003/api/properties/user/${decoded.userId}`, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
+        const response = await axios.get(
+          `http://195.179.231.102:6003/api/properties/user/${decoded.userId}`,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
         setBusinessData(aggregateData(response.data));
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -261,30 +187,6 @@ function BusinessVolume() {
     };
     fetchData();
   }, [token]);
-
-  const aggregateData = (data) => {
-    const volumes = {
-      forSale: { residential: 0, commercial: 0, land: 0 },
-      forPurchase: { residential: 0, commercial: 0, land: 0 },
-      onRent: { residential: 0, commercial: 0, land: 0 },
-      forRent: { residential: 0, commercial: 0, land: 0 }
-    };
-
-    data.forEach(item => {
-      if (item.status === "Sold") {
-        Object.entries(item.inquiryType).forEach(([type, active]) => {
-          if (active) {
-            Object.keys(item.propertyType).forEach((propType) => {
-              if (item.propertyType[propType]) {
-                volumes[type][propType] += item.advancePayment || 0; // Sum advance payments if sold
-              }
-            });
-          }
-        });
-      }
-    });
-    return volumes;
-  };
 
   const handleNavigate = (type) => {
     navigate('/BusinessVolumeDetail', { state: { inquiryType: type } });
@@ -297,31 +199,25 @@ function BusinessVolume() {
       <CategoryContainer>
         {Object.entries(businessData).map(([type, details], index) => (
           <CategoryBlock key={index}>
-            <InquiryHeader color={getColor(type)}>{type.replace('for', 'For ')}</InquiryHeader>
+            <InquiryHeader color={getColor(type)}>
+              {type.replace(/^for/, 'For ')}
+            </InquiryHeader>
             <Table>
               {Object.entries(details).map(([category, amount]) => (
                 <TableRow key={category}>
                   <TableCell>{category}</TableCell>
-                  <TableCell>$ {amount.toLocaleString()}</TableCell>
+                  <TableCell>PKR {amount.toLocaleString()}</TableCell>
                 </TableRow>
               ))}
             </Table>
-            <LearnMoreButton onClick={() => handleNavigate(type)}>Learn More</LearnMoreButton>
+            <LearnMoreButton onClick={() => handleNavigate(type)}>
+              Learn More
+            </LearnMoreButton>
           </CategoryBlock>
         ))}
       </CategoryContainer>
     </PageContainer>
   );
 }
-
-const getColor = (type) => {
-  switch (type) {
-    case 'forSale': return '#007bff'; // Blue
-    case 'forPurchase': return '#6f42c1'; // Purple
-    case 'onRent': return '#28a745'; // Green
-    case 'forRent': return '#dc3545'; // Red
-    default: return '#6c757d'; // Default grey
-  }
-};
 
 export default BusinessVolume;

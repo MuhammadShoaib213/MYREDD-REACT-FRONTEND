@@ -1,23 +1,3 @@
-
-// import React from 'react';
-
-// const ProgressBar = ({ currentStep }) => {
-//     const stepPercentage = ((currentStep - 1) / 3) * 100;
-
-//     return (
-//         <div style={{ width: '100%', backgroundColor: '#D3D3D3' }}>
-//             <div style={{
-//                 height: '20px',
-//                 width: `${stepPercentage}%`,
-//                 backgroundColor: currentStep === 4 ? '#FF0000' : '#007BFF'
-//             }}></div>
-//         </div>
-//     );
-// };
-
-// export default ProgressBar;
-
-
 import React from 'react';
 import styled from 'styled-components';
 

@@ -139,38 +139,6 @@ const RawOnRent = ({
         onChange={handleChange}
       />
 
-    <PropertyConditionSelect
-        condition={formData.propertyCondition}
-        onConditionChange={handlePropertyConditionChange}
-      />
-
-      {/* Media/Files */}
-      <FileUploadComponent
-        label="Upload Front Pictures"
-        name="frontPictures"
-        multiple
-        maxFiles={10}
-        onFilesChange={handleFilesChange}
-      />
-
-      <FileUploadComponent
-        label="Upload Property Pictures"
-        name="propertyPictures"
-        multiple
-        maxFiles={10}
-        onFilesChange={handlePropertyImagesChange}
-      />
-
-      {/* Features & Facilities */}
-      <FloorFeatureSelector
-        floors={formData.floors}
-        onFloorChange={handleFloorChange}
-      />
-      <FacilitySelector
-        facilities={formData.facilities}
-        onFacilitiesChange={handleFacilitiesChange}
-      />
-
       {/* Financial Details */}
       <DemandInput
         demand={formData.demand}
@@ -185,11 +153,6 @@ const RawOnRent = ({
       <CommissionInput
            commission={formData.commission}
            onCommissionChange={handleCommissionChange}
-      />
-
-      <AddedValueInput
-           addedValue={formData.addedValue}
-           onAddedValueChange={handleAddedValueChange}
       />
 
       <PrioritySelect

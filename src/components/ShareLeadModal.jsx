@@ -1,60 +1,88 @@
 import React, { useState, useEffect } from 'react';
 import Modal from 'react-modal';
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 import axios from 'axios';
-import {jwtDecode} from 'jwt-decode'; // Ensure jwtDecode is imported
+import {jwtDecode} from 'jwt-decode';
+
+// Fade-in animation for the modal content
+const fadeIn = keyframes`
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+`;
 
 const ModalContent = styled.div`
-  padding: 20px;
-  background-color: white;
+  animation: ${fadeIn} 0.5s ease-out;
+  padding: 30px;
+  background: #ffffff;
   color: #333;
-  border-radius: 12px;
+  border-radius: 16px;
   max-width: 600px;
   width: 90%;
-  margin: 5% auto; /* Center the modal and provide space around it */
-  box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
-
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+  border: 1px solid #eaeaea;
+  
   @media (max-width: 768px) {
-    padding: 15px;
-    max-width: 90%;
+    padding: 20px;
   }
 `;
 
 const ModalHeader = styled.h2`
-  margin-bottom: 20px;
-  font-size: 1.5em;
+  margin-bottom: 25px;
+  font-size: 1.8em;
   text-align: center;
+  color: #e74c3c;
 `;
 
+/* 
+  Update the FriendsList to display friend items in a row with horizontal scrolling.
+  The scrollbars are hidden using vendor prefixes and standard properties.
+*/
 const FriendsList = styled.ul`
-  list-style-type: none;
+  list-style: none;
   padding: 0;
-  max-height: 300px; /* Limit the height to make it scrollable */
-  overflow-y: auto;
-  margin-bottom: 20px;
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  margin-bottom: 25px;
 
-  @media (max-width: 768px) {
-    max-height: 200px; /* Reduce the height for smaller screens */
+  /* Hide scrollbars for WebKit browsers */
+  &::-webkit-scrollbar {
+    display: none;
   }
+  /* Hide scrollbar for IE, Edge and Firefox */
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 `;
 
 const FriendItem = styled.li`
-  margin-bottom: 10px;
+  min-width: 200px;
   display: flex;
   align-items: center;
-  padding: 10px;
+  padding: 12px;
   border-radius: 8px;
-  background-color: #f9f9f9;
-  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
-  transition: background-color 0.3s;
+  background: #fefefe;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  transition: background 0.3s, transform 0.3s;
 
   &:hover {
-    background-color: #f1f1f1;
+    background: #f5f5f5;
+    transform: scale(1.02);
   }
 `;
 
 const Checkbox = styled.input`
   margin-right: 15px;
+  width: 18px;
+  height: 18px;
+  accent-color: #e74c3c;
 `;
 
 const FriendInfo = styled.div`
@@ -62,12 +90,12 @@ const FriendInfo = styled.div`
   flex-direction: column;
 
   span {
-    font-weight: bold;
-    font-size: 1em;
+    font-weight: 600;
+    font-size: 1.1em;
   }
 
   small {
-    color: #666;
+    color: #888;
     font-size: 0.9em;
   }
 `;
@@ -75,22 +103,23 @@ const FriendInfo = styled.div`
 const ShareButton = styled.button`
   background-color: #ff4500;
   color: white;
-  padding: 10px 20px;
+  padding: 12px 20px;
   border: none;
   border-radius: 8px;
   cursor: pointer;
   font-weight: bold;
-  transition: background-color 0.3s ease;
-  margin-right: 10px;
+  transition: background-color 0.3s ease, transform 0.3s;
   width: 100%;
-  
+  margin-bottom: 10px;
+
   &:hover {
     background-color: #e03e00;
+    transform: scale(1.02);
   }
 
   &:focus {
     outline: none;
-    box-shadow: 0 0 5px #ff4500;
+    box-shadow: 0 0 8px rgba(255, 69, 0, 0.6);
   }
 
   &:active {
@@ -101,21 +130,22 @@ const ShareButton = styled.button`
 const CancelButton = styled.button`
   background-color: #ccc;
   color: #333;
-  padding: 10px 20px;
+  padding: 12px 20px;
   border: none;
   border-radius: 8px;
   cursor: pointer;
   font-weight: bold;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.3s ease, transform 0.3s;
   width: 100%;
-  
+
   &:hover {
     background-color: #bbb;
+    transform: scale(1.02);
   }
 
   &:focus {
     outline: none;
-    box-shadow: 0 0 5px #ccc;
+    box-shadow: 0 0 8px rgba(204, 204, 204, 0.6);
   }
 
   &:active {
@@ -126,7 +156,8 @@ const CancelButton = styled.button`
 const ButtonContainer = styled.div`
   display: flex;
   justify-content: space-between;
-  margin-top: 20px;
+  gap: 15px;
+  margin-top: 25px;
 
   @media (max-width: 768px) {
     flex-direction: column;
@@ -136,6 +167,30 @@ const ButtonContainer = styled.div`
     }
   }
 `;
+
+/*
+  Custom modal styles for react-modal:
+  - The overlay uses a semi-transparent black background with a blur effect.
+  - The content is centered using top, left, and transform properties.
+*/
+const customModalStyles = {
+  overlay: {
+    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+    backdropFilter: 'blur(8px)',
+    WebkitBackdropFilter: 'blur(8px)',
+  },
+  content: {
+    top: '50%',
+    left: '50%',
+    right: 'auto',
+    bottom: 'auto',
+    transform: 'translate(-50%, -50%)',
+    border: 'none',
+    background: 'transparent',
+    padding: '0',
+    overflow: 'visible',
+  },
+};
 
 const ShareLeadModal = ({ isOpen, onRequestClose, leadId }) => {
   const [friends, setFriends] = useState([]);
@@ -150,11 +205,13 @@ const ShareLeadModal = ({ isOpen, onRequestClose, leadId }) => {
 
         try {
           const response = await axios.get(`/friend/list?userId=${userId}`, {
-            headers: { Authorization: `Bearer ${token}` }
+            headers: { Authorization: `Bearer ${token}` },
           });
 
           if (Array.isArray(response.data)) {
-            const fetchedFriends = response.data.filter(friend => friend._id !== userId);
+            const fetchedFriends = response.data.filter(
+              (friend) => friend._id !== userId
+            );
             setFriends(fetchedFriends);
           } else {
             console.error('Unexpected data structure:', response.data);
@@ -171,9 +228,9 @@ const ShareLeadModal = ({ isOpen, onRequestClose, leadId }) => {
   }, [isOpen]);
 
   const handleFriendSelection = (friendId) => {
-    setSelectedFriends(prev => {
+    setSelectedFriends((prev) => {
       if (prev.includes(friendId)) {
-        return prev.filter(id => id !== friendId);
+        return prev.filter((id) => id !== friendId);
       } else {
         return [...prev, friendId];
       }
@@ -183,12 +240,16 @@ const ShareLeadModal = ({ isOpen, onRequestClose, leadId }) => {
   const handleShareWithAll = async () => {
     try {
       const token = localStorage.getItem('token');
-      await axios.post('http://195.179.231.102:6003/api/shared-leads/share-lead', {
-        leadId: leadId,
-        shareWithAll: true
-      }, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      await axios.post(
+        'http://195.179.231.102:6003/api/shared-leads/share-lead',
+        {
+          leadId: leadId,
+          shareWithAll: true,
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
       alert('Lead shared with all users!');
       onRequestClose();
     } catch (error) {
@@ -199,12 +260,16 @@ const ShareLeadModal = ({ isOpen, onRequestClose, leadId }) => {
   const shareLead = async () => {
     try {
       const token = localStorage.getItem('token');
-      await axios.post('http://195.179.231.102:6003/api/shared-leads/share-lead', {
-        leadId: leadId,
-        friendIds: selectedFriends
-      }, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      await axios.post(
+        'http://195.179.231.102:6003/api/shared-leads/share-lead',
+        {
+          leadId: leadId,
+          friendIds: selectedFriends,
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
       alert('Lead shared successfully!');
       onRequestClose();
     } catch (error) {
@@ -213,11 +278,16 @@ const ShareLeadModal = ({ isOpen, onRequestClose, leadId }) => {
   };
 
   return (
-    <Modal isOpen={isOpen} onRequestClose={onRequestClose} contentLabel="Share Lead">
+    <Modal
+      isOpen={isOpen}
+      onRequestClose={onRequestClose}
+      contentLabel="Share Lead"
+      style={customModalStyles}
+    >
       <ModalContent>
         <ModalHeader>Share Lead</ModalHeader>
         <FriendsList>
-          {friends.map(friend => (
+          {friends.map((friend) => (
             <FriendItem key={friend._id}>
               <Checkbox
                 type="checkbox"
@@ -226,14 +296,18 @@ const ShareLeadModal = ({ isOpen, onRequestClose, leadId }) => {
                 onChange={() => handleFriendSelection(friend._id)}
               />
               <FriendInfo>
-                <span>{friend.firstName} {friend.lastName}</span>
+                <span>
+                  {friend.firstName} {friend.lastName}
+                </span>
                 <small>{friend.email}</small>
               </FriendInfo>
             </FriendItem>
           ))}
         </FriendsList>
         <ButtonContainer>
-          <ShareButton onClick={handleShareWithAll}>Share with All Users</ShareButton>
+          <ShareButton onClick={handleShareWithAll}>
+            Share with All Users
+          </ShareButton>
           <ShareButton onClick={shareLead}>Share</ShareButton>
           <CancelButton onClick={onRequestClose}>Cancel</CancelButton>
         </ButtonContainer>

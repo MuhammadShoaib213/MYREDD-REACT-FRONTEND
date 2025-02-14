@@ -1,268 +1,17 @@
-// import React, { useState, useEffect } from 'react';
-// import axios from 'axios';
-// import {jwtDecode} from 'jwt-decode';
-// import styled from 'styled-components';
-// import Calendar from 'react-calendar';
-// import 'react-calendar/dist/Calendar.css';
-// import bgImage from '../images/bg.jpg';
-
-// const PageContainer = styled.div`
-//   background-image: url(${bgImage});
-//   background-size: cover;
-//   background-position: center;
-//   background-blend-mode: overlay;
-//   background-color: rgba(0, 0, 0, 0.7);
-//   height: 100vh;
-//   display: flex;
-//   justify-content: center;
-//   align-items: center;
-//   padding: 20px;
-//   padding-top: 80px;
-//   overflow: auto;
-
-//   @media (max-width: 768px) {
-//     height: auto;
-//   }
-// `;
-
-// const ContentContainer = styled.div`
-//   display: flex;
-//   flex-direction: column;
-//   align-items: center;
-//   width: 100%;
-//   max-width: 800px;
-// `;
-
-// const Header = styled.h1`
-//   color: white;
-//   margin-bottom: 20px;
-// `;
-
-// const FiltersContainer = styled.div`
-//   display: flex;
-//   justify-content: space-between;
-//   margin-bottom: 20px;
-//   width: 100%;
-// `;
-
-// const SearchBar = styled.input`
-//   padding: 10px;
-//   width: 200px;
-//   border: 1px solid #ddd;
-//   border-radius: 5px;
-// `;
-
-// const FilterSelect = styled.select`
-//   padding: 10px;
-//   border: 1px solid #ddd;
-//   border-radius: 5px;
-//   margin-left: 10px;
-// `;
-
-// const CalendarContainer = styled.div`
-//   background-color: #f9f9f9;
-//   padding: 20px;
-//   border-radius: 8px;
-//   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-//   margin-bottom: 20px;
-//   width: 100%;
-// `;
-
-// const AppointmentListContainer = styled.div`
-//   background-color: #f9f9f9;
-//   padding: 20px;
-//   border-radius: 8px;
-//   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-//   width: 100%;
-// `;
-
-// const AppointmentItem = styled.div`
-//   padding: 10px;
-//   border-bottom: 1px solid #ddd;
-//   &:last-child {
-//     border-bottom: none;
-//   }
-// `;
-
-// const AddButton = styled.button`
-//   padding: 10px 20px;
-//   border: none;
-//   border-radius: 5px;
-//   background-color: red;
-//   color: white;
-//   cursor: pointer;
-//   margin-top: 20px;
-//   &:hover {
-//     background-color: darkred;
-//   }
-// `;
-
-// // const SchedulePage = () => {
-// //   const [schedules, setSchedules] = useState([]);
-// //   const [loading, setLoading] = useState(false);
-// //   const [error, setError] = useState(null);
-
-// //   useEffect(() => {
-// //     const fetchSchedules = async () => {
-// //       setLoading(true);
-// //       const token = localStorage.getItem('token');
-// //       if (!token) {
-// //         setError('No token found');
-// //         setLoading(false);
-// //         return;
-// //       }
-
-// //       try {
-// //         const { userId } = jwtDecode(token);
-// //         const response = await axios.get(`http://195.179.231.102:6003/api/schedules/user/all/${userId}`);
-// //         setSchedules(response.data);
-// //         console.log(response.data);
-// //       } catch (err) {
-// //         setError('Failed to fetch schedules');
-// //         console.error(err);
-// //       } finally {
-// //         setLoading(false);
-// //       }
-// //     };
-
-// //     fetchSchedules();
-// //   }, []);
-
-// //   if (loading) return <p>Loading...</p>;
-// //   if (error) return <p>Error: {error}</p>;
-
-// //   return (
-// //     <PageContainer>
-// //       <ContentContainer>
-// //         <Header>Schedule</Header>
-// //         <FiltersContainer>
-// //           <SearchBar placeholder="Search appointments..." />
-// //           <div>
-// //             <FilterSelect>
-// //               <option value="all">All Statuses</option>
-// //               <option value="upcoming">Upcoming</option>
-// //               <option value="completed">Completed</option>
-// //               <option value="canceled">Canceled</option>
-// //             </FilterSelect>
-// //             <FilterSelect>
-// //               <option value="all">All Types</option>
-// //               <option value="meetings">Meetings</option>
-// //               <option value="calls">Calls</option>
-// //               <option value="tasks">Tasks</option>
-// //             </FilterSelect>
-// //           </div>
-// //         </FiltersContainer>
-// //         <AppointmentListContainer>
-// //           <h2>Upcoming Appointments</h2>
-// //           {schedules.map((schedule, index) => (
-// //             <AppointmentItem key={index}>
-// //              <p><strong>{schedule.scheduleType}</strong> with <strong>{schedule.customerName}</strong></p>
-
-// //               <p>{new Date(schedule.date).toLocaleString()}</p>
-// //             </AppointmentItem>
-// //           ))}
-// //         </AppointmentListContainer>
-// //         {/* <AddButton>Add Appointment</AddButton> */}
-// //       </ContentContainer>
-// //     </PageContainer>
-// //   );
-// // };
-
-// // export default SchedulePage;
-
-// const SchedulePage = () => {
-//   const [schedules, setSchedules] = useState([]);
-//   const [loading, setLoading] = useState(false);
-//   const [error, setError] = useState(null);
-
-//   useEffect(() => {
-//     const fetchSchedules = async () => {
-//       setLoading(true);
-//       const token = localStorage.getItem('token');
-//       if (!token) {
-//         setError('No token found');
-//         setLoading(false);
-//         return;
-//       }
-
-//       try {
-//         const { userId } = jwtDecode(token);
-//         const response = await axios.get(`http://195.179.231.102:6003/api/schedules/user/all/${userId}`);
-//         setSchedules(response.data);
-//         console.log(response.data);
-//       } catch (err) {
-//         setError('Failed to fetch schedules');
-//         console.error(err);
-//       } finally {
-//         setLoading(false);
-//       }
-//     };
-
-//     fetchSchedules();
-//   }, []);
-
-//   if (loading) return <p>Loading...</p>;
-//   if (error) return <p>Error: {error}</p>;
-
-//   return (
-//     <PageContainer>
-//       <ContentContainer>
-//         <Header>Schedule</Header>
-//         <FiltersContainer>
-//           <SearchBar placeholder="Search appointments..." />
-//           <div>
-//             <FilterSelect>
-//               <option value="all">All Statuses</option>
-//               <option value="upcoming">Upcoming</option>
-//               <option value="completed">Completed</option>
-//               <option value="canceled">Canceled</option>
-//             </FilterSelect>
-//             <FilterSelect>
-//               <option value="all">All Types</option>
-//               <option value="meetings">Meetings</option>
-//               <option value="calls">Calls</option>
-//               <option value="tasks">Tasks</option>
-//             </FilterSelect>
-//           </div>
-//         </FiltersContainer>
-//         <AppointmentListContainer>
-//           <h2>Upcoming Appointments</h2>
-//           {schedules.length === 0 ? (
-//             <p>No schedules available at the moment.</p>
-//           ) : (
-//             schedules.map((schedule, index) => (
-//               <AppointmentItem key={index}>
-//                 <p><strong>{schedule.scheduleType}</strong> with <strong>{schedule.customerName}</strong></p>
-//                 <p>{new Date(schedule.date).toLocaleString()}</p>
-//               </AppointmentItem>
-//             ))
-//           )}
-//         </AppointmentListContainer>
-//         {/* <AddButton>Add Appointment</AddButton> */}
-//       </ContentContainer>
-//     </PageContainer>
-//   );
-// };
-
-// export default SchedulePage;
-
-
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { jwtDecode } from 'jwt-decode';
+import {jwtDecode} from 'jwt-decode';
 import styled, { createGlobalStyle } from 'styled-components';
 import bgImage from '../images/bg.jpg';
-import {  useNavigate } from 'react-router-dom';
-
+import { useNavigate } from 'react-router-dom';
 
 const GlobalStyle = createGlobalStyle`
   body {
     margin: 0;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-      'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-      sans-serif;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    background: #f4f4f4;
   }
 `;
 
@@ -272,90 +21,84 @@ const PageContainer = styled.div`
   background-position: center;
   background-blend-mode: overlay;
   background-color: rgba(0, 0, 0, 0.75);
-  height: 100vh;
+  min-height: 100vh;
+  padding: 20px;
+  padding-top: 100px;
   display: flex;
   justify-content: center;
-  align-items: flex-start;  /* Align content to the top instead of center */
-  padding: 20px;
-  padding-top: 200px;  /* Decrease the top padding to reduce the space from the top */
-  overflow: auto;
-
-  @media (max-width: 768px) {
-    height: auto;
-    padding-top: 80px;
-  }
+  align-items: flex-start;
 `;
 
-
 const ContentContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
   width: 100%;
-  max-width: 800px;
-  background: rgba(255, 255, 255, 0.8);
-  padding: 20px;
+  max-width: 900px;
+  background: rgba(255, 255, 255, 0.95);
+  padding: 30px;
   border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 `;
 
 const Header = styled.h1`
+  text-align: center;
+  margin-bottom: 20px;
   color: #333;
 `;
 
-const AppointmentListContainer = styled.div`
+const Table = styled.table`
   width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
 `;
 
-const AppointmentItem = styled.div`
-  background-color: white;
-  margin-top: 10px;
-  padding: 15px;
-  border-radius: 5px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  transition: transform 0.2s;
+const TableHead = styled.thead`
+  background-color: #e74c3c; /* Red color for the table header */
+`;
 
-  &:hover {
-    transform: translateY(-5px);
+const TableRow = styled.tr`
+  &:nth-child(even) {
+    background-color: #f8f8f8;
   }
+  &:hover {
+    background-color: #e6f7ff;
+  }
+`;
+
+const TableHeaderCell = styled.th`
+  padding: 12px;
+  border: 1px solid #ddd;
+  text-align: left;
+  color: #fff;
+  font-weight: 600;
+`;
+
+const TableDataCell = styled.td`
+  padding: 12px;
+  border: 1px solid #ddd;
 `;
 
 const BackButton = styled.button`
-  position: absolute;
-  left: 20px;
-  top: 135px;
-  background-color: #333;
-  border: 2px solid #ff0000;
-  color: white;
-  font-size: 16px;
+  margin-bottom: 20px;
+  background-color: #ffffff;
+  border: 2px solid #e74c3c;
+  color: #e74c3c;
+  font-size: 14px;
   cursor: pointer;
-  padding: 15px 20px;
-  border-radius: 10px;
+  padding: 10px 15px;
+  border-radius: 5px;
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-  width: 200px;
-  height: 60px;
-  transition: background-color 0.3s, transform 0.3s;
-  z-index: 10; // Bring the button above other elements
+  transition: background-color 0.3s, color 0.3s;
   
   &:hover {
-    background-color: #ff0000;
-    transform: translateY(-2px);
-  }
-
-  @media (max-width: 768px) {
-    font-size: 14px;
-    width: 100%;
-    height: auto;
-    left: 10px;
+    background-color: #e74c3c;
+    color: #ffffff;
   }
 `;
 
-
 const SchedulePage = () => {
   const [schedules, setSchedules] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchSchedules = async () => {
@@ -366,7 +109,6 @@ const SchedulePage = () => {
         setLoading(false);
         return;
       }
-
       try {
         const { userId } = jwtDecode(token);
         const response = await axios.get(`http://195.179.231.102:6003/api/schedules/user/all/${userId}`);
@@ -381,25 +123,61 @@ const SchedulePage = () => {
     fetchSchedules();
   }, []);
 
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error: {error}</p>;
-  if (schedules.length === 0) return <p>No schedules available at the moment.</p>;
+  if (loading) {
+    return (
+      <PageContainer>
+        <ContentContainer>
+          <p>Loading...</p>
+        </ContentContainer>
+      </PageContainer>
+    );
+  }
+
+  if (error) {
+    return (
+      <PageContainer>
+        <ContentContainer>
+          <p>Error: {error}</p>
+        </ContentContainer>
+      </PageContainer>
+    );
+  }
+
+  if (schedules.length === 0) {
+    return (
+      <PageContainer>
+        <ContentContainer>
+          <p>No schedules available at the moment.</p>
+        </ContentContainer>
+      </PageContainer>
+    );
+  }
 
   return (
     <>
       <GlobalStyle />
       <PageContainer>
-      <BackButton onClick={() => navigate(-1)}>← Back</BackButton>
         <ContentContainer>
+          <BackButton onClick={() => navigate(-1)}>← Back</BackButton>
           <Header>Schedule</Header>
-          <AppointmentListContainer>
-            {schedules.map((schedule, index) => (
-              <AppointmentItem key={index}>
-                <p><strong>{schedule.scheduleType}</strong> with <strong>{schedule.customerName}</strong></p>
-                <p>{new Date(schedule.date).toLocaleString()}</p>
-              </AppointmentItem>
-            ))}
-          </AppointmentListContainer>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableHeaderCell>Type</TableHeaderCell>
+                <TableHeaderCell>Customer Name</TableHeaderCell>
+                <TableHeaderCell>Date &amp; Time</TableHeaderCell>
+              </TableRow>
+            </TableHead>
+            <tbody>
+              {schedules.map((schedule, index) => (
+                <TableRow key={index}>
+                  <TableDataCell>{schedule.scheduleType}</TableDataCell>
+                  <TableDataCell>{schedule.customerName}</TableDataCell>
+                  <TableDataCell>{new Date(schedule.date).toLocaleString()}</TableDataCell>
+                </TableRow>
+              ))}
+            </tbody>
+          </Table>
         </ContentContainer>
       </PageContainer>
     </>

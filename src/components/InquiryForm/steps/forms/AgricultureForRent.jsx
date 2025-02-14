@@ -170,18 +170,7 @@ const AgricultureForRent = ({
         onFilesChange={handlePropertyImagesChange}
         isRequired={true}
       />
-
-      {/* Features & Facilities */}
-      {/* <FloorFeatureSelector
-        floors={formData.floors}
-        onFloorChange={handleFloorChange}
-      />
-      <FacilitySelector
-        facilities={formData.facilities}
-        onFacilitiesChange={handleFacilitiesChange}
-      /> */}
-
-      {/* Financial Details */}
+      
       <DemandPerMonth
         demand={formData.demand}
         onDemandChange={handleDemandChange}

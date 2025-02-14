@@ -1,364 +1,133 @@
-// import React, { useState, useEffect } from 'react';
-// import axios from 'axios';
-// import styled from 'styled-components';
-// import bgImage from '../images/bg.jpg'; 
-// import { useParams } from 'react-router-dom';
-
-// const PageContainer = styled.div`
-//   background-image: url(${bgImage});
-//   background-size: cover;
-//   background-position: center;
-//   background-blend-mode: overlay;
-//   background-color: rgba(0, 0, 0, 0.7);
-//   height: 100vh;
-//   display: flex;
-//   flex-direction: column;
-//   align-items: center;
-//   padding: 20px;
-//   overflow: auto;
-// `;
-
-// const Header = styled.h1`
-//   color: red;
-//   margin-bottom: 20px;
-// `;
-
-// const Section = styled.div`
-//   width: 100%;
-//   max-width: 800px;
-//   margin-bottom: 20px;
-//   padding: 20px;
-//   background-color: #f9f9f9;
-//   border-radius: 8px;
-//   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-// `;
-
-// const SectionTitle = styled.h2`
-//   color: red;
-//   margin-bottom: 10px;
-// `;
-
-// const Label = styled.label`
-//   display: block;
-//   margin-bottom: 5px;
-//   font-weight: bold;
-// `;
-
-// const Input = styled.input`
-//   width: calc(100% - 22px);
-//   padding: 10px;
-//   border: 1px solid #ddd;
-//   border-radius: 5px;
-//   margin-bottom: 10px;
-// `;
-
-// const Select = styled.select`
-//   width: 100%;
-//   padding: 10px;
-//   border: 1px solid #ddd;
-//   border-radius: 5px;
-//   margin-bottom: 10px;
-// `;
-
-// const Textarea = styled.textarea`
-//   width: 100%;
-//   height: 100px;
-//   padding: 10px;
-//   border: 1px solid #ddd;
-//   border-radius: 5px;
-//   margin-bottom: 10px;
-// `;
-
-// const Button = styled.button`
-//   padding: 10px 20px;
-//   border: none;
-//   border-radius: 5px;
-//   background-color: red;
-//   color: white;
-//   cursor: pointer;
-//   margin-right: 10px;
-//   &:hover {
-//     background-color: darkred;
-//   }
-// `;
-
-// const LeadDetailPage = () => {
-//   const { id } = useParams();
-//   const [propertyData, setPropertyData] = useState(null);
-//   const [loading, setLoading] = useState(true);
-//   const [error, setError] = useState(null);
-
-//   useEffect(() => {
-//     const fetchPropertyData = async () => {
-//       try {
-//         const response = await axios.get(`http://195.179.231.102:6003/api/properties/propertybyid/${id}`);
-//         setPropertyData(response.data);
-//         console.log(response.data);
-//       } catch (err) {
-//         setError(err.message);
-//       } finally {
-//         setLoading(false);
-//       }
-//     };
-
-//     fetchPropertyData();
-//   }, [id]);
-
-//   if (loading) return <PageContainer>Loading...</PageContainer>;
-//   if (error) return <PageContainer>Error: {error}</PageContainer>;
-
-//   const formatRequirement = (property) => {
-//     const { length, width, features } = property;
-//     const formattedFeatures = Object.entries(features)
-//       .filter(([key, value]) => value)
-//       .map(([key]) => key)
-//       .join(", ");
-//       return `${length} x ${width} feet - Features: ${formattedFeatures}`;
-//   };
-
-//   return (
-//     <PageContainer>
-//       <Header>Lead Details</Header>
-      
-//       {propertyData && (
-//         <>
-//           <Section>
-//             <SectionTitle>Lead Information</SectionTitle>
-//             <Label>Lead #:</Label>
-//             <Input type="text" value={propertyData._id} readOnly />
-            
-//             <Label>Name:</Label>
-//             <Input type="text" value={propertyData.customerName} readOnly />
-            
-//             <Label>Requirement:</Label>
-//             <Input type="text" value={formatRequirement(propertyData)} readOnly />
-//           </Section>
-
-//           <Section>
-//             <SectionTitle>Interaction</SectionTitle>
-//             <Label>Call/Meet:</Label>
-//             <Select defaultValue={propertyData.interactionType}>
-//               <option value="call">Call</option>
-//               <option value="meet">Meet</option>
-//             </Select>
-
-//             <Label>Table Format (One Line):</Label>
-//             <Select defaultValue={propertyData.tableFormat}>
-//               <option value="format1">Format 1</option>
-//               <option value="format2">Format 2</option>
-//             </Select>
-//           </Section>
-
-//           <Section>
-//             <SectionTitle>Notes</SectionTitle>
-//             <Label>Voice Notes:</Label>
-//             <Button>Record</Button>
-//             <Button>Send (Email/WhatsApp)</Button>
-//             <Button>Share with Associates</Button>
-            
-//             <Label>Text Notes:</Label>
-//             <Textarea placeholder="Write notes here"></Textarea>
-//           </Section>
-
-//           <Section>
-//             <SectionTitle>Priority and Commission</SectionTitle>
-//             <Label>Set Priority:</Label>
-//             <Select defaultValue={propertyData.priority}>
-//               <option value="high">High</option>
-//               <option value="medium">Medium</option>
-//               <option value="low">Low</option>
-//             </Select>
-
-//             <Label>Commission Percentage:</Label>
-//             <Input type="text" value={propertyData.commissionPercentage} readOnly />
-//           </Section>
-
-//           <Section>
-//             <SectionTitle>Generate Contract</SectionTitle>
-//             <Button>Send (Email/WhatsApp)</Button>
-//             <Button>Share with Associates</Button>
-//             <Button>Share Contract</Button>
-//           </Section>
-
-//           <Section>
-//             <SectionTitle>Update Status</SectionTitle>
-//             <Label>Lead Status:</Label>
-//             <Select defaultValue={propertyData.status}>
-//               <option value="active">Active</option>
-//               <option value="pending">Pending</option>
-//               <option value="sold">Sold</option>
-//             </Select>
-//           </Section>
-
-//           <Section>
-//             <SectionTitle>Generate Contract</SectionTitle>
-//             <Button>Generate Contract</Button>
-//           </Section>
-//         </>
-//       )}
-//     </PageContainer>
-//   );
-// };
-
-// export default LeadDetailPage;
-
-
-
-
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
-import styled from 'styled-components';
+import styled, { ThemeProvider } from 'styled-components';
 import bgImage from '../images/bg.jpg'; 
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import {jwtDecode} from 'jwt-decode';
 import ContractForm from './ContractForm';
-import {  useNavigate } from 'react-router-dom';
 
+// ----------------------
+// Theme Definition
+// ----------------------
+const theme = {
+  primary: '#e74c3c',           // Primary color for headers and buttons
+  secondary: '#ff4500',         // Secondary button color (used on hover)
+  background: '#ffffff',        // Card/background color
+  overlay: 'rgba(0, 0, 0, 0.7)',  // Overlay background color
+  inputBorder: '#ddd',          // Input border color
+  inputFocus: '#e74c3c',         // Input focus border color
+};
 
+// ----------------------
+// Styled Components
+// ----------------------
 const PageContainer = styled.div`
   background-image: url(${bgImage});
   background-size: cover;
   background-position: center;
   background-blend-mode: overlay;
-  background-color: rgba(0, 0, 0, 0.7);
-  height: 100vh;
+  background-color: ${(props) => props.theme.overlay};
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 20px;
+  padding: 40px 20px;
   overflow: auto;
-  padding-top: 135px;
+  padding-top: 100px;
 `;
 
 const Header = styled.h1`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  position: relative;
-  width: 100%;
-  padding: 20px;
-  color: white;
-  @media (max-width: 768px) {
-    flex-direction: column;
-    padding: 10px;
-  }
+  color: ${(props) => props.theme.background};
+  font-size: 2.5rem;
+  margin-bottom: 20px;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
 `;
 
 const Section = styled.div`
   width: 100%;
   max-width: 800px;
-  margin-bottom: 20px;
-  padding: 20px;
-  background-color: #f9f9f9;
+  background: ${(props) => props.theme.background};
   border-radius: 8px;
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  margin-bottom: 20px;
+  padding: 30px;
+  transition: transform 0.3s;
+  &:hover {
+    transform: translateY(-5px);
+  }
 `;
 
 const SectionTitle = styled.h2`
-  color: red;
-  margin-bottom: 10px;
+  color: ${(props) => props.theme.primary};
+  margin-bottom: 15px;
+  font-size: 1.8rem;
 `;
 
 const Button = styled.button`
-  padding: 10px 20px;
+  background: ${(props) => props.theme.primary};
+  color: #fff;
   border: none;
   border-radius: 5px;
-  background-color: red;
-  color: white;
+  padding: 12px 24px;
+  margin: 5px;
   cursor: pointer;
-  margin-right: 10px;
-  margin-bottom: 10px;
-
+  font-size: 1rem;
+  transition: background 0.3s, transform 0.3s;
   &:hover {
-    background-color: darkred;
-  }
-
-  @media (max-width: 768px) {
-    padding: 8px 16px;
-    font-size: 14px;
-    margin-right: 5px;
-    margin-bottom: 5px;
+    background: ${(props) => props.theme.secondary};
+    transform: translateY(-2px);
   }
 `;
-
-// const PageContainer = styled.div`
-//   background-image: url(${bgImage});
-//   background-size: cover;
-//   background-position: center;
-//   background-blend-mode: overlay;
-//   background-color: rgba(0, 0, 0, 0.7);
-//   height: 100vh;
-//   display: flex;
-//   flex-direction: column;
-//   align-items: center;
-//   padding: 20px;
-//   overflow: auto;
-//   padding-top: 80px;
-// `;
-
-// const Header = styled.h1`
-//   color: white;
-//   margin-bottom: 20px;
-// `;
-
-// const Section = styled.div`
-//   width: 100%;
-//   max-width: 800px;
-//   margin-bottom: 20px;
-//   padding: 20px;
-//   background-color: #f9f9f9;
-//   border-radius: 8px;
-//   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-// `;
-
-// const SectionTitle = styled.h2`
-//   color: red;
-//   margin-bottom: 10px;
-// `;
 
 const Label = styled.label`
   display: block;
-  margin-bottom: 5px;
+  margin-bottom: 8px;
   font-weight: bold;
+  color: #333;
 `;
 
 const Input = styled.input`
-  width: calc(100% - 22px);
-  padding: 10px;
-  border: 1px solid #ddd;
+  width: 100%;
+  padding: 12px;
+  border: 1px solid ${(props) => props.theme.inputBorder};
   border-radius: 5px;
-  margin-bottom: 10px;
+  margin-bottom: 15px;
+  font-size: 1rem;
+  transition: border 0.3s;
+  &:focus {
+    border-color: ${(props) => props.theme.inputFocus};
+    outline: none;
+  }
 `;
 
 const Select = styled.select`
   width: 100%;
-  padding: 10px;
-  border: 1px solid #ddd;
+  padding: 12px;
+  border: 1px solid ${(props) => props.theme.inputBorder};
   border-radius: 5px;
-  margin-bottom: 10px;
+  margin-bottom: 15px;
+  font-size: 1rem;
+  transition: border 0.3s;
+  &:focus {
+    border-color: ${(props) => props.theme.inputFocus};
+    outline: none;
+  }
 `;
 
 const Textarea = styled.textarea`
   width: 100%;
-  height: 100px;
-  padding: 10px;
-  border: 1px solid #ddd;
+  height: 120px;
+  padding: 12px;
+  border: 1px solid ${(props) => props.theme.inputBorder};
   border-radius: 5px;
-  margin-bottom: 10px;
+  margin-bottom: 15px;
+  font-size: 1rem;
+  transition: border 0.3s;
+  &:focus {
+    border-color: ${(props) => props.theme.inputFocus};
+    outline: none;
+  }
 `;
-
-// const Button = styled.button`
-//   padding: 10px 20px;
-//   border: none;
-//   border-radius: 5px;
-//   background-color: red;
-//   color: white;
-//   cursor: pointer;
-//   margin-right: 10px;
-//   &:hover {
-//     background-color: darkred;
-//   }
-// `;
 
 const NotesList = styled.ul`
   list-style: none;
@@ -366,72 +135,109 @@ const NotesList = styled.ul`
 `;
 
 const NoteItem = styled.li`
-  background: #f9f9f9;
-  padding: 10px;
+  background: #f1f1f1;
   border-radius: 5px;
-  margin-top: 10px;
+  padding: 15px;
+  margin-bottom: 10px;
   border: 1px solid #ccc;
-  display: flex;
-  flex-direction: column;  // Organize content in columns
 `;
 
 const Timestamp = styled.span`
-  font-size: 12px;
+  font-size: 0.8rem;
   color: #666;
-  align-self: flex-end;  // Position at the end of the flex container
-  margin-top: 5px;  // Give some space from the main content
+  display: block;
+  text-align: right;
+  margin-top: 8px;
 `;
 
 const AudioPlayer = styled.audio`
   width: 100%;
-  margin-top: 5px;
+  margin-top: 10px;
 `;
 
 const DeleteButton = styled.button`
-  padding: 5px 10px;
-  background-color: red;
-  color: white;
+  background: #d9534f;
+  color: #fff;
   border: none;
-  align-self: flex-end;
-  border-radius: 4px;
-  margin-top: 5px;  // Ensure some space from the audio player
-
+  border-radius: 5px;
+  padding: 6px 12px;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: background 0.3s;
   &:hover {
-    background-color: darkred;
+    background: #c9302c;
   }
 `;
 
+// Update BackButton to use the theme keys directly (without the "colors" property)
 const BackButton = styled.button`
   position: absolute;
   left: 20px;
-  top: 135px;
-  background-color: #333;
-  border: 2px solid #ff0000;
-  color: white;
-  font-size: 16px;
+  top: 120px;
+  background-color: #ffffff;
+  border: 2px solid ${(props) => props.theme.primary};
+  color: ${(props) => props.theme.primary};
+  font-size: 14px;
   cursor: pointer;
-  padding: 15px 20px;
-  border-radius: 10px;
+  padding: 10px 15px;
+  border-radius: 5px;
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-  width: 200px;
-  height: 60px;
-  transition: background-color 0.3s, transform 0.3s;
-  z-index: 10; // Bring the button above other elements
-  
+  transition: background-color 0.3s, color 0.3s, transform 0.3s;
   &:hover {
-    background-color: #ff0000;
+    background-color: ${(props) => props.theme.primary};
+    color: #ffffff;
     transform: translateY(-2px);
   }
-
   @media (max-width: 768px) {
-    font-size: 14px;
-    width: 100%;
-    height: auto;
     left: 10px;
+    width: auto;
+    text-align: center;
   }
 `;
 
+// ----------------------
+// Helper Functions
+// ----------------------
 
+// Format the commission based on its type.
+// If type is 'percentage', append a '%' sign; otherwise, return the value as is.
+const formatCommission = (commission) => {
+  if (!commission) return '';
+  if (typeof commission === 'object') {
+    const { type, value } = commission;
+    return type === 'percentage' ? `${value}%` : value;
+  }
+  return commission;
+};
+
+// Updated formatRequirement function to use available fields and avoid errors
+const formatRequirement = (property) => {
+  const length = property.landLength || property.coveredLength || '';
+  const width = property.landWidth || property.coveredWidth || '';
+  const unit = property.landUnit || property.coveredUnit || 'feet';
+  
+  let formattedFeatures = '';
+  if (property.facilities && Array.isArray(property.facilities) && property.facilities.length > 0) {
+    formattedFeatures = property.facilities
+      .map(facility => facility.name || '')
+      .filter(name => name)
+      .join(", ");
+  }
+  
+  if (!length && !width) {
+    return formattedFeatures ? `Features: ${formattedFeatures}` : 'No requirement details available';
+  }
+  
+  let requirementString = `${length} x ${width} ${unit}`;
+  if (formattedFeatures) {
+    requirementString += ` - Features: ${formattedFeatures}`;
+  }
+  return requirementString;
+};
+
+// ----------------------
+// Main Component: LeadDetailPage
+// ----------------------
 const LeadDetailPage = () => {
   const { id } = useParams();
   const [propertyData, setPropertyData] = useState({});
@@ -443,46 +249,25 @@ const LeadDetailPage = () => {
   const [isRecording, setIsRecording] = useState(false);
   const mediaRecorderRef = useRef(null);
   const audioChunksRef = useRef([]);
-  const [scheduleType, setScheduleType] = useState('call'); // Default to 'call'
+  const [scheduleType, setScheduleType] = useState('call');
   const [scheduleDate, setScheduleDate] = useState('');
   const [scheduleTime, setScheduleTime] = useState('');
   const [schedules, setSchedules] = useState([]);
   const [status, setStatus] = useState(propertyData.status);
   const navigate = useNavigate(); 
 
-
   const token = localStorage.getItem('token');
 
-  // useEffect(() => {
-  //   const fetchPropertyData = async () => {
-  //     try {
-  //       const response = await axios.get(`http://195.179.231.102:6003/api/properties/propertybyid/${id}`);
-  //       setPropertyData(response.data);
-  //       console.log(response.data);
-  //     } catch (err) {
-  //       setError(err.message);
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
-
-  //   fetchPropertyData();
-  // }, [id]);
   const fetchData = async () => {
     try {
       const headers = { Authorization: `Bearer ${token}` };
-  
-      // Fetch property details first to get customerId
       let propertyResponse;
       try {
         propertyResponse = await axios.get(`http://195.179.231.102:6003/api/properties/propertybyid/${id}`, { headers });
         setPropertyData(propertyResponse.data);
-        console.log(propertyResponse.data);
       } catch (err) {
         setError(`Error fetching property data: ${err.response ? err.response.data.message : err.message}`);
       }
-  
-      // Fetch notes using userId, propertyId, and customerId
       if (propertyResponse && propertyResponse.data.customerId && token) {
         try {
           const decodedToken = jwtDecode(token);
@@ -491,34 +276,28 @@ const LeadDetailPage = () => {
           setNotes(notesResponse.data);
         } catch (err) {
           console.error(`Error fetching notes: ${err.response ? err.response.data.message : err.message}`);
-          // Optionally set a less critical error state or log this error without setting a main error
         }
       }
     } catch (err) {
-      // Catch any unexpected errors
       setError(`Unexpected error: ${err.message}`);
     } finally {
       setLoading(false);
     }
   };
   
-
   const fetchSchedules = async () => {
-    const token = localStorage.getItem('token');
     const headers = { Authorization: `Bearer ${token}` };
-  
     try {
       const decodedToken = jwtDecode(token);
       const userId = decodedToken.userId;
       const response = await axios.get(`http://195.179.231.102:6003/api/schedules/user/${userId}`, { headers });
-      setSchedules(response.data); // Assuming the API returns an array of schedules
+      setSchedules(response.data);
     } catch (error) {
       console.error('Failed to fetch schedules:', error);
       setError(`Failed to fetch schedules: ${error.response ? error.response.data.message : error.message}`);
     }
   };
 
-  
   const handleStatusChange = async (newStatus) => {
     setStatus(newStatus);
     try {
@@ -534,10 +313,9 @@ const LeadDetailPage = () => {
 
   useEffect(() => {
     fetchData();
-      fetchSchedules();
-      setStatus(propertyData.status);
-  }, [id, token,propertyData.status]);  // Ensuring useEffect dependency array is correct
-  
+    fetchSchedules();
+    setStatus(propertyData.status);
+  }, [id, token, propertyData.status]);
 
   const handleSaveNote = async () => {
     if (!note && !audioURL) {
@@ -548,29 +326,22 @@ const LeadDetailPage = () => {
       console.error('Property data is not fully loaded.');
       return;
     }
-    const token = localStorage.getItem('token');
     const decodedToken = jwtDecode(token);
     const userId = decodedToken.userId;
-  
     const datetime = new Date().toISOString();
-  
     const formData = new FormData();
     formData.append('propertyId', propertyData._id);
     formData.append('customerId', propertyData.customerId);
     formData.append('text', note);
     formData.append('datetime', datetime);
-  
     if (audioURL) {
       const response = await fetch(audioURL);
       const blob = await response.blob();
       formData.append('audio', new File([blob], 'audioNote.webm', { type: 'audio/webm' }));
     }
-  
     try {
       const response = await axios.post('http://195.179.231.102:6003/api/notes', formData, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        },
+        headers: { Authorization: `Bearer ${token}` },
       });
       setNotes([...notes, response.data]);
       setNote('');
@@ -580,35 +351,28 @@ const LeadDetailPage = () => {
     }
   };
   
-
   const handleDeleteNote = async (noteId, index) => {
     try {
       const headers = { Authorization: `Bearer ${token}` };
       await axios.delete(`http://195.179.231.102:6003/api/notes/${noteId}`, { headers });
-  
-      // If the DELETE request is successful, update the UI by removing the note from the list
       const updatedNotes = [...notes];
       updatedNotes.splice(index, 1);
       setNotes(updatedNotes);
     } catch (error) {
       console.error('Failed to delete note:', error);
-      // Optionally set an error state here to notify the user
       setError('Failed to delete note. Please try again.');
     }
   };
   
-
   const handleRecordAudio = () => {
     if (!isRecording) {
       navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
         mediaRecorderRef.current = new MediaRecorder(stream);
         mediaRecorderRef.current.start();
         audioChunksRef.current = [];
-
         mediaRecorderRef.current.ondataavailable = event => {
           audioChunksRef.current.push(event.data);
         };
-
         setIsRecording(true);
       });
     } else {
@@ -624,38 +388,22 @@ const LeadDetailPage = () => {
     }
   };
 
-  if (loading) return <PageContainer>Loading...</PageContainer>;
-  if (error) return <PageContainer>Error: {error}</PageContainer>;
-
-  const formatRequirement = (property) => {
-    const { length, width, features } = property;
-    const formattedFeatures = Object.entries(features)
-      .filter(([key, value]) => value)
-      .map(([key]) => key)
-      .join(", ");
-    return `${length} x ${width} feet - Features: ${formattedFeatures}`;
-  };
-
   const handleSaveSchedule = async () => {
     if (!scheduleDate || !scheduleTime) {
       alert("Please fill in all schedule fields.");
       return;
     }
-  
-    const token = localStorage.getItem('token');
     const decodedToken = jwtDecode(token);
     const userId = decodedToken.userId;
     const headers = { Authorization: `Bearer ${token}` };
-  
     const scheduleData = {
       userId,
       propertyId: id,
-      customerId: propertyData.customerId, // Assuming this is stored in propertyData
+      customerId: propertyData.customerId,
       scheduleType,
-      date: new Date(scheduleDate + 'T' + scheduleTime).toISOString(), // Combining date and time
+      date: new Date(scheduleDate + 'T' + scheduleTime).toISOString(),
       time: scheduleTime
     };
-  
     try {
       const response = await axios.post('http://195.179.231.102:6003/api/schedules/add', scheduleData, { headers });
       alert('Schedule saved successfully');
@@ -666,136 +414,123 @@ const LeadDetailPage = () => {
     }
   };
 
-
-  
+  if (loading) return <PageContainer>Loading...</PageContainer>;
+  if (error) return <PageContainer>Error: {error}</PageContainer>;
 
   return (
-    <PageContainer>
-      <BackButton onClick={() => navigate(-1)}>← Back</BackButton>
-      <Header>Lead Details</Header>
-      
-      {propertyData && (
-        <>
-          <Section>
-            <SectionTitle>Lead Information</SectionTitle>
-            <Label>Lead #:</Label>
-            <Input type="text" value={propertyData._id} readOnly />
-            
-            <Label>Name:</Label>
-            <Input type="text" value={propertyData.customerName} readOnly />
-            
-            <Label>Requirement:</Label>
-            <Input type="text" value={formatRequirement(propertyData)} readOnly />
-          </Section>
-
-          <Section>
-  <SectionTitle>Schedule Interaction</SectionTitle>
-
-  {/* Display Existing Schedules */}
-  <div>
-    <h3>Existing Schedules</h3>
-    <ul>
-      {schedules.map((schedule, index) => (
-        <li key={index}>
-          <p><strong>Type:</strong> {schedule.scheduleType}</p>
-          <p><strong>Date:</strong> {new Date(schedule.date).toLocaleDateString()}</p>
-          <p><strong>Time:</strong> {schedule.time}</p>
-        </li>
-      ))}
-    </ul>
-  </div>
-
-  {/* Form to Add New Schedule */}
-  <div>
-    <h3>Add New Schedule</h3>
-    <Label>Type:</Label>
-    <Select value={scheduleType} onChange={e => setScheduleType(e.target.value)}>
-      <option value="call">Call</option>
-      <option value="meet">Meet</option>
-    </Select>
-
-    <Label>Date:</Label>
-    <Input
-      type="date"
-      value={scheduleDate}
-      onChange={e => setScheduleDate(e.target.value)}
-    />
-
-    <Label>Time:</Label>
-    <Input
-      type="time"
-      value={scheduleTime}
-      onChange={e => setScheduleTime(e.target.value)}
-    />
-
-    <Button onClick={handleSaveSchedule}>Save Schedule</Button>
-  </div>
-</Section>
-
-
-
-
-          <Section>
-            <SectionTitle>Notes</SectionTitle>
-            <Input
-              type="text"
-              placeholder="Write your note here..."
-              value={note}
-              onChange={e => setNote(e.target.value)}
-            />
-            <Button onClick={handleSaveNote}>Save Note</Button>
-            <Button onClick={handleRecordAudio}>
-              {isRecording ? 'Stop Recording' : 'Start Recording'}
-            </Button>
-            <Button onClick={() => { if (audioURL) handleSaveNote(); }} disabled={!audioURL}>
-              Save Recording
-            </Button>
-            <NotesList>
-              {notes.map((note, index) => (
-                <NoteItem key={note._id}> {/* Use note._id as the key if available */}
-                  {note.text}
-                  {note.audioURL && <AudioPlayer controls src={note.audioURL} />}
-                  <DeleteButton onClick={() => handleDeleteNote(note._id, index)}>Delete</DeleteButton>
-                  <Timestamp>{new Date(note.datetime).toLocaleString()}</Timestamp>
-                </NoteItem>
-              ))}
-            </NotesList>
-          </Section>
-
-          <Section>
-            <SectionTitle>Priority and Commission</SectionTitle>
-            <Label>Set Priority:</Label>
-            <Input type="text" value={propertyData.priority} readOnly />
-
-            <Label>Commission Percentage %:</Label>
-            <Input type="text" value={propertyData.commission} readOnly />
-          </Section>
-
-          <Section>
-            <SectionTitle>Update Status</SectionTitle>
-            <Label>Lead Status:</Label>
-            <Input type="text" value={propertyData.status} readOnly />
-            <Label> Update Lead Status:</Label>
-  <Select value={status || 'pending'} onChange={e => handleStatusChange(e.target.value)}>
-  <option value="active">Select Status</option>
-    <option value="active">Active</option>
-    <option value="pending">Pending</option>
-    <option value="sold">Sold</option>
-  </Select>
-          </Section>
-
-          <Section>
-            <SectionTitle>Generate Contract</SectionTitle>
-            <Button>Send (Email/WhatsApp)</Button>
-            <Button>Share with Associates</Button>
-            <Button>Share Contract</Button>
-          </Section>
-          <ContractForm/>
-        </>
-      )}
-    </PageContainer>
+    <ThemeProvider theme={theme}>
+      <PageContainer>
+        <BackButton onClick={() => navigate(-1)}>← Back</BackButton>
+        <Header>Lead Details</Header>
+        
+        {propertyData && (
+          <>
+            <Section>
+              <SectionTitle>Lead Information</SectionTitle>
+              <Label>Lead #:</Label>
+              <Input type="text" value={propertyData._id} readOnly />
+              
+              <Label>Name:</Label>
+              <Input type="text" value={propertyData.customerName} readOnly />
+              
+              <Label>Requirement:</Label>
+              <Input type="text" value={formatRequirement(propertyData)} readOnly />
+            </Section>
+  
+            <Section>
+              <SectionTitle>Schedule Interaction</SectionTitle>
+              <div>
+                <h3>Existing Schedules</h3>
+                <ul>
+                  {schedules.map((schedule, index) => (
+                    <li key={index}>
+                      <p><strong>Type:</strong> {schedule.scheduleType}</p>
+                      <p><strong>Date:</strong> {new Date(schedule.date).toLocaleDateString()}</p>
+                      <p><strong>Time:</strong> {schedule.time}</p>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+  
+              <div>
+                <h3>Add New Schedule</h3>
+                <Label>Type:</Label>
+                <Select value={scheduleType} onChange={e => setScheduleType(e.target.value)}>
+                  <option value="call">Call</option>
+                  <option value="meet">Meet</option>
+                </Select>
+  
+                <Label>Date:</Label>
+                <Input
+                  type="date"
+                  value={scheduleDate}
+                  onChange={e => setScheduleDate(e.target.value)}
+                />
+  
+                <Label>Time:</Label>
+                <Input
+                  type="time"
+                  value={scheduleTime}
+                  onChange={e => setScheduleTime(e.target.value)}
+                />
+  
+                <Button onClick={handleSaveSchedule}>Save Schedule</Button>
+              </div>
+            </Section>
+  
+            <Section>
+              <SectionTitle>Notes</SectionTitle>
+              <Input
+                type="text"
+                placeholder="Write your note here..."
+                value={note}
+                onChange={e => setNote(e.target.value)}
+              />
+              <Button onClick={handleSaveNote}>Save Note</Button>
+              <Button onClick={handleRecordAudio}>
+                {isRecording ? 'Stop Recording' : 'Start Recording'}
+              </Button>
+              <Button onClick={() => { if (audioURL) handleSaveNote(); }} disabled={!audioURL}>
+                Save Recording
+              </Button>
+              <NotesList>
+                {notes.map((note, index) => (
+                  <NoteItem key={note._id}>
+                    {note.text}
+                    {note.audioURL && <AudioPlayer controls src={note.audioURL} />}
+                    <DeleteButton onClick={() => handleDeleteNote(note._id, index)}>Delete</DeleteButton>
+                    <Timestamp>{new Date(note.datetime).toLocaleString()}</Timestamp>
+                  </NoteItem>
+                ))}
+              </NotesList>
+            </Section>
+  
+            <Section>
+              <SectionTitle>Priority and Commission</SectionTitle>
+              <Label>Set Priority:</Label>
+              <Input type="text" value={propertyData.priority} readOnly />
+  
+              <Label>Commission:</Label>
+              <Input type="text" value={formatCommission(propertyData.commission)} readOnly />
+            </Section>
+  
+            <Section>
+              <SectionTitle>Update Status</SectionTitle>
+              <Label>Lead Status:</Label>
+              <Input type="text" value={propertyData.status} readOnly />
+              <Label>Update Lead Status:</Label>
+              <Select value={status || 'pending'} onChange={e => handleStatusChange(e.target.value)}>
+                <option value="active">Select Status</option>
+                <option value="active">Active</option>
+                <option value="pending">Pending</option>
+                <option value="sold">Sold</option>
+              </Select>
+            </Section>
+          </>
+        )}
+      </PageContainer>
+    </ThemeProvider>
   );
 };
 
 export default LeadDetailPage;
- 

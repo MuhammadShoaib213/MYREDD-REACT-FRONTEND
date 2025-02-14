@@ -8,7 +8,11 @@ import StepThree from './steps/StepThree';
 import StepFour from './steps/StepFour';
 import bgImage from '../../images/bg.jpg';
 import { useLocation, useNavigate } from 'react-router-dom';
-import {jwtDecode} from 'jwt-decode';
+import {jwtDecode} from 'jwt-decode'; // Import jwtDecode
+
+// Import Toastify components and CSS
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const Container = styled.div`
   background-image: url(${bgImage});
@@ -25,14 +29,15 @@ const Container = styled.div`
 `;
 
 const MainForm = () => {
-    const navigate = useNavigate();
-    const location = useLocation();
-    const [userId, setUserId] = useState(null);
-    const [cnic, setCnic] = useState(null);
-    const [phoneNumber, setPhoneNumber] = useState(null);
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [userId, setUserId] = useState(null);
+  const [cnic, setCnic] = useState(null);
+  const [phoneNumber, setPhoneNumber] = useState(null);
 
   const [formData, setFormData] = useState({
-    cnicNumber : '',
+    userId: '',         // Will be set from the token
+    cnicNumber: '',
     selectedCountry: 'PK',
     city: '',
     district: '',
@@ -65,307 +70,282 @@ const MainForm = () => {
     StreetwidthUnit: '',
     propertyCondition: '',
     demand: '',
-    contractTerm : '',
-    frontPictures:'',
-    propertyPictures:'',
+    contractTerm: '',
+    frontPictures: '',
+    propertyPictures: '',
+    phoneNumber: '',
   });
 
   const [currentStep, setCurrentStep] = useState(0);
 
-
   useEffect(() => {
-      // Retrieve and decode token from localStorage if available
-      const token = localStorage.getItem('token');
-      if (token) {
-        try {
-          const decodedToken = jwtDecode(token);
-          if (decodedToken && decodedToken.userId) {
-            setUserId(decodedToken.userId);
-          }
-        } catch (error) {
-          console.error('Error decoding token:', error);
+    // Retrieve and decode token from localStorage if available
+    const token = localStorage.getItem('token');
+    if (token) {
+      try {
+        const decodedToken = jwtDecode(token);
+        if (decodedToken && decodedToken.userId) {
+          setUserId(decodedToken.userId);
         }
+      } catch (error) {
+        console.error('Error decoding token:', error);
+        toast.error('Error decoding authentication token.');
       }
-  
-      // Check for a temporary token in query parameters
-      const queryParams = new URLSearchParams(window.location.search);
-      const tempTokenParam = queryParams.get('tempToken');
-      if (tempTokenParam) {
-        try {
-          const decodedTempToken = JSON.parse(atob(tempTokenParam));
-          if (decodedTempToken.userId) {
-            setUserId(decodedTempToken.userId);
-          }
-          if (decodedTempToken.cnic) {
-            setCnic(decodedTempToken.cnic);
-          }
-        } catch (error) {
-          console.error('Error decoding tempToken:', error);
+    }
+
+    // Check for a temporary token in query parameters
+    const queryParams = new URLSearchParams(window.location.search);
+    const tempTokenParam = queryParams.get('tempToken');
+    if (tempTokenParam) {
+      try {
+        const decodedTempToken = JSON.parse(atob(tempTokenParam));
+        if (decodedTempToken.userId) {
+          setUserId(decodedTempToken.userId);
         }
+        if (decodedTempToken.cnic) {
+          setCnic(decodedTempToken.cnic);
+        }
+      } catch (error) {
+        console.error('Error decoding tempToken:', error);
+        toast.error('Error decoding temporary token.');
       }
-      
-      // If `location.state` contains `cnic` and `phoneNumber`, set them.
-      if (location.state?.cnic) {
-        setCnic(location.state.cnic);
-      }
-      if (location.state?.phoneNumber) {
-        setPhoneNumber(location.state.phoneNumber);
-      }
-    }, [location]);
+    }
 
-    useEffect(() => {
-        // Update the formData once userId and cnic are set
-        setFormData(prevFormData => ({
-          ...prevFormData,
-          userId: userId || '',
-          cnicNumber: cnic || '',
-          phoneNumber: phoneNumber || ''
-        }));
-      }, [userId, cnic, phoneNumber]);
-  
+    // If `location.state` contains `cnic` and `phoneNumber`, set them.
+    if (location.state?.cnic) {
+      setCnic(location.state.cnic);
+    }
+    if (location.state?.phoneNumber) {
+      setPhoneNumber(location.state.phoneNumber);
+    }
+  }, [location]);
 
-  // --- Handler functions for steps 1-3 (unchanged) ---
+  // Update formData with userId, cnic, and phoneNumber once they're set
+  useEffect(() => {
+    setFormData(prevFormData => ({
+      ...prevFormData,
+      userId: userId || '',
+      cnicNumber: cnic || '',
+      phoneNumber: phoneNumber || ''
+    }));
+  }, [userId, cnic, phoneNumber]);
+
+  // --- Handler functions for steps ---
   const handleChange = (event) => {
     const { name, value } = event.target;
-    setFormData((prev) => ({
+    setFormData(prev => ({
       ...prev,
       [name]: value,
     }));
   };
 
-
   const handleChangeDistrict = (selectedDistrict) => {
-    setFormData((prevFormData) => ({
+    setFormData(prevFormData => ({
       ...prevFormData,
       district: selectedDistrict,
     }));
   };
-  
-
-  // ... handleFloorChange, handleFacilitiesChange, etc., remain the same ...
-
-  //   const handleFloorChange = (updatedFloors) => {
-  //   setFormData((prev) => ({
-  //     ...prev,
-  //     floors: updatedFloors,
-  //   }));
-  // };
-
 
   const handleFloorChange = (updatedFloors) => {
     const transformedFloors = updatedFloors.map((floor) => ({
-      name: floor.name || 'Unnamed Floor', // Default floor name if missing
+      name: floor.name || 'Unnamed Floor',
       features: floor.features
         ? Object.fromEntries(
             Object.entries(floor.features).map(([featureName, featureValue]) => [
-              featureName || 'Unnamed Feature', // Default feature name if missing
-              featureValue || 0, // Default feature value if missing
+              featureName || 'Unnamed Feature',
+              featureValue || 0,
             ])
           )
-        : {}, // Default to empty object if features are missing
+        : {},
     }));
-  
-    setFormData((prev) => ({
+
+    setFormData(prev => ({
       ...prev,
       floors: transformedFloors,
     }));
   };
-  
-
-  // const handleFacilitiesChange = (updatedFacilities) => {
-  //   setFormData((prev) => ({
-  //     ...prev,
-  //     facilities: updatedFacilities,
-  //   }));
-  // };
-
-
 
   const handleFacilitiesChange = (updatedFacilities) => {
     const transformedFacilities = updatedFacilities.map((facility) => ({
-      name: facility.name || 'Unknown', // Default name if missing
-      value: facility.value === 'Y' || facility.value === 'N' ? facility.value : 'N', // Default value
+      name: facility.name || 'Unknown',
+      value: facility.value === 'Y' || facility.value === 'N' ? facility.value : 'N',
     }));
-  
-    setFormData((prev) => ({
+
+    setFormData(prev => ({
       ...prev,
       facilities: transformedFacilities,
     }));
   };
-  
 
-
-
-    const handlePriorityChange = (value) => {
-    setFormData((prev) => ({
+  const handlePriorityChange = (value) => {
+    setFormData(prev => ({
       ...prev,
       priority: value,
     }));
   };
 
-    const handleBudgetChange = (updatedBudget) => {
-    setFormData((prev) => ({
+  const handleBudgetChange = (updatedBudget) => {
+    setFormData(prev => ({
       ...prev,
       budget: updatedBudget,
     }));
   };
 
-    const handleCommissionChange = (updatedCommission) => {
-    setFormData((prev) => ({
+  const handleCommissionChange = (updatedCommission) => {
+    setFormData(prev => ({
       ...prev,
       commission: updatedCommission,
     }));
   };
 
   const handleAdvanceChange = (value) => {
-    setFormData((prev) => ({
+    setFormData(prev => ({
       ...prev,
       advanceAmount: value,
     }));
   };
 
   const handlePropertyConditionChange = (value) => {
-    setFormData((prev) => ({
+    setFormData(prev => ({
       ...prev,
       propertyCondition: value,
     }));
-  };  
-
+  };
 
   const handleContractTermChange = (value) => {
-    setFormData((prev) => ({
+    setFormData(prev => ({
       ...prev,
       contractTerm: value,
     }));
-  };  
+  };
 
   const handleDemandChange = (value) => {
-    setFormData((prev) => ({
+    setFormData(prev => ({
       ...prev,
       demand: value,
     }));
-  };  
-  
-  const handleFilesChange = (name, files) => {
-    const fileArray = Array.from(files);
-
-    setFormData((prev) => ({
-      ...prev,
-        frontPictures: fileArray, // Store files by field name
-
-    }));
   };
 
+  const handleFilesChange = (name, files) => {
+    const fileArray = Array.from(files);
+    setFormData(prev => ({
+      ...prev,
+      frontPictures: fileArray,
+    }));
+  };
 
   const handlePropertyImagesChange = (name, files) => {
     const fileArray = Array.from(files);
-
-    setFormData((prev) => ({
+    setFormData(prev => ({
       ...prev,
-      propertyPictures: fileArray, // Store files by field name
-
+      propertyPictures: fileArray,
     }));
   };
 
-  
-
   const handleAddedValueChange = (updatedAddedValue) => {
-    setFormData((prev) => ({
+    setFormData(prev => ({
       ...prev,
       addedValue: updatedAddedValue,
     }));
   };
 
-  // // --- Final submission (gets called by Step 4's <form onSubmit>) ---
   // const handleSubmit = async (event) => {
   //   event.preventDefault();
-  
+  //   console.log('React formData state just before submit:', formData);
+
   //   try {
-  //     // Initialize FormData
+  //     // Create a new FormData object
   //     const formDataToSubmit = new FormData();
-  
-  //     // Add form data fields to FormData object
-  //     Object.entries(formData).forEach(([key, value]) => {
-  //       if (Array.isArray(value)) {
-  //         // If value is an array (e.g., files or other lists)
-  //         value.forEach((item, index) => {
-  //           formDataToSubmit.append(`${key}[${index}]`, item);
+
+  //     // Convert the React state into FormData
+  //     for (const [key, value] of Object.entries(formData)) {
+  //       // For arrays of File objects (e.g., frontPictures, propertyPictures)
+  //       if ((key === 'frontPictures' || key === 'propertyPictures') && Array.isArray(value)) {
+  //         value.forEach((file) => {
+  //           formDataToSubmit.append(key, file);
   //         });
-  //       } else if (typeof value === 'object' && value !== null) {
-  //         // If value is an object (e.g., nested objects like budget)
-  //         Object.entries(value).forEach(([nestedKey, nestedValue]) => {
-  //           formDataToSubmit.append(`${key}[${nestedKey}]`, nestedValue);
-  //         });
-  //       } else {
-  //         // For regular fields
+  //       }
+  //       // For a single File (e.g., video)
+  //       else if (key === 'video' && value instanceof File) {
+  //         formDataToSubmit.append('video', value);
+  //       }
+  //       // For arrays of objects (e.g., facilities, floors)
+  //       else if ((key === 'facilities' || key === 'floors') && Array.isArray(value)) {
+  //         formDataToSubmit.append(key, JSON.stringify(value));
+  //       }
+  //       // For nested objects (e.g., budget, commission, addedValue)
+  //       else if (key === 'budget' || key === 'commission' || key === 'addedValue') {
+  //         formDataToSubmit.append(key, JSON.stringify(value));
+  //       }
+  //       // For primitive values
+  //       else {
   //         formDataToSubmit.append(key, value);
   //       }
-  //     });
-  
-  //     // Make the POST request
+  //     }
+
+  //     // Log out the FormData key-value pairs
+  //     console.log('FormData key-value pairs:');
+  //     for (const [formKey, val] of formDataToSubmit.entries()) {
+  //       if (val instanceof File) {
+  //         console.log(
+  //           formKey,
+  //           `=> File name: ${val.name}, size: ${val.size}, type: ${val.type}`
+  //         );
+  //       } else {
+  //         console.log(formKey, val);
+  //       }
+  //     }
+
+  //     // Send the POST request
   //     const response = await axios.post(
   //       'http://195.179.231.102:6003/api/properties/add',
   //       formDataToSubmit,
-  //       {
-  //         headers: { 'Content-Type': 'multipart/form-data' },
-  //       }
+  //       { headers: { 'Content-Type': 'multipart/form-data' } }
   //     );
-  
-  //     // Handle the response
+
   //     console.log('Form submitted successfully:', response.data);
-  //     alert('Form submitted successfully!');
+  //     toast.success('Form submitted successfully!');
+
+  //     // Extract the property id from the response (assuming it's returned as _id)
+  //     const propertyId = response.data._id;
+  //     // Navigate to the PropertyAd page using the property id
+  //     navigate(`/PropertyAd/${propertyId}`);
   //   } catch (error) {
-  //     // Handle errors
-  //     console.error('Error submitting form:', error.response || error.message);
-  //     alert('Failed to submit the form. Please try again.');
+  //     const errorMsg =
+  //       error.response && error.response.data && error.response.data.message
+  //         ? error.response.data.message
+  //         : error.message || 'Unknown error occurred';
+  //     console.error('Error submitting form:', errorMsg);
+  //     toast.error(`Failed to submit the form. ${errorMsg}`);
   //   }
   // };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-
-    // 1. Log the React state before submitting
     console.log('React formData state just before submit:', formData);
-
+  
     try {
-      // 2. Create a new FormData object
+      // Create a new FormData object
       const formDataToSubmit = new FormData();
-
-      // 3. Convert your React state into FormData
+  
+      // Convert your React state into FormData
       for (const [key, value] of Object.entries(formData)) {
-        // If it's an array of File objects (e.g., frontPictures, propertyPictures)
         if ((key === 'frontPictures' || key === 'propertyPictures') && Array.isArray(value)) {
           value.forEach((file) => {
             formDataToSubmit.append(key, file);
           });
-        }
-        // If it's a single File (e.g., video)
-        else if (key === 'video' && value instanceof File) {
+        } else if (key === 'video' && value instanceof File) {
           formDataToSubmit.append('video', value);
-        }
-        // If it's an array of objects (e.g., facilities, floors)
-        else if (
-          (key === 'facilities' || key === 'floors') &&
-          Array.isArray(value)
-        ) {
-          // Stringify the entire array
+        } else if ((key === 'facilities' || key === 'floors') && Array.isArray(value)) {
           formDataToSubmit.append(key, JSON.stringify(value));
-        }
-        // If it's a nested object (e.g., budget, commission, addedValue)
-        else if (
-          key === 'budget' ||
-          key === 'commission' ||
-          key === 'addedValue'
-        ) {
+        } else if (key === 'budget' || key === 'commission' || key === 'addedValue') {
           formDataToSubmit.append(key, JSON.stringify(value));
-        }
-        // Otherwise, treat it as a primitive (string/number/etc.)
-        else {
+        } else {
           formDataToSubmit.append(key, value);
         }
       }
-
-      // 4. Log out everything in the FormData right before sending
+  
+      // Log out everything in the FormData before sending
       console.log('FormData key-value pairs:');
       for (const [formKey, val] of formDataToSubmit.entries()) {
         if (val instanceof File) {
@@ -377,38 +357,52 @@ const MainForm = () => {
           console.log(formKey, val);
         }
       }
-
-      // 5. Send the POST request
+  
+      // Send the POST request
       const response = await axios.post(
         'http://195.179.231.102:6003/api/properties/add',
         formDataToSubmit,
         { headers: { 'Content-Type': 'multipart/form-data' } }
       );
-
-      // 6. Log response from server
+  
       console.log('Form submitted successfully:', response.data);
-      alert('Form submitted successfully!');
+      toast.success('Form submitted successfully!');
+  
+      // Try extracting the property id from the response.
+      // Adjust the property key as needed based on your API response.
+      const propertyId = response.data.propertyId || response.data.id;
+  
+      if (propertyId) {
+        // Navigate to the PropertyAd page with the property id
+        navigate(`/PropertyAd/${propertyId}`);
+      } else {
+        console.error("Property ID not found in the server response", response.data);
+        toast.error("Property submitted, but no property id was returned.");
+      }
     } catch (error) {
-      console.error('Error submitting form:', error.response || error.message);
-      alert('Failed to submit the form. Please try again.');
+      const errorMsg =
+        error.response && error.response.data && error.response.data.message
+          ? error.response.data.message
+          : error.message || 'Unknown error occurred';
+      console.error('Error submitting form:', errorMsg);
+      toast.error(`Failed to submit the form. ${errorMsg}`);
     }
   };
   
-  
- // This function merges Step 4's local data into parent formData
- const finalUpdateFormData = (localData) => {
-   setFormData((prev) => ({
-     ...prev,
-     ...localData,
-   }));
- };
+  // Merges Step 4's local data into the parent formData
+  const finalUpdateFormData = (localData) => {
+    setFormData(prev => ({
+      ...prev,
+      ...localData,
+    }));
+  };
 
   // Steps navigation
   const nextStep = () => {
-    setCurrentStep((prevStep) => prevStep + 1);
+    setCurrentStep(prevStep => prevStep + 1);
   };
   const prevStepFn = () => {
-    setCurrentStep((prevStep) => Math.max(prevStep - 1, 0));
+    setCurrentStep(prevStep => Math.max(prevStep - 1, 0));
   };
 
   // Group existing handler functions
@@ -428,7 +422,6 @@ const MainForm = () => {
     handlePropertyImagesChange,
     handleChangeDistrict,
     handleSubmit,
-    // ...
   };
 
   // Define steps
@@ -458,21 +451,27 @@ const MainForm = () => {
       prevStep={prevStepFn}
       formData={formData}
       handlers={handlers}
-    finalUpdateFormData={finalUpdateFormData} 
+      finalUpdateFormData={finalUpdateFormData}
     />,
   ];
 
   return (
     <Container>
-    <div>
-      {stepComponents[currentStep]}
-      {/* <div>
-        <h3>Form Data Preview:</h3>
-        <pre style={{ background: '#f4f4f4', padding: '10px' }}>
-          {JSON.stringify(formData, null, 2)}
-        </pre>
-      </div> */}
-    </div>
+      <div>
+        {stepComponents[currentStep]}
+        {/* ToastContainer renders notifications */}
+        <ToastContainer 
+          position="top-right"
+          autoClose={5000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+        />
+      </div>
     </Container>
   );
 };

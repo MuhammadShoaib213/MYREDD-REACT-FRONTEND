@@ -147,13 +147,6 @@ const VillasForPurchase = ({
            isRequired={true}
       />
 
-      <AddedValueInput
-           addedValue={formData.addedValue}
-           onAddedValueChange={handleAddedValueChange}
-      />
-
-
-
       {/* No button here—submit is in StepFour */}
     </FormContainer>
   );

@@ -48,7 +48,7 @@ const SizeInput = ({ value, sizeUnit, onValueChange, onUnitChange, isRequired = 
 
   return (
     <div>
-      <Label htmlFor="size">Size {isRequired && <RequiredAsterisk>*</RequiredAsterisk>}</Label>
+      <Label htmlFor="size">Property Size {isRequired && <RequiredAsterisk>*</RequiredAsterisk>}</Label>
       <StyledWrapper>
         <Input
           type="number"

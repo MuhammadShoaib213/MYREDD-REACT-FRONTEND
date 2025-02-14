@@ -169,16 +169,6 @@ const AgricultureForSale = ({
         isRequired={true}
       />
 
-      {/* Features & Facilities */}
-      {/* <FloorFeatureSelector
-        floors={formData.floors}
-        onFloorChange={handleFloorChange}
-      />
-      <FacilitySelector
-        facilities={formData.facilities}
-        onFacilitiesChange={handleFacilitiesChange}
-      /> */}
-
       {/* Financial Details */}
       <DemandInput
         demand={formData.demand}

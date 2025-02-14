@@ -112,17 +112,6 @@ const WarehouseOnRent = ({
         onConditionChange={handlePropertyConditionChange}
       />
 
-
-      {/* Features & Facilities */}
-      <FloorFeatureSelector
-        floors={formData.floors}
-        onFloorChange={handleFloorChange}
-      />
-      <FacilitySelector
-        facilities={formData.facilities}
-        onFacilitiesChange={handleFacilitiesChange}
-      />
-
       {/* Financial Details */}
        <BudgetRangePerMonth
            min={formData.budget.min}
@@ -143,11 +132,6 @@ const WarehouseOnRent = ({
       <CommissionInput
            commission={formData.commission}
            onCommissionChange={handleCommissionChange}
-      />
-
-      <AddedValueInput
-           addedValue={formData.addedValue}
-           onAddedValueChange={handleAddedValueChange}
       />
 
     <ContractTermSelect

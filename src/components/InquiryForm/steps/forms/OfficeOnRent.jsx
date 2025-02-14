@@ -145,11 +145,6 @@ const OfficeOnRent = ({
            onCommissionChange={handleCommissionChange}
       />
 
-      <AddedValueInput
-           addedValue={formData.addedValue}
-           onAddedValueChange={handleAddedValueChange}
-      />
-
     <ContractTermSelect
         term={formData.contractTerm}
         onTermChange={handleContractTermChange}

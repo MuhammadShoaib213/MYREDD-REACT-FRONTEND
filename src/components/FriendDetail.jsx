@@ -47,20 +47,6 @@ const ContentContainer = styled.div`
   }
 `;
 
-// const ProfileCard = styled.div`
-//   flex: 1;
-//   background: white;
-//   border-radius: 10px;
-//   box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-//   padding: 20px;
-//   display: flex;
-//   flex-direction: column;
-//   align-items: center;
-
-//   @media (max-width: 768px) {
-//     width: 100%; // Full width on small screens
-//   }
-// `;
 
 const TabsCard = styled.div`
   flex: 2;
@@ -73,39 +59,6 @@ const TabsCard = styled.div`
     width: 100%; // Full width on small screens
   }
 `;
-
-// // Styled components
-// const PageContainer = styled.div`
-//   background-image: url(${bgImage});
-//   background-size: cover;
-//   background-position: center;
-//   background-blend-mode: overlay;
-//   background-color: rgba(0, 0, 0, 0.5);
-//   min-height: 100vh;
-//   display: flex;
-//   flex-direction: column;
-//   align-items: center;
-//   padding: 20px;
-// `;
-
-// const Header = styled.header`
-//   background-color: red;
-//   color: white;
-//   width: 100%;
-//   max-width: 1200px;
-//   text-align: center;
-//   padding: 10px 0;
-//   font-size: 24px;
-//   border-radius: 10px;
-//   margin-bottom: 20px; // Added space between header and content
-// `;
-
-// const ContentContainer = styled.div`
-//   display: flex;
-//   gap: 20px;
-//   width: 100%;
-//   max-width: 1200px;
-// `;
 
 const ProfileCard = styled.div`
   flex: 0 0 300px;
@@ -156,13 +109,7 @@ const Label = styled.span`
   color: #666;
 `;
 
-// const TabsCard = styled.div`
-//   flex: 1;
-//   background: white;
-//   border-radius: 10px;
-//   box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-//   overflow: hidden;
-// `;
+
 
 const TabsHeader = styled.div`
   background-color: red;
@@ -214,30 +161,27 @@ const InfoItem = styled.div`
 const BackButton = styled.button`
   position: absolute;
   left: 20px;
-  top: 135px;
-  background-color: #333;
-  border: 2px solid #ff0000;
-  color: white;
-  font-size: 16px;
+  top: 120px;
+  background-color: #ffffff;
+  border: 2px solid #e74c3c;
+  color: #e74c3c;
+  font-size: 14px;
   cursor: pointer;
-  padding: 15px 20px;
-  border-radius: 10px;
+  padding: 10px 15px;
+  border-radius: 5px;
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-  width: 200px;
-  height: 60px;
-  transition: background-color 0.3s, transform 0.3s;
-  z-index: 10; // Bring the button above other elements
-  
+  transition: background-color 0.3s, color 0.3s, transform 0.3s;
+
   &:hover {
-    background-color: #ff0000;
+    background-color: #e74c3c;
+    color: #ffffff;
     transform: translateY(-2px);
   }
 
   @media (max-width: 768px) {
-    font-size: 14px;
-    width: 100%;
-    height: auto;
     left: 10px;
+    width: 100%;
+    text-align: center;
   }
 `;
 

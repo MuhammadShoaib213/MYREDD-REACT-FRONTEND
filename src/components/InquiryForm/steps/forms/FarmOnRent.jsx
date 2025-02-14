@@ -176,12 +176,7 @@ const FarmOnRent = ({
         demand={formData.demand}
         onDemandChange={handleDemandChange}
       />
-
-      <AdvanceAmountInput
-        advanceAmount={formData.advanceAmount}
-        onAdvanceChange={handleAdvanceChange}
-      />
-
+      
       <CommissionInput
            commission={formData.commission}
            onCommissionChange={handleCommissionChange}

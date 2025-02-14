@@ -4,12 +4,11 @@ import {jwtDecode} from 'jwt-decode';
 import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import bgImage from '../images/bg.jpg';
-import {
-    FiHome,
-  } from 'react-icons/fi';
-import {  motion } from 'framer-motion';
+import { FiHome } from 'react-icons/fi';
+import { motion } from 'framer-motion';
 
-// Styled components
+// --- Styled Components --- //
+
 const PageContainer = styled.div`
   background-image: url(${bgImage});
   background-size: cover;
@@ -46,28 +45,27 @@ const Header = styled.h1`
 const BackButton = styled.button`
   position: absolute;
   left: 20px;
-  background-color: #333; // Subtle dark background
-  border: 2px solid #ff0000; // Border to match red theme
-  color: white;
-  font-size: 16px;
+  top: 5px;
+  background-color: #ffffff;
+  border: 2px solid #e74c3c;
+  color: #e74c3c;
+  font-size: 14px;
   cursor: pointer;
-  padding: 15px 20px; // Adjusted padding for better appearance
-  border-radius: 10px; // More rounded corners
-  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); // Soft shadow for depth
-  width: 200px; // Match the width of other buttons
-  height: 60px; // Match the height of other buttons
-  transition: background-color 0.3s, transform 0.3s; // Smooth transition effects
+  padding: 10px 15px;
+  border-radius: 5px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s, color 0.3s, transform 0.3s;
 
   &:hover {
-    background-color: #ff0000; // Match hover effect with the red theme
-    transform: translateY(-2px); // Slight lift on hover
+    background-color: #e74c3c;
+    color: #ffffff;
+    transform: translateY(-2px);
   }
 
   @media (max-width: 768px) {
-    font-size: 14px;
-    width: 100%;
-    height: auto;
     left: 10px;
+    width: 100%;
+    text-align: center;
   }
 `;
 
@@ -190,6 +188,23 @@ const NavButton = styled(motion.button)`
   }
 `;
 
+// --- Helper Functions for New Data Structure --- //
+
+// Helper to extract the created date from the property document.
+// If createdAt is wrapped inside a $date object, extract the number.
+const getCreatedDate = (property) => {
+  if (property.createdAt && property.createdAt.$date) {
+    if (property.createdAt.$date.$numberLong) {
+      return new Date(parseInt(property.createdAt.$date.$numberLong, 10));
+    } else {
+      return new Date(property.createdAt.$date);
+    }
+  }
+  return new Date(property.createdAt);
+};
+
+// --- Main Component --- //
+
 function PropertyBank() {
   const [properties, setProperties] = useState([]);
   const [propertyData, setPropertyData] = useState({});
@@ -228,18 +243,12 @@ function PropertyBank() {
       const currentYear = now.getFullYear();
 
       properties.forEach((property) => {
-        // Extract inquiry types that are true
-        const inquiryTypes = Object.entries(property.inquiryType || {})
-          .filter(([, value]) => value)
-          .map(([key]) => key);
+        // With the new data structure, inquiryType and propertyType are strings.
+        const inquiryType = property.inquiryType || "Unknown";
+        const propertyType = property.propertyType || "Unknown";
 
-        // Extract property types that are true
-        const propertyTypes = Object.entries(property.propertyType || {})
-          .filter(([, value]) => value)
-          .map(([key]) => key);
-
-        // Determine the time frame
-        const createdAt = new Date(property.createdAt);
+        // Get the created date
+        const createdAt = getCreatedDate(property);
         const propertyMonth = createdAt.getMonth();
         const propertyYear = createdAt.getFullYear();
 
@@ -254,20 +263,13 @@ function PropertyBank() {
           return; // Skip properties outside of these time frames
         }
 
-        // Update counts in newPropertyData
-        inquiryTypes.forEach((inquiryType) => {
-          if (!newPropertyData[inquiryType]) {
-            newPropertyData[inquiryType] = {};
-          }
-
-          propertyTypes.forEach((propType) => {
-            if (!newPropertyData[inquiryType][propType]) {
-              // Initialize counts array
-              newPropertyData[inquiryType][propType] = [0, 0, 0];
-            }
-            newPropertyData[inquiryType][propType][timeFrameIndex] += 1;
-          });
-        });
+        if (!newPropertyData[inquiryType]) {
+          newPropertyData[inquiryType] = {};
+        }
+        if (!newPropertyData[inquiryType][propertyType]) {
+          newPropertyData[inquiryType][propertyType] = [0, 0, 0];
+        }
+        newPropertyData[inquiryType][propertyType][timeFrameIndex] += 1;
       });
 
       setPropertyData(newPropertyData);
@@ -291,24 +293,26 @@ function PropertyBank() {
   };
 
   const formatInquiryType = (type) => {
-    // Convert camelCase to "For Sale", "For Purchase", etc.
-    return type.replace(/([A-Z])/g, ' $1').replace(/^./, (str) => str.toUpperCase());
+    // Convert strings like "For Sale" to the desired format.
+    return type; // (Assuming the API already sends it in a human-readable format)
   };
 
   const formatPropertyType = (type) => {
-    // Capitalize the first letter and replace camelCase with spaces
-    return type.replace(/([A-Z])/g, ' $1').replace(/^./, (str) => str.toUpperCase());
+    // Capitalize the first letter (if needed)
+    return type.charAt(0).toUpperCase() + type.slice(1);
   };
 
   const getColor = (type) => {
-    switch (type) {
-      case 'forSale':
+    // Since inquiryType is now a string (e.g., "For Sale"), we compare in lowercase.
+    const lower = type.toLowerCase();
+    switch (lower) {
+      case 'for sale':
         return '#007bff'; // Blue
-      case 'forPurchase':
+      case 'for purchase':
         return '#6f42c1'; // Purple
-      case 'forRent':
+      case 'for rent':
         return '#28a745'; // Green
-      case 'onRent':
+      case 'on rent':
         return '#dc3545'; // Red
       default:
         return '#6c757d'; // Default grey
@@ -328,7 +332,7 @@ function PropertyBank() {
   return (
     <PageContainer>
       <HeaderContainer>
-        <BackButton onClick={() => navigate(-1)}>← Back</BackButton>
+      <BackButton onClick={() => navigate(-1)}>← Back</BackButton>
         <Header>Property Bank</Header>
       </HeaderContainer>
       <CategoryContainer>
