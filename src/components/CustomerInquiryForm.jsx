@@ -581,7 +581,7 @@ const CustomerInquiryForm = () => {
     // Validate the WhatsApp number
     const number = whatsappNumber.trim();
     if (!isValidPhoneNumber(number)) {
-      setWhatsappNumberError("Please enter a valid WhatsApp number.");
+      setWhatsappNumberError("Please enter a valid WhatsApp number.i.e. +92 3123212456 ");
       return;
     }
 

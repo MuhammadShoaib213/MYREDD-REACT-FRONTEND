@@ -282,7 +282,6 @@ function App() {
           <Route path="/ForgotPasswordForm" element={<ForgotPasswordForm />} />
           <Route path="/OTPVerificationForm" element={<OTPVerificationForm />} />
           <Route path="/ResetPasswordForm" element={<ResetPasswordForm />} />
-          <Route path="/PropertyAd/:id" element={<PropertyAd />} />
 
           {/* Protected Routes */}
           <Route element={<ProtectedRoute />}>
@@ -331,6 +330,8 @@ function App() {
             <Route path="/SchedulePage" element={<SchedulePage />} />
             <Route path="/DriveComponent" element={<DriveComponent />} />
             <Route path="/PropertyMatches/:id" element={<PropertyMatches />} />
+            <Route path="/PropertyAd/:id" element={<PropertyAd />} />
+
             <Route path="/subscribe/:planTitle" element={
               <Elements stripe={stripePromise}>
                 <SubscriptionForm />

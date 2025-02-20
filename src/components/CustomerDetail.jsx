@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import bgImage from '../images/bg.jpg';
-import {  useNavigate } from 'react-router-dom';
-
-
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const PageContainer = styled.div`
   background-image: url(${bgImage});
@@ -15,7 +14,7 @@ const PageContainer = styled.div`
   min-height: 100vh;
   display: flex;
   justify-content: center;
-  align-items: stretch; /* Adjusted to stretch to make all children equal height */
+  align-items: stretch;
   padding: 40px;
   padding-top: 180px;
 
@@ -40,7 +39,7 @@ const MainContent = styled.div`
   margin-right: 20px;
   width: 100%;
   max-width: 400px;
-  flex: 1; /* Ensures it takes the space needed and respects flex properties */
+  flex: 1;
 
   @media (max-width: 768px) {
     margin-right: 0;
@@ -57,7 +56,7 @@ const SidePanel = styled.div`
   width: 100%;
   height: 500px;
   max-width: 400px;
-  flex: 1; /* Ensures it takes the space needed and respects flex properties */
+  flex: 1;
 
   @media (max-width: 768px) {
     width: 100%;
@@ -79,18 +78,17 @@ const Header = styled.div`
   }
 `;
 
-
 const DetailImage = styled.img`
-  width: 250px; // Increased size
-  height: 250px; // Increased size
+  width: 250px;
+  height: 250px;
   border-radius: 50%;
   object-fit: cover;
   margin-bottom: 20px;
 `;
 
 const DetailText = styled.p`
-  margin: 10px 0; // Increased margin
-  font-size: 20px; // Increased font size
+  margin: 10px 0;
+  font-size: 20px;
   color: #333;
 `;
 
@@ -101,9 +99,9 @@ const Label = styled.span`
 
 const DetailEntry = styled.div`
   background: white;
-  padding: 15px; // Increased padding
-  margin: 10px 0; // Increased margin
-  font-size: 18px; // Increased font size
+  padding: 15px;
+  margin: 10px 0;
+  font-size: 18px;
 `;
 
 const BackButton = styled.button`
@@ -133,6 +131,16 @@ const BackButton = styled.button`
   }
 `;
 
+// Styled component for clickable text
+const ClickableText = styled.span`
+  cursor: pointer;
+  color: blue;
+  text-decoration: underline;
+  &:hover {
+    color: darkblue;
+  }
+`;
+
 const CustomerDetail = () => {
   const { id } = useParams();
   const [customer, setCustomer] = useState(null);
@@ -158,26 +166,87 @@ const CustomerDetail = () => {
 
   if (!customer) return <p>Loading...</p>;
 
+  // Opens WhatsApp chat with the given number
+  const handleOpenWhatsApp = (number) => {
+    const url = `https://wa.me/${number}`;
+    window.open(url, '_blank');
+  };
+
+  // Opens Gmail compose window with the email as recipient
+  const handleOpenGmail = (email) => {
+    const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(email)}`;
+    window.open(gmailUrl, '_blank');
+  };
+
+  // Copies mobile number to clipboard and shows a toast message
+  const handleCopyMobile = (number) => {
+    navigator.clipboard.writeText(number)
+      .then(() => {
+        toast.success('Mobile number copied to clipboard!');
+      })
+      .catch((err) => {
+        toast.error('Failed to copy mobile number.');
+        console.error('Clipboard error:', err);
+      });
+  };
+
   return (
     <PageContainer>
       <BackButton onClick={() => navigate(-1)}>← Back</BackButton>
       <MainContent>
         <DetailImage src={customer.profilePicture ? `http://195.179.231.102:6003/${customer.profilePicture}` : 'https://via.placeholder.com/200'} alt={customer.fullName} />
-        <DetailText><Label>Name:</Label> {customer.fullName}</DetailText>
-        <DetailText><Label>Mobile:</Label> {customer.officialMobile}</DetailText>
-        <DetailText><Label>WhatsApp:</Label> {customer.whatsappMobile}</DetailText>
-        <DetailText><Label>Member Since:</Label> {new Date(customer.createdAt).toLocaleDateString()}</DetailText>
-        <DetailText><Label>Address:</Label> {customer.currentAddress}, {customer.currentCity}, {customer.country}</DetailText>
+        <DetailText>
+          <Label>Name:</Label> {customer.fullName}
+        </DetailText>
+        <DetailText>
+          <Label>Mobile:</Label>{' '}
+          <ClickableText onClick={() => handleCopyMobile(customer.officialMobile)}>
+            {customer.officialMobile}
+          </ClickableText>
+        </DetailText>
+        <DetailText>
+          <Label>WhatsApp:</Label>{' '}
+          <ClickableText onClick={() => handleOpenWhatsApp(customer.whatsappMobile)}>
+            {customer.whatsappMobile}
+          </ClickableText>
+        </DetailText>
+        <DetailText>
+          <Label>Member Since:</Label> {new Date(customer.createdAt).toLocaleDateString()}
+        </DetailText>
+        <DetailText>
+          <Label>Address:</Label> {customer.currentAddress}, {customer.currentCity}, {customer.country}
+        </DetailText>
       </MainContent>
       <SidePanel>
-        <DetailEntry><Label>Citizen ID:</Label> {customer.cnicNumber}</DetailEntry>
-        <DetailEntry><Label>Living City:</Label> {customer.currentCity}</DetailEntry>
-        <DetailEntry><Label>Profession:</Label> {customer.profession}</DetailEntry>
-        <DetailEntry><Label>Personal Email:</Label> {customer.personalEmail}</DetailEntry>
-        <DetailEntry><Label>Official Email:</Label> {customer.officialEmail}</DetailEntry>
-        <DetailEntry><Label>Age:</Label> {customer.age}</DetailEntry>
-        <DetailEntry><Label>Dependants:</Label> {customer.dependants}</DetailEntry>
+        <DetailEntry>
+          <Label>Citizen ID:</Label> {customer.cnicNumber}
+        </DetailEntry>
+        <DetailEntry>
+          <Label>Living City:</Label> {customer.currentCity}
+        </DetailEntry>
+        <DetailEntry>
+          <Label>Profession:</Label> {customer.profession}
+        </DetailEntry>
+        <DetailEntry>
+          <Label>Personal Email:</Label>{' '}
+          <ClickableText onClick={() => handleOpenGmail(customer.personalEmail)}>
+            {customer.personalEmail}
+          </ClickableText>
+        </DetailEntry>
+        <DetailEntry>
+          <Label>Official Email:</Label>{' '}
+          <ClickableText onClick={() => handleOpenGmail(customer.officialEmail)}>
+            {customer.officialEmail}
+          </ClickableText>
+        </DetailEntry>
+        <DetailEntry>
+          <Label>Age:</Label> {customer.age}
+        </DetailEntry>
+        <DetailEntry>
+          <Label>Dependants:</Label> {customer.dependants}
+        </DetailEntry>
       </SidePanel>
+      <ToastContainer position="top-right" autoClose={3000} hideProgressBar />
     </PageContainer>
   );
 };

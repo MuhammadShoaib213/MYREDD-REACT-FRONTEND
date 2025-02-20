@@ -1,238 +1,3 @@
-// import React, { useState, useEffect } from 'react';
-// import axios from 'axios';
-// import { jwtDecode } from 'jwt-decode';
-// import { Link, useNavigate } from 'react-router-dom';
-// import styled from 'styled-components';
-// import bgImage from '../images/bg.jpg';  // Ensure this path points to your actual background image
-
-// const PageContainer = styled.div`
-//   background-image: url(${bgImage});
-//   background-size: cover;
-//   background-position: center;
-//   background-blend-mode: overlay;
-//   background-color: rgba(0, 0, 0, 0.7); // This creates a dark overlay effect
-//   height: 100vh;
-//   display: flex;
-//   flex-direction: column;
-//   align-items: center;
-//   padding: 20px;
-//   padding-top: 135px;
-//   overflow: auto;  // Ensures content can scroll if it exceeds the viewport height
-// `;
-
-// const HeaderContainer = styled.div`
-//   display: flex;
-//   justify-content: center;
-//   align-items: center;
-//   position: relative;
-//   width: 100%;
-//   padding: 20px;
-//   @media (max-width: 768px) {
-//     flex-direction: column;
-//     padding: 10px;
-//   }
-// `;
-
-// const Header = styled.h1`
-//   color: white;
-//   margin: 0;
-// `;
-
-// const BackButton = styled.button`
-//   position: absolute;
-//   left: 20px;
-//   top: 10px;
-//   background-color: #ffffff;
-//   border: 2px solid #e74c3c;
-//   color: #e74c3c;
-//   font-size: 14px;
-//   cursor: pointer;
-//   padding: 10px 15px;
-//   border-radius: 5px;
-//   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-//   transition: background-color 0.3s, color 0.3s, transform 0.3s;
-
-//   &:hover {
-//     background-color: #e74c3c;
-//     color: #ffffff;
-//     transform: translateY(-2px);
-//   }
-
-//   @media (max-width: 768px) {
-//     left: 10px;
-//     width: 100%;
-//     text-align: center;
-//   }
-// `;
-
-// const CategoryContainer = styled.div`
-//   display: flex;
-//   justify-content: center;
-//   flex-wrap: wrap;
-//   width: 100%;
-// `;
-
-// const CategoryBlock = styled.div`
-//   background: rgba(255, 255, 255, 0.2);
-//   border-radius: 10px;
-//   margin: 10px;
-//   padding: 20px;
-//   width: 280px;
-//   display: flex;
-//   flex-direction: column;
-//   align-items: center;
-// `;
-
-// const InquiryHeader = styled.h2`
-//   background-color: ${props => props.color};
-//   color: white;
-//   text-align: center;
-//   padding: 10px;
-//   border-radius: 5px;
-//   width: 100%;
-// `;
-
-// const Table = styled.div`
-//   display: grid;
-//   grid-template-columns: repeat(4, 1fr);
-//   gap: 10px;
-//   width: 100%;
-//   background-color: #f8f9fa;
-//   padding: 10px;
-//   border-radius: 5px;
-//   margin-top: 10px;
-// `;
-
-// const TableRow = styled.div`
-//   display: contents;
-// `;
-
-// const TableHeader = styled.div`
-//   font-weight: bold;
-//   text-align: center;
-// `;
-
-// const TableCell = styled.div`
-//   text-align: center;
-//   padding: 5px 10px;
-//   background-color: #ddd;
-//   border-radius: 5px;
-// `;
-
-// const LearnMoreButton = styled.button`
-//   margin-top: 10px;
-//   padding: 10px 20px;
-//   background-color: #4caf50;
-//   color: white;
-//   border: none;
-//   border-radius: 5px;
-//   cursor: pointer;
-//   text-align: center;
-// `;
-
-// function InquiriesStatus() {
-//   const [inquiryData, setInquiryData] = useState({});
-//   const token = localStorage.getItem('token');
-//   const navigate = useNavigate(); 
-
-//   useEffect(() => {
-//     const fetchData = async () => {
-//       if (!token) return;
-//       try {
-//         const decoded = jwtDecode(token);
-//         const response = await axios.get(`http://195.179.231.102:6003/api/properties/user/${decoded.userId}`, {
-//           headers: { Authorization: `Bearer ${token}` }
-//         });
-//         setInquiryData(aggregateData(response.data));
-//         console.log(response.data);
-//       } catch (error) {
-//         console.error('Error fetching data:', error);
-//       }
-//     };
-//     fetchData();
-//   }, [token]);
-
-//   const aggregateData = (data) => {
-//     const counts = {
-//       forSale: { residential: [0, 0, 0], commercial: [0, 0, 0], land: [0, 0, 0] },
-//       forPurchase: { residential: [0, 0, 0], commercial: [0, 0, 0], land: [0, 0, 0] },
-//       forRent: { residential: [0, 0, 0], commercial: [0, 0, 0], land: [0, 0, 0] },
-//       onRent: { residential: [0, 0, 0], commercial: [0, 0, 0], land: [0, 0, 0] }
-//     };
-
-//     data.forEach(item => {
-//       Object.entries(item.inquiryType).forEach(([type, active]) => {
-//         if (active) {
-//           ['residential', 'commercial', 'land'].forEach((propType) => {
-//             const dateAdded = new Date(item.dateAdded);
-//             const now = new Date();
-//             const thisMonth = dateAdded.getMonth() === now.getMonth() && dateAdded.getFullYear() === now.getFullYear();
-//             const thisYear = dateAdded.getFullYear() === now.getFullYear();
-//             const lastYear = dateAdded.getFullYear() === now.getFullYear() - 1;
-//             const timeIndexes = [thisMonth, thisYear, lastYear];
-//             timeIndexes.forEach((isActive, index) => {
-//               if (isActive && item.propertyType[propType]) {
-//                 counts[type][propType][index]++;
-//               }
-//             });
-//           });
-//         }
-//       });
-//     });
-//     return counts;
-//   };
-
-//   const handleNavigate = (type) => {
-//     navigate('/InquiriesStatusDetail', { state: { inquiryType: type } });
-//   };
-
-//   return (
-//     <PageContainer>
-//       <HeaderContainer>
-//       <BackButton onClick={() => navigate(-1)}>← Back</BackButton>
-//         <Header>Inquiries Status</Header>
-//       </HeaderContainer>
-//       <CategoryContainer>
-//         {Object.entries(inquiryData).map(([type, details], index) => (
-//           <CategoryBlock key={index}>
-//             <InquiryHeader color={getColor(type)}>{type.replace('for', 'For ')}</InquiryHeader>
-//             <Table>
-//               <TableRow>
-//                 <TableHeader></TableHeader>
-//                 <TableHeader>This Month</TableHeader>
-//                 <TableHeader>This Year</TableHeader>
-//                 <TableHeader>Last Year</TableHeader>
-//               </TableRow>
-//               {Object.entries(details).map(([subtype, counts]) => (
-//                 <TableRow key={subtype}>
-//                   <TableCell>{subtype.charAt(0).toUpperCase() + subtype.slice(1)}</TableCell>
-//                   <TableCell>{counts[0]}</TableCell>
-//                   <TableCell>{counts[1]}</TableCell>
-//                   <TableCell>{counts[2]}</TableCell>
-//                 </TableRow>
-//               ))}
-//             </Table>
-//             <LearnMoreButton onClick={() => handleNavigate(type)}>Learn More</LearnMoreButton>
-//           </CategoryBlock>
-//         ))}
-//       </CategoryContainer>
-//     </PageContainer>
-//   );
-// }
-
-// const getColor = (type) => {
-//   switch (type) {
-//     case 'forSale': return '#007bff'; // Blue
-//     case 'forPurchase': return '#6f42c1'; // Purple
-//     case 'forRent': return '#28a745'; // Green
-//     case 'onRent': return '#dc3545'; // Red
-//     default: return '#6c757d'; // Default grey
-//   }
-// };
-
-// export default InquiriesStatus;
-
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -256,6 +21,7 @@ const PageContainer = styled.div`
   align-items: center;
   padding: 20px;
   overflow: auto;
+  padding-top: 135px;
 `;
 
 const HeaderContainer = styled.div`
@@ -274,31 +40,6 @@ const HeaderContainer = styled.div`
 const Header = styled.h1`
   color: white;
   margin: 0;
-`;
-
-const BackButton = styled.button`
-  position: absolute;
-  left: 20px;
-  top: 10px;
-  background-color: #ffffff;
-  border: 2px solid #e74c3c;
-  color: #e74c3c;
-  font-size: 14px;
-  cursor: pointer;
-  padding: 10px 15px;
-  border-radius: 5px;
-  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-  transition: background-color 0.3s, color 0.3s, transform 0.3s;
-  &:hover {
-    background-color: #e74c3c;
-    color: #ffffff;
-    transform: translateY(-2px);
-  }
-  @media (max-width: 768px) {
-    left: 10px;
-    width: 100%;
-    text-align: center;
-  }
 `;
 
 const CategoryContainer = styled.div`
@@ -364,6 +105,32 @@ const LearnMoreButton = styled.button`
   border-radius: 5px;
   cursor: pointer;
   text-align: center;
+`;
+
+const BackButton = styled.button`
+  position: absolute;
+  left: 20px;
+  top: 120px;
+  background-color: #ffffff;
+  border: 2px solid #e74c3c;
+  color: #e74c3c;
+  font-size: 14px;
+  cursor: pointer;
+  padding: 10px 15px;
+  border-radius: 5px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s, color 0.3s, transform 0.3s;
+  z-index: 9999;
+  &:hover {
+    background-color: #e74c3c;
+    color: #ffffff;
+    transform: translateY(-2px);
+  }
+  @media (max-width: 768px) {
+    left: 10px;
+    width: 100%;
+    text-align: center;
+  }
 `;
 
 // ----------------------
@@ -451,8 +218,8 @@ function InquiriesStatus() {
 
   return (
     <PageContainer>
+       <BackButton onClick={() => navigate(-1)}>← Back</BackButton>
       <HeaderContainer>
-        <BackButton onClick={() => navigate(-1)}>← Back</BackButton>
         <Header>Inquiries Status</Header>
       </HeaderContainer>
       <CategoryContainer>

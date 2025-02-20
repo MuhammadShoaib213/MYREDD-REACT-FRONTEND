@@ -16,10 +16,15 @@ const Label = styled.label`
   color: #333;
 `;
 
+const FlexContainer = styled.div`
+  display: flex;
+  gap: 10px;
+  align-items: center;
+`;
+
 const Input = styled.input`
   width: calc(50% - 10px);
   padding: 8px;
-  margin-right: 10px;
   border-radius: 4px;
   border: 1px solid #ccc;
   background-color: white;
@@ -34,18 +39,13 @@ const RequiredAsterisk = styled.span`
   margin-left: 4px;
 `;
 
-
 const BudgetRangePerMonth = ({ min = '', max = '', onBudgetChange, isRequired = false }) => {
   const [budget, setBudget] = useState({ min, max });
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-
-    // Update budget locally
     const updatedBudget = { ...budget, [name]: value };
     setBudget(updatedBudget);
-
-    // Notify parent about the updated budget
     if (onBudgetChange) {
       onBudgetChange(updatedBudget);
     }
@@ -53,8 +53,10 @@ const BudgetRangePerMonth = ({ min = '', max = '', onBudgetChange, isRequired = 
 
   return (
     <Container>
-      <Label>Budget Range Per Month {isRequired && <RequiredAsterisk>*</RequiredAsterisk>}</Label>
-      <div>
+      <Label>
+        Budget Range Per Month {isRequired && <RequiredAsterisk>*</RequiredAsterisk>}
+      </Label>
+      <FlexContainer>
         <Input
           type="number"
           name="min"
@@ -73,7 +75,7 @@ const BudgetRangePerMonth = ({ min = '', max = '', onBudgetChange, isRequired = 
           min="0"
           required={isRequired}
         />
-      </div>
+      </FlexContainer>
     </Container>
   );
 };

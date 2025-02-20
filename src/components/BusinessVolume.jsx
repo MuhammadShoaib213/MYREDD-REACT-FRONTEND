@@ -41,7 +41,7 @@ const CategoryBlock = styled.div`
   border-radius: 10px;
   margin: 10px;
   padding: 20px;
-  width: 280px;
+  width: 370px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -58,7 +58,7 @@ const InquiryHeader = styled.h2`
 
 const Table = styled.div`
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(4, 1fr);
   gap: 10px;
   width: 100%;
   background-color: #f8f9fa;
@@ -121,24 +121,83 @@ const BackButton = styled.button`
 // Normalize a string: lowercase and remove spaces.
 const normalize = (str) => str.toLowerCase().replace(/\s/g, '');
 
-// Updated aggregation function using the new data structure.
-// We assume item.inquiryType and item.propertyType are strings.
+// Updated aggregation function using the new profit formula and date splits.
+// Only properties with status "sold" will contribute to profit.
+// Profit is computed based on the following logic:
+// 1. Determine the base value: use `demand` if available; otherwise use the max value from `budget`.
+// 2. If both commission and addedValue are of type "value", sum them.
+// 3. If both are of type "percentage", calculate profit as the percentage (sum of both percentages)
+//    applied to the base value.
+// 4. Profit is aggregated into three buckets: All Time, This Year, and This Month.
 const aggregateData = (data) => {
-  // Define volumes using normalized keys.
+  // Define inquiry types and property categories with split profit columns.
   const volumes = {
-    forsale: { residential: 0, commercial: 0, land: 0 },
-    forpurchase: { residential: 0, commercial: 0, land: 0 },
-    onrent: { residential: 0, commercial: 0, land: 0 },
-    forrent: { residential: 0, commercial: 0, land: 0 }
+    forsale: { 
+      residential: { allTime: 0, thisYear: 0, thisMonth: 0 },
+      commercial: { allTime: 0, thisYear: 0, thisMonth: 0 },
+      land: { allTime: 0, thisYear: 0, thisMonth: 0 }
+    },
+    forpurchase: { 
+      residential: { allTime: 0, thisYear: 0, thisMonth: 0 },
+      commercial: { allTime: 0, thisYear: 0, thisMonth: 0 },
+      land: { allTime: 0, thisYear: 0, thisMonth: 0 }
+    },
+    onrent: { 
+      residential: { allTime: 0, thisYear: 0, thisMonth: 0 },
+      commercial: { allTime: 0, thisYear: 0, thisMonth: 0 },
+      land: { allTime: 0, thisYear: 0, thisMonth: 0 }
+    },
+    forrent: { 
+      residential: { allTime: 0, thisYear: 0, thisMonth: 0 },
+      commercial: { allTime: 0, thisYear: 0, thisMonth: 0 },
+      land: { allTime: 0, thisYear: 0, thisMonth: 0 }
+    }
   };
+
+  // Get current date details.
+  const now = new Date();
+  const currentYear = now.getFullYear();
+  const currentMonth = now.getMonth(); // 0-indexed
 
   data.forEach(item => {
     if (item.status && item.status.toLowerCase() === "sold") {
+      // Determine the base value: use demand if available, otherwise check for budget's max value.
+      let base = 0;
+      if (item.demand && item.demand !== "") {
+        base = Number(item.demand);
+      } else if (item.budget && item.budget.max) {
+        base = Number(item.budget.max);
+      }
+      
+      // Calculate profit based on commission and addedValue.
+      let profit = 0;
+      if (item.commission && item.addedValue) {
+        if (item.commission.type === 'value' && item.addedValue.type === 'value') {
+          profit = Number(item.commission.value) + Number(item.addedValue.value);
+        } else if (item.commission.type === 'percentage' && item.addedValue.type === 'percentage') {
+          profit = base * ((Number(item.commission.value) + Number(item.addedValue.value)) / 100);
+        }
+      }
+      
+      // Determine the date of the item.
+      const date = new Date(item.dateAdded);
+      const year = date.getFullYear();
+      const month = date.getMonth();
+
+      // Aggregate profit into all three columns.
       const inquiryKey = item.inquiryType ? normalize(item.inquiryType) : "";
       const propertyKey = item.propertyType ? item.propertyType.toLowerCase() : "";
       if (volumes[inquiryKey] && volumes[inquiryKey][propertyKey] !== undefined) {
-        const payment = Number(item.advancePayment) || 0;
-        volumes[inquiryKey][propertyKey] += payment;
+        // Always add to All Time.
+        volumes[inquiryKey][propertyKey].allTime += profit;
+        // Add to This Year if the year matches.
+        if (year === currentYear) {
+          volumes[inquiryKey][propertyKey].thisYear += profit;
+          // Add to This Month if both year and month match.
+          if (month === currentMonth) {
+            volumes[inquiryKey][propertyKey].thisMonth += profit;
+          }
+        }
       }
     }
   });
@@ -180,6 +239,7 @@ function BusinessVolume() {
           `http://195.179.231.102:6003/api/properties/user/${decoded.userId}`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
+        // Use the updated aggregation function for profit calculations.
         setBusinessData(aggregateData(response.data));
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -203,10 +263,25 @@ function BusinessVolume() {
               {type.replace(/^for/, 'For ')}
             </InquiryHeader>
             <Table>
-              {Object.entries(details).map(([category, amount]) => (
+              {/* Table header row */}
+              <TableRow>
+                <TableCell><strong>Category</strong></TableCell>
+                <TableCell><strong>All Time (PKR)</strong></TableCell>
+                <TableCell><strong>This Year (PKR)</strong></TableCell>
+                <TableCell><strong>This Month (PKR)</strong></TableCell>
+              </TableRow>
+              {Object.entries(details).map(([category, stats]) => (
                 <TableRow key={category}>
                   <TableCell>{category}</TableCell>
-                  <TableCell>PKR {amount.toLocaleString()}</TableCell>
+                  <TableCell>
+                     {Number(stats?.allTime ?? 0).toLocaleString()}
+                  </TableCell>
+                  <TableCell>
+                     {Number(stats?.thisYear ?? 0).toLocaleString()}
+                  </TableCell>
+                  <TableCell>
+                     {Number(stats?.thisMonth ?? 0).toLocaleString()}
+                  </TableCell>
                 </TableRow>
               ))}
             </Table>

@@ -23,6 +23,7 @@ const PageContainer = styled.div`
   padding: 20px;
   padding-top: 135px;
   overflow: auto;
+  text-align: center;
 `;
 
 const Header = styled.h1`
@@ -32,23 +33,39 @@ const Header = styled.h1`
 
 const ContentContainer = styled.div`
   display: flex;
-  flex-direction: row; /* Default to row */
-  justify-content: space-between;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
   width: 100%;
   max-width: 1200px;
-  margin-bottom: 30px;
-
+  margin: 0 auto 30px;
+  
   @media (max-width: 768px) {
-    flex-direction: column; /* Stack vertically on small screens */
-    align-items: center;
+    flex-direction: column;
   }
 `;
 
 const TableContainer = styled.div`
   width: 50%;
-
+  height: 370px;
+  overflow-y: auto;
+  
   @media (max-width: 768px) {
-    width: 100%; /* Full width on small screens */
+    width: 100%;
+  }
+`;
+
+const ChartContainer = styled.div`
+  width: 50%;
+  height: 300px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  
+  @media (max-width: 768px) {
+    width: 100%;
+    margin-top: 20px;
   }
 `;
 
@@ -57,6 +74,7 @@ const StyledTable = styled.table`
   border-collapse: collapse;
   background: white;
   border-radius: 10px;
+  margin: auto;
 `;
 
 const TableTitle = styled.h2`
@@ -132,10 +150,7 @@ const SummaryContainer = styled.div`
 // Helper Functions
 // ----------------------
 
-// Aggregates data by property type and subtype, counting inquiries and deals.
-// Assumes updated data structure: inquiryType, propertyType, and propertySubType are strings.
 const aggregateData = (rawData, inquiryType) => {
-  // Define the expected structure (display names)
   const structure = {
     Residential: ['Home', 'Apartment', 'Villas', 'FarmHouse'],
     Commercial: ['Office', 'Shop', 'Warehouse', 'Factory'],
@@ -143,7 +158,6 @@ const aggregateData = (rawData, inquiryType) => {
   };
 
   let results = {};
-  // Initialize results for each property type and its subtypes.
   Object.keys(structure).forEach(type => {
     results[type] = {};
     structure[type].forEach(subtype => {
@@ -152,29 +166,23 @@ const aggregateData = (rawData, inquiryType) => {
   });
 
   rawData.forEach(item => {
-    // Compare inquiryType as strings (case-insensitive)
     if (
       item.inquiryType &&
       inquiryType &&
       item.inquiryType.toLowerCase() === inquiryType.toLowerCase()
     ) {
-      // Check propertyType (string comparison)
       Object.keys(structure).forEach(type => {
         if (
           item.propertyType &&
           item.propertyType.toLowerCase() === type.toLowerCase()
         ) {
           structure[type].forEach(subtype => {
-            // Check propertySubType (string comparison)
             if (
               item.propertySubType &&
               item.propertySubType.toLowerCase() === subtype.toLowerCase()
             ) {
               results[type][subtype].inquiries++;
-              if (
-                item.status &&
-                item.status.toLowerCase() === "sold"
-              ) {
+              if (item.status && item.status.toLowerCase() === "sold") {
                 results[type][subtype].sold++;
               }
             }
@@ -183,11 +191,9 @@ const aggregateData = (rawData, inquiryType) => {
       });
     }
   });
-
   return results;
 };
 
-// Computes overall totals across all types.
 const computeSummary = (data) => {
   let totalInquiries = 0;
   let totalSold = 0;
@@ -200,24 +206,22 @@ const computeSummary = (data) => {
   return { totalInquiries, totalSold };
 };
 
-// Normalize inquiry type (remove spaces, lowercase) for header color.
 const getColor = (type) => {
   const normalized = type.replace(/\s/g, '').toLowerCase();
   switch (normalized) {
     case 'forsale':
-      return '#007bff'; // Blue
+      return '#007bff';
     case 'forpurchase':
-      return '#6f42c1'; // Purple
+      return '#6f42c1';
     case 'onrent':
-      return '#28a745'; // Green
+      return '#28a745';
     case 'forrent':
-      return '#dc3545'; // Red
+      return '#dc3545';
     default:
-      return '#6c757d'; // Grey
+      return '#6c757d';
   }
 };
 
-// Prepare data for the chart from the subtypes object.
 const renderGraphData = (subtypes) => {
   return Object.keys(subtypes).map(subtype => ({
     name: subtype,
@@ -271,13 +275,11 @@ function InquiryDealDetail() {
       <BackButton onClick={() => navigate(-1)}>← Back</BackButton>
       <Header>Inquiry vs Deal Done for {inquiryType}</Header>
       
-      {/* Summary Metrics */}
       <SummaryContainer>
         <div><strong>Total Inquiries:</strong> {summary.totalInquiries}</div>
         <div><strong>Total Deals:</strong> {summary.totalSold}</div>
       </SummaryContainer>
       
-      {/* Chart Type Toggle */}
       <ChartToggleButton onClick={toggleChartType}>
         Switch to {chartType === 'bar' ? 'Pie' : 'Bar'} Chart
       </ChartToggleButton>
@@ -305,38 +307,40 @@ function InquiryDealDetail() {
               </tbody>
             </StyledTable>
           </TableContainer>
-          <ResponsiveContainer width="50%" height={300}>
-            {chartType === 'bar' ? (
-              <BarChart data={renderGraphData(subtypes)}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <Bar dataKey="Inquiries" fill="#8884d8" />
-                <Bar dataKey="Sold" fill="#82ca9d" />
-              </BarChart>
-            ) : (
-              <PieChart>
-                <Tooltip />
-                <Legend />
-                <Pie
-                  data={renderGraphData(subtypes)}
-                  dataKey="Inquiries" // Example: using Inquiries as value
-                  nameKey="name"
-                  cx="50%"
-                  cy="50%"
-                  outerRadius={80}
-                  label
-                  isAnimationActive={true}
-                >
-                  {renderGraphData(subtypes).map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={['#8884d8', '#82ca9d'][index % 2]} />
-                  ))}
-                </Pie>
-              </PieChart>
-            )}
-          </ResponsiveContainer>
+          <ChartContainer>
+            <ResponsiveContainer width="100%" height="100%">
+              {chartType === 'bar' ? (
+                <BarChart data={renderGraphData(subtypes)}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="name" />
+                  <YAxis />
+                  <Tooltip />
+                  <Legend />
+                  <Bar dataKey="Inquiries" fill="#8884d8" />
+                  <Bar dataKey="Sold" fill="#82ca9d" />
+                </BarChart>
+              ) : (
+                <PieChart>
+                  <Tooltip />
+                  <Legend />
+                  <Pie
+                    data={renderGraphData(subtypes)}
+                    dataKey="Inquiries"
+                    nameKey="name"
+                    cx="50%"
+                    cy="50%"
+                    outerRadius={80}
+                    label
+                    isAnimationActive={true}
+                  >
+                    {renderGraphData(subtypes).map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={['#8884d8', '#82ca9d'][index % 2]} />
+                    ))}
+                  </Pie>
+                </PieChart>
+              )}
+            </ResponsiveContainer>
+          </ChartContainer>
         </ContentContainer>
       ))}
     </PageContainer>

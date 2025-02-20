@@ -45,6 +45,7 @@ const BackButton = styled.button`
   border-radius: 5px;
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
   transition: background-color 0.3s, color 0.3s, transform 0.3s;
+  z-index: 99999;
 
   &:hover {
     background-color: #e74c3c;
@@ -189,7 +190,7 @@ function CRM() {
     <DashboardContainer>
       <Header>
       <BackButton onClick={() => navigate(-1)}>← Back</BackButton>
-        <Title>Dashboard</Title>
+        <Title>Business Status</Title>
       </Header>
       <CardsContainer>
         {cards.map((card) => (

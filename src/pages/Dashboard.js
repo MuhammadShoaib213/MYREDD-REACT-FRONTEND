@@ -8,6 +8,7 @@ import {
   FiBarChart2,
   FiAlertCircle,
 } from 'react-icons/fi';
+import {  FaChartBar } from 'react-icons/fa'; 
 import {jwtDecode} from 'jwt-decode';
 import { Link, useNavigate } from 'react-router-dom';
 import Lottie from 'react-lottie';
@@ -478,9 +479,9 @@ const Dashboard = () => {
         <Link to="/CRM" style={{ textDecoration: 'none' }}>
           <NavButton whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
             <Icon>
-              <FiHome />
+              <FaChartBar />
             </Icon>
-            <Label>Dashboard</Label>
+            <Label>Business Status</Label>
           </NavButton>
         </Link>
         <Link to="/PropertyBank" style={{ textDecoration: 'none' }}>

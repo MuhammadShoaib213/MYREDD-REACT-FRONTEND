@@ -1,18 +1,30 @@
+// BusinessVolumeDetail.js
+
 import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
-import { jwtDecode } from 'jwt-decode';
+// If you installed the jwt-decode package, typically import like this:
+import {jwtDecode} from 'jwt-decode';
+
 import styled from 'styled-components';
 import bgImage from '../images/bg.jpg';
-import { 
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
-  PieChart, Pie, Cell 
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  PieChart,
+  Pie,
+  Cell,
+  ResponsiveContainer
 } from 'recharts';
-import { useLocation, useNavigate } from 'react-router-dom';
 
 // ----------------------
 // Styled Components
 // ----------------------
-
 const PageContainer = styled.div`
   background-image: url(${bgImage});
   background-size: cover;
@@ -23,6 +35,7 @@ const PageContainer = styled.div`
   padding: 20px;
   padding-top: 135px;
   overflow: auto;
+  text-align: center;
 `;
 
 const Header = styled.h1`
@@ -32,10 +45,14 @@ const Header = styled.h1`
 
 const ContentContainer = styled.div`
   display: flex;
-  justify-content: space-between;
+  flex-direction: row;
+  justify-content: center;
+  align-items: start;
+  gap: 20px;
   width: 100%;
   max-width: 1200px;
-  margin-bottom: 30px;
+  margin: 0 auto 30px;
+  
   @media (max-width: 768px) {
     flex-direction: column;
     align-items: center;
@@ -44,8 +61,24 @@ const ContentContainer = styled.div`
 
 const TableContainer = styled.div`
   width: 50%;
+  max-height: 370px;
+  overflow-y: auto;
+  
   @media (max-width: 768px) {
     width: 100%;
+  }
+`;
+
+const ChartContainer = styled.div`
+  width: 50%;
+  height: 300px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  
+  @media (max-width: 768px) {
+    width: 100%;
+    margin-top: 20px;
   }
 `;
 
@@ -54,12 +87,15 @@ const StyledTable = styled.table`
   border-collapse: collapse;
   background: white;
   border-radius: 10px;
+  margin: auto;
+  text-align: center;
 `;
 
 const TableTitle = styled.h2`
   background-color: #4CAF50;
   color: white;
   padding: 10px 15px;
+  margin: 0;
 `;
 
 const Th = styled.th`
@@ -99,9 +135,10 @@ const BackButton = styled.button`
     transform: translateY(-2px);
   }
   @media (max-width: 768px) {
-    left: 10px;
+    position: static;
     width: 100%;
     text-align: center;
+    margin-bottom: 10px;
   }
 `;
 
@@ -123,240 +160,323 @@ const SummaryContainer = styled.div`
   margin-bottom: 20px;
   color: white;
   font-size: 16px;
-`;
-
-const CategoryContainer = styled.div`
   display: flex;
   justify-content: center;
-  flex-wrap: wrap;
-  width: 100%;
-`;
+  gap: 30px;
 
-const CategoryBlock = styled.div`
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 10px;
-  margin: 10px;
-  padding: 20px;
-  width: 280px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-`;
+  div {
+    margin: 0 10px;
+  }
 
-const InquiryHeader = styled.h2`
-  background-color: ${props => props.color};
-  color: white;
-  text-align: center;
-  padding: 10px;
-  border-radius: 5px;
-  width: 100%;
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: center;
+  }
 `;
 
 // ----------------------
-// Helper Functions
+// Helper / Aggregation Functions
 // ----------------------
 
-// Normalize a string: lowercase and remove spaces.
-const normalize = (str) => str.toLowerCase().replace(/\s/g, '');
+// Normalize string: lowercases and removes spaces
+const normalize = (str) => (str || "").toLowerCase().replace(/\s/g, "");
 
-// Aggregates business volume data from rawData for a given inquiryType.
-// Assumes that item.inquiryType, item.propertyType, and item.propertySubType are strings.
-const aggregateData = (rawData, inquiryType) => {
-  // Define the expected structure with display names.
+/**
+ * Break down profit by propertyType -> propertySubType -> { allTime, thisYear, thisMonth }
+ * We only count items where:
+ *   1) status === 'sold' (case-insensitive)
+ *   2) inquiryType matches the targetInquiryType (after normalization)
+ * 
+ * Profit logic:
+ *   - base = demand (if present) else budget.max
+ *   - If both commission & addedValue are type "value", profit = sum of those values
+ *   - If both are type "percentage", profit = base * (sum of those percentages) / 100
+ */
+const aggregateDataBySubType = (data, targetInquiryType) => {
+  // Adjust these sub-types to your actual ones
   const structure = {
-    Residential: ['Home', 'Apartment', 'Villas', 'FarmHouse'],
-    Commercial: ['Office', 'Shop', 'Warehouse', 'Factory'],
-    Land: ['Others']
+    residential: ["home", "apartment", "villas", "farmhouse", "others"],
+    commercial: ["office", "shop", "warehouse", "factory", "others"],
+    land: ["agricultural", "plot", "industrial", "others"]
   };
 
+  // Initialize results with zero
   let results = {};
-  Object.keys(structure).forEach(type => {
-    results[type] = {};
-    structure[type].forEach(subtype => {
-      results[type][subtype] = { qty: 0, commission: 0, profit: 0 };
+  Object.keys(structure).forEach((propType) => {
+    results[propType] = {};
+    structure[propType].forEach((subType) => {
+      results[propType][subType] = {
+        allTime: 0,
+        thisYear: 0,
+        thisMonth: 0
+      };
     });
   });
 
-  rawData.forEach(item => {
-    if (
-      item.inquiryType &&
-      inquiryType &&
-      item.inquiryType.toLowerCase() === inquiryType.toLowerCase() &&
-      item.propertyType &&
-      item.propertySubType
-    ) {
-      Object.keys(structure).forEach(type => {
-        if (item.propertyType.toLowerCase() === type.toLowerCase()) {
-          structure[type].forEach(subtype => {
-            if (item.propertySubType.toLowerCase() === subtype.toLowerCase()) {
-              // Only count if the property is sold.
-              const count = (item.status && item.status.toLowerCase() === "sold") ? 1 : 0;
-              results[type][subtype].qty += count;
-              if (count) {
-                const payment = Number(item.advancePayment) || 0;
-                results[type][subtype].commission += payment;
-                results[type][subtype].profit += payment * 0.1;
-              }
-            }
-          });
+  // Get current year/month
+  const now = new Date();
+  const currentYear = now.getFullYear();
+  const currentMonth = now.getMonth();
+
+  // Normalize the target inquiry type
+  const normalizedTarget = normalize(targetInquiryType);
+
+  data.forEach((item) => {
+    // Must be sold
+    if ((item.status || "").toLowerCase() !== "sold") return;
+
+    // Must match inquiryType
+    const itemInquiry = normalize(item.inquiryType);
+    if (itemInquiry !== normalizedTarget) return;
+
+    // Determine base
+    let base = 0;
+    if (item.demand) {
+      base = Number(item.demand) || 0;
+    } else if (item.budget?.max) {
+      base = Number(item.budget.max) || 0;
+    }
+
+    // Compute profit
+    let profit = 0;
+    if (item.commission && item.addedValue) {
+      const { type: commType, value: commVal } = item.commission;
+      const { type: addType, value: addVal } = item.addedValue;
+
+      if (commType === "value" && addType === "value") {
+        profit = (Number(commVal) || 0) + (Number(addVal) || 0);
+      } else if (commType === "percentage" && addType === "percentage") {
+        const totalPct = (Number(commVal) || 0) + (Number(addVal) || 0);
+        profit = base * (totalPct / 100);
+      }
+      // If you want to handle "mixed" type logic (one value, one percentage), add more conditions here.
+    }
+
+    // Identify property type & subType
+    const pType = normalize(item.propertyType);
+    const pSubType = normalize(item.propertySubType);
+
+    // If the aggregator structure includes pType...
+    if (results[pType]) {
+      // Use the subType if it exists in the structure, otherwise fallback to "others"
+      const subTypeArray = structure[pType];
+      const chosenSubType = subTypeArray.includes(pSubType) ? pSubType : "others";
+
+      // Sum up in allTime, thisYear, thisMonth
+      const date = new Date(item.dateAdded);
+      const year = date.getFullYear();
+      const month = date.getMonth();
+
+      results[pType][chosenSubType].allTime += profit;
+
+      if (year === currentYear) {
+        results[pType][chosenSubType].thisYear += profit;
+        if (month === currentMonth) {
+          results[pType][chosenSubType].thisMonth += profit;
         }
-      });
+      }
     }
   });
 
   return results;
 };
 
-const renderGraphData = (subtypes) => {
-  return Object.keys(subtypes).map(subtype => ({
+// Convert subtypes object -> array for Recharts
+const renderGraphData = (subtypeObj) => {
+  // e.g. subtypeObj = { home: {allTime, thisYear, thisMonth}, apartment: {...}, ... }
+  return Object.keys(subtypeObj).map((subtype) => ({
     name: subtype,
-    QTY: subtypes[subtype].qty,
-    Commission: subtypes[subtype].commission,
-    Profit: subtypes[subtype].profit
+    allTime: subtypeObj[subtype].allTime,
+    thisYear: subtypeObj[subtype].thisYear,
+    thisMonth: subtypeObj[subtype].thisMonth
   }));
 };
 
-const computeSummary = (data) => {
-  let totalQty = 0, totalCommission = 0, totalProfit = 0;
-  Object.values(data).forEach(subtypes => {
-    Object.values(subtypes).forEach(counts => {
-      totalQty += counts.qty;
-      totalCommission += counts.commission;
-      totalProfit += counts.profit;
+// Summarize everything for the page's header
+const computeSummary = (aggregatedData) => {
+  let totalAllTime = 0,
+    totalThisYear = 0,
+    totalThisMonth = 0;
+
+  Object.values(aggregatedData).forEach((subtypes) => {
+    Object.values(subtypes).forEach(({ allTime, thisYear, thisMonth }) => {
+      totalAllTime += allTime;
+      totalThisYear += thisYear;
+      totalThisMonth += thisMonth;
     });
   });
-  return { totalQty, totalCommission, totalProfit };
+
+  return { totalAllTime, totalThisYear, totalThisMonth };
 };
 
-const getColor = (type) => {
-  const normalizedType = normalize(type);
-  switch (normalizedType) {
-    case 'forsale':
-      return '#007bff';
-    case 'forpurchase':
-      return '#6f42c1';
-    case 'onrent':
-      return '#28a745';
-    case 'forrent':
-      return '#dc3545';
-    default:
-      return '#6c757d';
-  }
-};
+// Colors for the Pie Chart
+const COLORS = ["#8884d8", "#82ca9d", "#ffc658", "#ff6f91", "#ffb347", "#a1cfff"];
 
 // ----------------------
-// Main Component: BusinessVolumeDetail
+// Main Component
 // ----------------------
-
 function BusinessVolumeDetail() {
-  const [data, setData] = useState({});
-  const [chartType, setChartType] = useState('bar'); // 'bar' or 'pie'
-  const [summary, setSummary] = useState({ totalQty: 0, totalCommission: 0, totalProfit: 0 });
+  const [aggregatedData, setAggregatedData] = useState({});
+  const [chartType, setChartType] = useState('bar'); // bar or pie
+  const [summary, setSummary] = useState({
+    totalAllTime: 0,
+    totalThisYear: 0,
+    totalThisMonth: 0
+  });
+
+  const navigate = useNavigate();
   const token = localStorage.getItem('token');
   const location = useLocation();
-  const inquiryType = location.state?.inquiryType;
-  const navigate = useNavigate();
+
+  // The inquiryType passed from the parent, e.g. "For Sale" or "For Rent"
+  const inquiryType = location.state?.inquiryType || ''; 
 
   useEffect(() => {
     if (!token) return;
-    const decoded = jwtDecode(token);
+
+    let decoded;
+    try {
+      decoded = jwtDecode(token);
+    } catch (err) {
+      console.error("Error decoding token:", err);
+      return;
+    }
+
     const fetchData = async () => {
       try {
+        // Fetch user's properties from your API
         const response = await axios.get(
           `http://195.179.231.102:6003/api/properties/user/${decoded.userId}`,
-          { headers: { Authorization: `Bearer ${token}` } }
+          {
+            headers: { Authorization: `Bearer ${token}` }
+          }
         );
-        const aggregated = aggregateData(response.data, inquiryType);
-        setData(aggregated);
-        setSummary(computeSummary(aggregated));
+
+        // Aggregate data using the updated function
+        const aggregated = aggregateDataBySubType(response.data, inquiryType);
+        setAggregatedData(aggregated);
+
+        // Compute overall summary
+        const sums = computeSummary(aggregated);
+        setSummary(sums);
+
       } catch (error) {
-        console.error('Error fetching data:', error);
+        console.error("Error fetching data:", error);
       }
     };
     fetchData();
   }, [token, inquiryType]);
 
+  // Toggle bar/pie chart
   const toggleChartType = () => {
-    setChartType(prevType => (prevType === 'bar' ? 'pie' : 'bar'));
+    setChartType(chartType === 'bar' ? 'pie' : 'bar');
   };
 
   return (
     <PageContainer>
       <BackButton onClick={() => navigate(-1)}>← Back</BackButton>
-      <Header>Business Volume Detail for {inquiryType}</Header>
+      <Header>Business Volume Detail - {inquiryType}</Header>
       
-      {/* Summary Metrics */}
+      {/* Summary of all propertyTypes combined */}
       <SummaryContainer>
-        <div><strong>Total QTY:</strong> {summary.totalQty}</div>
-        <div><strong>Total Commission:</strong> $ {summary.totalCommission.toFixed(2)}</div>
-        <div><strong>Total Profit:</strong> $ {summary.totalProfit.toFixed(2)}</div>
+        <div>
+          <strong>All Time (PKR):</strong>{" "}
+          {Math.round(summary.totalAllTime).toLocaleString()}
+        </div>
+        <div>
+          <strong>This Year (PKR):</strong>{" "}
+          {Math.round(summary.totalThisYear).toLocaleString()}
+        </div>
+        <div>
+          <strong>This Month (PKR):</strong>{" "}
+          {Math.round(summary.totalThisMonth).toLocaleString()}
+        </div>
       </SummaryContainer>
-      
-      {/* Chart Toggle Button */}
+
+      {/* Button to switch bar/pie */}
       <ChartToggleButton onClick={toggleChartType}>
         Switch to {chartType === 'bar' ? 'Pie' : 'Bar'} Chart
       </ChartToggleButton>
-      
-      {Object.entries(data).map(([type, subtypes]) => (
-        <ContentContainer key={type}>
-          <TableContainer>
-            <TableTitle>{type}</TableTitle>
-            <StyledTable>
-              <thead>
-                <tr>
-                  <Th>Type</Th>
-                  <Th>QTY</Th>
-                  <Th>Commission</Th>
-                  <Th>Profit</Th>
-                </tr>
-              </thead>
-              <tbody>
-                {Object.entries(subtypes).map(([subtype, values]) => (
-                  <SubtypeRow key={subtype}>
-                    <Td>{subtype}</Td>
-                    <Td>{values.qty}</Td>
-                    <Td>PKR {values.commission.toFixed(2)}</Td>
-                    <Td>PKR {values.profit.toFixed(2)}</Td>
-                  </SubtypeRow>
-                ))}
-              </tbody>
-            </StyledTable>
-          </TableContainer>
-          <ResponsiveContainer width="50%" height={300}>
-            {chartType === 'bar' ? (
-              <BarChart data={renderGraphData(subtypes)}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <Bar dataKey="QTY" fill="#8884d8" />
-                <Bar dataKey="Commission" fill="#82ca9d" />
-                <Bar dataKey="Profit" fill="#ffc658" />
-              </BarChart>
-            ) : (
-              <PieChart>
-                <Tooltip />
-                <Legend />
-                <Pie
-                  data={renderGraphData(subtypes)}
-                  dataKey="QTY" // You can change this to Commission or Profit as needed.
-                  nameKey="name"
-                  cx="50%"
-                  cy="50%"
-                  outerRadius={80}
-                  label
-                  isAnimationActive={true}
-                >
-                  {renderGraphData(subtypes).map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={['#8884d8', '#82ca9d', '#ffc658'][index % 3]} />
+
+      {/* For each property type (residential, commercial, land) */}
+      {Object.entries(aggregatedData).map(([propType, subtypes]) => {
+        const graphData = renderGraphData(subtypes);
+
+        return (
+          <ContentContainer key={propType}>
+            {/* Table */}
+            <TableContainer>
+              <TableTitle>
+                {propType.charAt(0).toUpperCase() + propType.slice(1)}
+              </TableTitle>
+              <StyledTable>
+                <thead>
+                  <tr>
+                    <Th>Sub-Type</Th>
+                    <Th>All Time (PKR)</Th>
+                    <Th>This Year (PKR)</Th>
+                    <Th>This Month (PKR)</Th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {Object.entries(subtypes).map(([subtype, values]) => (
+                    <SubtypeRow key={subtype}>
+                      <Td>{subtype}</Td>
+                      <Td>{Math.round(values.allTime).toLocaleString()}</Td>
+                      <Td>{Math.round(values.thisYear).toLocaleString()}</Td>
+                      <Td>{Math.round(values.thisMonth).toLocaleString()}</Td>
+                    </SubtypeRow>
                   ))}
-                </Pie>
-              </PieChart>
-            )}
-          </ResponsiveContainer>
-        </ContentContainer>
-      ))}
+                </tbody>
+              </StyledTable>
+            </TableContainer>
+
+            {/* Chart */}
+            <ChartContainer>
+              <ResponsiveContainer width="100%" height="100%">
+                {chartType === 'bar' ? (
+                  <BarChart data={graphData}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="name" />
+                    <YAxis />
+                    <Tooltip />
+                    <Legend />
+                    <Bar dataKey="allTime" fill="#8884d8" />
+                    <Bar dataKey="thisYear" fill="#82ca9d" />
+                    <Bar dataKey="thisMonth" fill="#ffc658" />
+                  </BarChart>
+                ) : (
+                  <PieChart>
+                    <Tooltip />
+                    <Legend />
+                    {/* 
+                      For the Pie chart, we choose which dataKey to visualize.
+                      You can pick "allTime", "thisYear", or "thisMonth" 
+                    */}
+                    <Pie
+                      data={graphData}
+                      dataKey="thisYear"
+                      nameKey="name"
+                      cx="50%"
+                      cy="50%"
+                      outerRadius={80}
+                      label
+                      isAnimationActive
+                    >
+                      {graphData.map((entry, index) => (
+                        <Cell
+                          key={`cell-${index}`}
+                          fill={COLORS[index % COLORS.length]}
+                        />
+                      ))}
+                    </Pie>
+                  </PieChart>
+                )}
+              </ResponsiveContainer>
+            </ChartContainer>
+          </ContentContainer>
+        );
+      })}
     </PageContainer>
   );
 }
