@@ -67,7 +67,7 @@ const ContactForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const response = await fetch(' http://localhost:6003/api/contact/send', {
+    const response = await fetch('http://195.179.231.102:6003/api/contact/send', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

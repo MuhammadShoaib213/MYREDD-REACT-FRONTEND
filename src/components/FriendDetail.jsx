@@ -196,7 +196,7 @@ const FriendDetail = () => {
   useEffect(() => {
     const fetchFriendDetail = async () => {
       try {
-        const response = await fetch(` http://localhost:6003/api/friend/detail/${id}`, {
+        const response = await fetch(`http://195.179.231.102:6003/api/friend/detail/${id}`, {
           headers: {
             Authorization: `Bearer ${token}`, // Include token in headers
           },
@@ -223,7 +223,7 @@ const FriendDetail = () => {
       <Header>Business Associates</Header>
       <ContentContainer>
         <ProfileCard>
-          <ProfileImage src={friend.profilePicture ? ` http://localhost:6003/${friend.profilePicture}` : 'https://via.placeholder.com/150'} alt={friend.fullName} />
+          <ProfileImage src={friend.profilePicture ? `http://195.179.231.102:6003/${friend.profilePicture}` : 'https://via.placeholder.com/150'} alt={friend.fullName} />
           <ProfileDetails>
             <DetailText><Label>Name:</Label> {friend.firstName} {friend.lastName}</DetailText><Divider />
             <DetailText><Label>Mobile:</Label> {friend.phoneNumber}</DetailText><Divider />

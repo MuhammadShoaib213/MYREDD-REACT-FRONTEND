@@ -224,7 +224,7 @@ const formatDate = (dateString) => {
 const CustomerCard = ({ customer, onViewDetail }) => (
   <Card>
     {/* <CardImage src={customer.profilePicture || 'default-profile.jpg'} alt={customer.fullName} /> */}
-    <CardImage src={customer.profilePicture ? ` http://localhost:6003/${customer.profilePicture}` : 'https://via.placeholder.com/200'} alt={customer.fullName} />
+    <CardImage src={customer.profilePicture ? `http://195.179.231.102:6003/${customer.profilePicture}` : 'https://via.placeholder.com/200'} alt={customer.fullName} />
     <CardBody>
       <CardTitle>{customer.fullName}</CardTitle>
       <CardSubtitle>{customer.currentAddress}</CardSubtitle>
@@ -253,7 +253,7 @@ const CustomerView = (customer) => {
         const decodedToken = jwtDecode(token);
         const userId = decodedToken.userId;
 
-        const response = await fetch(` http://localhost:6003/api/customers?userId=${userId}`);
+        const response = await fetch(`http://195.179.231.102:6003/api/customers?userId=${userId}`);
         if (!response.ok) {
           throw new Error('Failed to fetch customers');
         }

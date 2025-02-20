@@ -298,7 +298,7 @@ const MainForm = () => {
 
   //     // Send the POST request
   //     const response = await axios.post(
-  //       ' http://localhost:6003/api/properties/add',
+  //       'http://195.179.231.102:6003/api/properties/add',
   //       formDataToSubmit,
   //       { headers: { 'Content-Type': 'multipart/form-data' } }
   //     );
@@ -360,7 +360,7 @@ const MainForm = () => {
   
       // Send the POST request
       const response = await axios.post(
-        ' http://localhost:6003/api/properties/add',
+        'http://195.179.231.102:6003/api/properties/add',
         formDataToSubmit,
         { headers: { 'Content-Type': 'multipart/form-data' } }
       );

@@ -171,7 +171,7 @@ const FriendsList = () => {
                 <FriendImage
                   src={
                     friend.profilePicture
-                      ? ` http://localhost:6003/${friend.profilePicture}`
+                      ? `http://195.179.231.102:6003/${friend.profilePicture}`
                       : "https://via.placeholder.com/200"
                   }
                   alt={friend.firstName}

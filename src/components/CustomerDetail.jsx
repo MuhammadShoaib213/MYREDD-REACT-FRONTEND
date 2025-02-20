@@ -149,7 +149,7 @@ const CustomerDetail = () => {
   useEffect(() => {
     const fetchCustomerDetail = async () => {
       try {
-        const response = await fetch(` http://localhost:6003/api/customers/detail/${id}`);
+        const response = await fetch(`http://195.179.231.102:6003/api/customers/detail/${id}`);
         if (!response.ok) {
           throw new Error('Failed to fetch customer details');
         }
@@ -194,7 +194,7 @@ const CustomerDetail = () => {
     <PageContainer>
       <BackButton onClick={() => navigate(-1)}>← Back</BackButton>
       <MainContent>
-        <DetailImage src={customer.profilePicture ? ` http://localhost:6003/${customer.profilePicture}` : 'https://via.placeholder.com/200'} alt={customer.fullName} />
+        <DetailImage src={customer.profilePicture ? `http://195.179.231.102:6003/${customer.profilePicture}` : 'https://via.placeholder.com/200'} alt={customer.fullName} />
         <DetailText>
           <Label>Name:</Label> {customer.fullName}
         </DetailText>

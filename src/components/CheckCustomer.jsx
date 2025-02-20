@@ -231,7 +231,7 @@
 //     }
 
 //     try {
-//       const response = await axios.get(` http://localhost:6003/api/customers/check`, { params });
+//       const response = await axios.get(`http://195.179.231.102:6003/api/customers/check`, { params });
 
 //       if (response.data.exists) {
 //         setCustomerData(response.data.customer);
@@ -259,7 +259,7 @@
 //           <ModalContent>
 //             <CloseButton onClick={() => setModalVisible(false)}>×</CloseButton>
 //             <Card>
-//               <CardImage src={customerData.profilePicture ? ` http://localhost:6003/${customerData.profilePicture}` : 'https://via.placeholder.com/200'} alt={customerData.fullName} />
+//               <CardImage src={customerData.profilePicture ? `http://195.179.231.102:6003/${customerData.profilePicture}` : 'https://via.placeholder.com/200'} alt={customerData.fullName} />
 //               <CardBody>
 //                 <CardTitle>{customerData.fullName}</CardTitle>
 //                 <CardSubtitle>{customerData.currentAddress}</CardSubtitle>
@@ -535,7 +535,7 @@ const CheckCustomer = () => {
     }
 
     try {
-      const response = await axios.get(' http://localhost:6003/api/customers/check', { params });
+      const response = await axios.get('http://195.179.231.102:6003/api/customers/check', { params });
 
       if (response.data.exists) {
         setCustomerData(response.data.customer);
@@ -569,7 +569,7 @@ const CheckCustomer = () => {
               <CardImage
                 src={
                   customerData?.profilePicture
-                    ? ` http://localhost:6003/${customerData.profilePicture}`
+                    ? `http://195.179.231.102:6003/${customerData.profilePicture}`
                     : 'https://via.placeholder.com/200'
                 }
                 alt={customerData?.fullName}

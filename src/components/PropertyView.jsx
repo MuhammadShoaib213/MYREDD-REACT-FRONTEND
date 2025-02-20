@@ -488,7 +488,7 @@
 // //         const decoded = jwtDecode(token);
 // //         const userId = decoded.userId;
 
-// //         const response = await axios.get(` http://localhost:6003/api/properties/all?userId=${userId}`);
+// //         const response = await axios.get(`http://195.179.231.102:6003/api/properties/all?userId=${userId}`);
 
 // //         // Check if response.data is an array
 // //         if (!Array.isArray(response.data)) {
@@ -596,7 +596,7 @@
 // //         const token = localStorage.getItem('token');
 // //         const headers = { Authorization: `Bearer ${token}` };
 // //         const response = await axios.patch(
-// //           ` http://localhost:6003/api/properties/updateStatus/${property._id}`,
+// //           `http://195.179.231.102:6003/api/properties/updateStatus/${property._id}`,
 // //           { status: newStatus },
 // //           { headers }
 // //         );
@@ -659,7 +659,7 @@
 // //         <PropertyImage
 // //           src={
 // //             property.images && property.images.length > 0
-// //               ? ` http://localhost:6003/${property.images[0]}`
+// //               ? `http://195.179.231.102:6003/${property.images[0]}`
 // //               : getImageForPropertySubType(property.propertySubType)
 // //           }
 // //           alt={property.title || 'Property Image'}
@@ -1393,7 +1393,7 @@
 //         }
 //         const decoded = jwtDecode(token);
 //         const userId = decoded.userId;
-//         const response = await axios.get(` http://localhost:6003/api/properties/all?userId=${userId}`);
+//         const response = await axios.get(`http://195.179.231.102:6003/api/properties/all?userId=${userId}`);
 //         if (!Array.isArray(response.data)) {
 //           throw new Error('Invalid data format received from API.');
 //         }
@@ -1483,7 +1483,7 @@
 //         const token = localStorage.getItem('token');
 //         const headers = { Authorization: `Bearer ${token}` };
 //         const response = await axios.patch(
-//           ` http://localhost:6003/api/properties/updateStatus/${property._id}`,
+//           `http://195.179.231.102:6003/api/properties/updateStatus/${property._id}`,
 //           { status: newStatus },
 //           { headers }
 //         );
@@ -1551,9 +1551,9 @@
 //         <PropertyImage
 //           src={
 //             property.frontPictures && property.frontPictures.length > 0
-//               ? ` http://localhost:6003/${property.frontPictures[0]}`
+//               ? `http://195.179.231.102:6003/${property.frontPictures[0]}`
 //               : property.propertyPictures && property.propertyPictures.length > 0
-//               ? ` http://localhost:6003/${property.propertyPictures[0]}`
+//               ? `http://195.179.231.102:6003/${property.propertyPictures[0]}`
 //               : getImageForPropertySubType(property.propertySubType)
 //           }
 //           alt={property.title || property.streetName || 'Property Image'}
@@ -2332,7 +2332,7 @@ const PropertyView = () => {
         const decoded = jwtDecode(token);
         const userId = decoded.userId;
         const response = await axios.get(
-          ` http://localhost:6003/api/properties/all?userId=${userId}`
+          `http://195.179.231.102:6003/api/properties/all?userId=${userId}`
         );
         if (!Array.isArray(response.data)) {
           throw new Error('Invalid data format received from API.');
@@ -2424,7 +2424,7 @@ const PropertyView = () => {
         const token = localStorage.getItem('token');
         const headers = { Authorization: `Bearer ${token}` };
         await axios.patch(
-          ` http://localhost:6003/api/properties/updateStatus/${property._id}`,
+          `http://195.179.231.102:6003/api/properties/updateStatus/${property._id}`,
           { status: newStatus },
           { headers }
         );
@@ -2549,9 +2549,9 @@ const PropertyView = () => {
         <PropertyImage
           src={
             property.frontPictures && property.frontPictures.length > 0
-              ? ` http://localhost:6003/${property.frontPictures[0]}`
+              ? `http://195.179.231.102:6003/${property.frontPictures[0]}`
               : property.propertyPictures && property.propertyPictures.length > 0
-              ? ` http://localhost:6003/${property.propertyPictures[0]}`
+              ? `http://195.179.231.102:6003/${property.propertyPictures[0]}`
               : getImageForPropertySubType(property.propertySubType)
           }
           alt={property.title || property.streetName || 'Property Image'}
