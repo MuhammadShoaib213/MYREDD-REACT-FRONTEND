@@ -450,7 +450,7 @@
 // //   useEffect(() => {
 // //     const fetchFriendRequests = async () => {
 // //       try {
-// //         const response = await axios.get('http://195.179.231.102:6003/api/friend/requests', {
+// //         const response = await axios.get('api/friend/requests', {
 // //           headers: { Authorization: `Bearer ${token}` }
 // //         });
 // //         setFriendRequests(response.data);
@@ -466,7 +466,7 @@
   
 // //   const handleAcceptFriendRequest = async (requestId) => {
 // //     try {
-// //       await axios.put('http://195.179.231.102:6003/api/friend/update', { 
+// //       await axios.put('api/friend/update', { 
 // //         friendsId: requestId,
 // //         action: 'accept'
 // //       }, {
@@ -483,7 +483,7 @@
   
 // //   const handleDeclineFriendRequest = async (requestId) => {
 // //     try {
-// //       await axios.put('http://195.179.231.102:6003/api/friend/update', { 
+// //       await axios.put('api/friend/update', { 
 // //         friendsId: requestId,
 // //         action: 'decline'
 // //       }, {
@@ -901,7 +901,7 @@
 //   // useEffect(() => {
 //   //   const fetchFriendRequests = async () => {
 //   //     try {
-//   //       const response = await axios.get('http://195.179.231.102:6003/api/friend/requests', {
+//   //       const response = await axios.get('api/friend/requests', {
 //   //         headers: { Authorization: `Bearer ${token}` }
 //   //       });
 //   //       setFriendRequests(response.data);
@@ -917,7 +917,7 @@
 //   useEffect(() => {
 //     const fetchFriendRequests = async () => {
 //         try {
-//             const response = await axios.get('http://195.179.231.102:6003/api/friend/requests', {
+//             const response = await axios.get('api/friend/requests', {
 //                 headers: { Authorization: `Bearer ${token}` }
 //             });
 //             setFriendRequests(response.data);
@@ -936,7 +936,7 @@
 
 //   const handleAcceptFriendRequest = async (requestId) => {
 //     try {
-//       await axios.put('http://195.179.231.102:6003/api/friend/update', { 
+//       await axios.put('api/friend/update', { 
 //         friendsId: requestId,
 //         action: 'accept'
 //       }, {
@@ -952,7 +952,7 @@
 
 //   const handleDeclineFriendRequest = async (requestId) => {
 //     try {
-//       await axios.put('http://195.179.231.102:6003/api/friend/update', { 
+//       await axios.put('api/friend/update', { 
 //         friendsId: requestId,
 //         action: 'decline'
 //       }, {
@@ -1395,7 +1395,7 @@ const ProfitContent = () => {
   useEffect(() => {
     // Example: fetch all properties from your API
     axios
-      .get('http://195.179.231.102:6003/api/properties')
+      .get('api/properties')
       .then((res) => {
         const rawProps = res.data || [];
         // 1) Aggregate
@@ -1510,7 +1510,7 @@ const BusinessAssociatesPage = () => {
   useEffect(() => {
     const fetchFriendRequests = async () => {
       try {
-        const response = await axios.get('http://195.179.231.102:6003/api/friend/requests', {
+        const response = await axios.get('api/friend/requests', {
           headers: { Authorization: `Bearer ${token}` }
         });
         setFriendRequests(response.data);
@@ -1529,7 +1529,7 @@ const BusinessAssociatesPage = () => {
   const handleAcceptFriendRequest = async (requestId) => {
     try {
       await axios.put(
-        'http://195.179.231.102:6003/api/friend/update',
+        'api/friend/update',
         { friendsId: requestId, action: 'accept' },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -1544,7 +1544,7 @@ const BusinessAssociatesPage = () => {
   const handleDeclineFriendRequest = async (requestId) => {
     try {
       await axios.put(
-        'http://195.179.231.102:6003/api/friend/update',
+        'api/friend/update',
         { friendsId: requestId, action: 'decline' },
         { headers: { Authorization: `Bearer ${token}` } }
       );

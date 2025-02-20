@@ -130,7 +130,7 @@ const RightSidebar = () => {
     event.preventDefault();
     setShowInviteForm(false);
     try {
-      const response = await axios.get(`http://195.179.231.102:6003/api/auth/search`, {
+      const response = await axios.get(`api/auth/search`, {
         headers: { Authorization: `Bearer ${token}` },
         params: { query: searchTerm },
       });
@@ -151,7 +151,7 @@ const RightSidebar = () => {
   const handleFriendRequest = async (userId) => {
     try {
       await axios.post(
-        'http://195.179.231.102:6003/api/friend/request',
+        'api/friend/request',
         { recipientId: userId },
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -181,7 +181,7 @@ const RightSidebar = () => {
           return;
         }
         await axios.post(
-          'http://195.179.231.102:6003/api/auth/invite',
+          'api/auth/invite',
           { email: inviteEmail },
           {
             headers: { Authorization: `Bearer ${token}` },
@@ -195,7 +195,7 @@ const RightSidebar = () => {
           return;
         }
         await axios.post(
-          'http://195.179.231.102:6003/api/auth/invite-sms',
+          'api/auth/invite-sms',
           { phoneNumber: invitePhone },
           {
             headers: { Authorization: `Bearer ${token}` },
@@ -229,7 +229,7 @@ const RightSidebar = () => {
             <ProfilePic
               src={
                 user.profilePicture
-                  ? `http://195.179.231.102:6003/${user.profilePicture}`
+                  ? `${user.profilePicture}`
                   : 'https://cdn-icons-png.freepik.com/512/147/147144.png'
               }
               alt={`${user.firstName} Avatar`}

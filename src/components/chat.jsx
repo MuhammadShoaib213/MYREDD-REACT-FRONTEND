@@ -147,7 +147,7 @@ const ContactItem = styled.div`
 
 
 // Setup axios instance with token
-axios.defaults.baseURL = 'http://195.179.231.102:6003/api';
+axios.defaults.baseURL = 'api';
 axios.interceptors.request.use(config => {
   const token = localStorage.getItem('token');
   config.headers.Authorization = token ? `Bearer ${token}` : '';

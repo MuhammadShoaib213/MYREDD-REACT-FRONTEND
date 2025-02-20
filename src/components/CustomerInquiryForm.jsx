@@ -425,7 +425,7 @@ const CustomerInquiryForm = () => {
   //   try {
   //     console.log(formData);
   //     const response = await axios.post(
-  //       "http://195.179.231.102:6003/api/customers/add",
+  //       "api/customers/add",
   //       data,
   //       {
   //         headers: {
@@ -510,7 +510,7 @@ const CustomerInquiryForm = () => {
     try {
       // Submit the form data to the backend
       const response = await axios.post(
-        "http://195.179.231.102:6003/api/customers/add",
+        "api/customers/add",
         data,
         {
           headers: {
@@ -614,7 +614,7 @@ const CustomerInquiryForm = () => {
     // Send the invite token and inviter's userId to the backend to store the mapping
     try {
       await axios.post(
-        "http://195.179.231.102:6003/api/CustomerInvites/create-invite-token",
+        "api/CustomerInvites/create-invite-token",
         { inviteToken },
         {
           headers: {
@@ -656,7 +656,7 @@ const CustomerInquiryForm = () => {
 
     try {
       const response = await axios.post(
-        "http://195.179.231.102:6003/api/auth/send-otp",
+        "api/auth/send-otp",
         { email }
       );
       if (response.status === 200) {
@@ -694,7 +694,7 @@ const CustomerInquiryForm = () => {
 
     try {
       const response = await axios.post(
-        "http://195.179.231.102:6003/api/auth/verify-otp",
+        "api/auth/verify-otp",
         { email, otp }
       );
       if (response.status === 200) {
