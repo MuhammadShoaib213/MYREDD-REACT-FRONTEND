@@ -86,7 +86,7 @@ function OTPVerificationForm() {
     }
 
     try {
-      const response = await fetch('api/auth/verify-otp-pass', {
+      const response = await fetch('/api/auth/verify-otp-pass', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

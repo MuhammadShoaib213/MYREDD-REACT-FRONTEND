@@ -188,7 +188,7 @@ function SignupPage() {
     };
 
     try {
-      const response = await fetch('api/auth/signup', {
+      const response = await fetch('/api/auth/signup', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -209,7 +209,7 @@ function SignupPage() {
   };
 
   const sendOtpToUser = async (email) => {
-    const response = await fetch('api/auth/send-otp', {
+    const response = await fetch('/api/auth/send-otp', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

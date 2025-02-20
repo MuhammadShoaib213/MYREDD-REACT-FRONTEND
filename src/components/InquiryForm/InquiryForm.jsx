@@ -360,7 +360,7 @@ const MainForm = () => {
   
       // Send the POST request
       const response = await axios.post(
-        'api/properties/add',
+        '/api/properties/add',
         formDataToSubmit,
         { headers: { 'Content-Type': 'multipart/form-data' } }
       );

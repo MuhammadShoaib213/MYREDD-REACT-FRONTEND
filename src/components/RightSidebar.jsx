@@ -151,7 +151,7 @@ const RightSidebar = () => {
   const handleFriendRequest = async (userId) => {
     try {
       await axios.post(
-        'api/friend/request',
+        '/api/friend/request',
         { recipientId: userId },
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -181,7 +181,7 @@ const RightSidebar = () => {
           return;
         }
         await axios.post(
-          'api/auth/invite',
+          '/api/auth/invite',
           { email: inviteEmail },
           {
             headers: { Authorization: `Bearer ${token}` },
@@ -195,7 +195,7 @@ const RightSidebar = () => {
           return;
         }
         await axios.post(
-          'api/auth/invite-sms',
+          '/api/auth/invite-sms',
           { phoneNumber: invitePhone },
           {
             headers: { Authorization: `Bearer ${token}` },

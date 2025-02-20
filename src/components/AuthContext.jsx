@@ -35,7 +35,7 @@ export const AuthProvider = ({ children }) => {
     // Function to simulate login
     const login = async (email, password) => {
         try {
-            const response = await fetch('api/auth/login', {
+            const response = await fetch('/api/auth/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

@@ -340,7 +340,7 @@ const LeadDetailPage = () => {
       formData.append('audio', new File([blob], 'audioNote.webm', { type: 'audio/webm' }));
     }
     try {
-      const response = await axios.post('api/notes', formData, {
+      const response = await axios.post('/api/notes', formData, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setNotes([...notes, response.data]);
@@ -405,7 +405,7 @@ const LeadDetailPage = () => {
       time: scheduleTime
     };
     try {
-      const response = await axios.post('api/schedules/add', scheduleData, { headers });
+      const response = await axios.post('/api/schedules/add', scheduleData, { headers });
       alert('Schedule saved successfully');
       console.log(response.data);
     } catch (error) {
