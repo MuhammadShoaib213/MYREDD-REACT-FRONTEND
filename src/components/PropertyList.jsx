@@ -267,7 +267,7 @@
 // // //         const decoded = jwtDecode(token);
 // // //         const userId = decoded.userId;
 
-// // //         const response = await axios.get('http://195.179.231.102:6003/api/properties/all', {
+// // //         const response = await axios.get(' http://localhost:6003/api/properties/all', {
 // // //           params: { userId: userId },
 // // //         });
 // // //         setProperties(response.data);
@@ -328,7 +328,7 @@
 // // //           {filteredProperties.map(property => (
 // // //             <PropertyCard key={property._id} onClick={() => handleCardClick(property._id)}>
 // // //               <PropertyImage 
-// // //                 src={property.images && property.images.length > 0 ? `http://195.179.231.102:6003/${property.images[0]}` : 'http://195.179.231.102:6003/uploads/bg.jpg'} 
+// // //                 src={property.images && property.images.length > 0 ? ` http://localhost:6003/${property.images[0]}` : ' http://localhost:6003/uploads/bg.jpg'} 
 // // //                 alt={property.title || 'Property Image'}
 // // //               />
 // // //               <PropertyInfo>
@@ -768,7 +768,7 @@
 // //         const decoded = jwtDecode(token);
 // //         const userId = decoded.userId;
 
-// //         const response = await axios.get('http://195.179.231.102:6003/api/properties/all', {
+// //         const response = await axios.get(' http://localhost:6003/api/properties/all', {
 // //           params: { userId: userId },
 // //         });
 
@@ -845,8 +845,8 @@
 // //               <PropertyCard key={property._id} onClick={() => handleCardClick(property._id)}>
 // //                 <PropertyImage 
 // //                   src={property.images && property.images.length > 0 
-// //                     ? `http://195.179.231.102:6003/${property.images[0]}` 
-// //                     : 'http://195.179.231.102:6003/uploads/bg.jpg'} 
+// //                     ? ` http://localhost:6003/${property.images[0]}` 
+// //                     : ' http://localhost:6003/uploads/bg.jpg'} 
 // //                   alt={property.title || 'Property Image'}
 // //                 />
 
@@ -1265,7 +1265,7 @@
 //         const decoded = jwtDecode(token);
 //         const userId = decoded.userId;
 
-//         const response = await axios.get('http://195.179.231.102:6003/api/properties/all', {
+//         const response = await axios.get(' http://localhost:6003/api/properties/all', {
 //           params: { userId },
 //         });
 
@@ -1370,8 +1370,8 @@
 //                 <PropertyImage 
 //                   src={
 //                     property.images && property.images.length > 0 
-//                       ? `http://195.179.231.102:6003/${property.images[0]}` 
-//                       : 'http://195.179.231.102:6003/uploads/bg.jpg'
+//                       ? ` http://localhost:6003/${property.images[0]}` 
+//                       : ' http://localhost:6003/uploads/bg.jpg'
 //                   } 
 //                   alt={property.title || 'Property Image'}
 //                 />
@@ -2010,7 +2010,7 @@ const PropertyList = () => {
         const decoded = jwtDecode(token);
         const userId = decoded.userId;
         // Using the API endpoint from previous version:
-        const response = await axios.get('http://195.179.231.102:6003/api/properties/all', {
+        const response = await axios.get(' http://localhost:6003/api/properties/all', {
           params: { userId },
         });
         if (!Array.isArray(response.data)) {
@@ -2134,7 +2134,7 @@ const PropertyList = () => {
         const token = localStorage.getItem('token');
         const headers = { Authorization: `Bearer ${token}` };
         await axios.patch(
-          `http://195.179.231.102:6003/api/properties/updateStatus/${property._id}`,
+          ` http://localhost:6003/api/properties/updateStatus/${property._id}`,
           { status: newStatus },
           { headers }
         );
@@ -2203,9 +2203,9 @@ const PropertyList = () => {
         <PropertyImage
           src={
             property.frontPictures && property.frontPictures.length > 0
-              ? `http://195.179.231.102:6003/${property.frontPictures[0]}`
+              ? ` http://localhost:6003/${property.frontPictures[0]}`
               : property.propertyPictures && property.propertyPictures.length > 0
-              ? `http://195.179.231.102:6003/${property.propertyPictures[0]}`
+              ? ` http://localhost:6003/${property.propertyPictures[0]}`
               : getImageForPropertySubType(property.propertySubType)
           }
           alt={property.title || property.streetName || 'Property Image'}

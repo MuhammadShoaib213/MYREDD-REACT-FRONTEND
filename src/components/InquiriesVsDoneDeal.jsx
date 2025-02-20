@@ -179,7 +179,7 @@ function InquiriesVsDeals() {
       try {
         const decoded = jwtDecode(token);
         const response = await axios.get(
-          `http://195.179.231.102:6003/api/properties/user/${decoded.userId}`,
+          ` http://localhost:6003/api/properties/user/${decoded.userId}`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
         // Use the updated aggregation logic

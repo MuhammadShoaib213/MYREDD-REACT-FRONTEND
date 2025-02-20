@@ -30,7 +30,7 @@ const DetectAddressComponent = ({ onUpdate }) => {
 
           try {
             const response = await axios.get(
-              `http://195.179.231.102:6003/api/address/reverse-geocode?lat=${latitude}&lng=${longitude}`
+              ` http://localhost:6003/api/address/reverse-geocode?lat=${latitude}&lng=${longitude}`
             );
             const data = response.data;  // Access response data directly
 

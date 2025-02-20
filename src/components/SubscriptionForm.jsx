@@ -37,7 +37,7 @@ const SubscriptionForm = () => {
     // Updated to include userId in the POST request
     const saveSubscriptionDetails = async (email, packageName, subscriptionStatus, userId) => {
         try {
-            const response = await fetch('http://195.179.231.102:6003/api/subscriptions', {
+            const response = await fetch(' http://localhost:6003/api/subscriptions', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

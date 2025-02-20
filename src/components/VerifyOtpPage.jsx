@@ -73,7 +73,7 @@ function VerifyOtpPage() {
       return;
     }
 
-    const response = await fetch('http://195.179.231.102:6003/api/auth/verify-otp', {
+    const response = await fetch(' http://localhost:6003/api/auth/verify-otp', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

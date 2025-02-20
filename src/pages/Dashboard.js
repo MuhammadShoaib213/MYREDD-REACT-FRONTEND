@@ -425,7 +425,7 @@ const Dashboard = () => {
       try {
         const token = localStorage.getItem('token');
         const response = await fetch(
-          `http://195.179.231.102:6003/api/auth/profile/${user.userId}`,
+          ` http://localhost:6003/api/auth/profile/${user.userId}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -458,7 +458,7 @@ const Dashboard = () => {
         <UserImage
           src={
             user.profilePic
-              ? `http://195.179.231.102:6003/${user.profilePic}`
+              ? ` http://localhost:6003/${user.profilePic}`
               : 'https://via.placeholder.com/200'
           }
           alt="Profile"

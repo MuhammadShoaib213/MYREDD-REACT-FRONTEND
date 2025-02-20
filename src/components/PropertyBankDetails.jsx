@@ -157,7 +157,7 @@ const PropertyBankDetails = () => {
         const decoded = jwtDecode(token);
         const userId = decoded.userId;
 
-        const response = await axios.get('http://195.179.231.102:6003/api/properties/all', {
+        const response = await axios.get(' http://localhost:6003/api/properties/all', {
           params: { userId },
         });
         setProperties(response.data);

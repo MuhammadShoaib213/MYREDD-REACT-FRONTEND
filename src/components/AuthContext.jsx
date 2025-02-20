@@ -35,7 +35,7 @@ export const AuthProvider = ({ children }) => {
     // Function to simulate login
     const login = async (email, password) => {
         try {
-            const response = await fetch('http://195.179.231.102:6003/api/auth/login', {
+            const response = await fetch(' http://localhost:6003/api/auth/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

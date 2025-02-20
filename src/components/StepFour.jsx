@@ -231,7 +231,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
       const latitude = selectedCity.lat;
       const longitude = selectedCity.lng;
       axios
-        .get("http://195.179.231.102:6003/api/neighborhoods", {
+        .get(" http://localhost:6003/api/neighborhoods", {
           params: {
             latitude: latitude,
             longitude: longitude,
@@ -266,7 +266,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
 
           try {
             const response = await fetch(
-              `http://195.179.231.102:6003/api/address/reverse-geocode?lat=${latitude}&lng=${longitude}`
+              ` http://localhost:6003/api/address/reverse-geocode?lat=${latitude}&lng=${longitude}`
             );
             const data = await response.json();
 

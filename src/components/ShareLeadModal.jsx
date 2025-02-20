@@ -241,7 +241,7 @@ const ShareLeadModal = ({ isOpen, onRequestClose, leadId }) => {
     try {
       const token = localStorage.getItem('token');
       await axios.post(
-        'http://195.179.231.102:6003/api/shared-leads/share-lead',
+        ' http://localhost:6003/api/shared-leads/share-lead',
         {
           leadId: leadId,
           shareWithAll: true,
@@ -261,7 +261,7 @@ const ShareLeadModal = ({ isOpen, onRequestClose, leadId }) => {
     try {
       const token = localStorage.getItem('token');
       await axios.post(
-        'http://195.179.231.102:6003/api/shared-leads/share-lead',
+        ' http://localhost:6003/api/shared-leads/share-lead',
         {
           leadId: leadId,
           friendIds: selectedFriends,
