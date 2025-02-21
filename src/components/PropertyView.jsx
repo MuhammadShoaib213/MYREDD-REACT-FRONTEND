@@ -1907,7 +1907,7 @@ const uploadImage = async (dataURL) => {
     const formData = new FormData();
     formData.append('file', blob, 'property-card.png');
 
-    const response = await axios.post(`${BASE_URL}/api/upload`, formData, {
+    const response = await axios.post(`${BASE_URL}http://195.179.231.102:6003/api/upload`, formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
     });
     return response.data.url;
@@ -2332,7 +2332,7 @@ const PropertyView = () => {
         const decoded = jwtDecode(token);
         const userId = decoded.userId;
         const response = await axios.get(
-          `/api/properties/all?userId=${userId}`
+          `http://195.179.231.102:6003/api/properties/all?userId=${userId}`
         );
         if (!Array.isArray(response.data)) {
           throw new Error('Invalid data format received from API.');
@@ -2424,7 +2424,7 @@ const PropertyView = () => {
         const token = localStorage.getItem('token');
         const headers = { Authorization: `Bearer ${token}` };
         await axios.patch(
-          `/api/properties/updateStatus/${property._id}`,
+          `http://195.179.231.102:6003/api/properties/updateStatus/${property._id}`,
           { status: newStatus },
           { headers }
         );

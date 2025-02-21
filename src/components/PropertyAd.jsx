@@ -331,7 +331,7 @@ const BackButton = styled.button`
 `;
 
 // ---------- HELPER FUNCTIONS FOR CAPTURING & UPLOADING ----------
-const BASE_URL = '';
+const BASE_URL = 'http://195.179.231.102:6003';
 
 const captureAdAsImage = async (adElement) => {
   try {

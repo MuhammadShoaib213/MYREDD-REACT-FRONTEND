@@ -249,7 +249,7 @@ function InquiryDealDetail() {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          `/api/properties/user/${decoded.userId}`,
+          `http://195.179.231.102:6003/api/properties/user/${decoded.userId}`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
         const aggregated = aggregateData(response.data, inquiryType);

@@ -115,14 +115,14 @@ const LeadTracker = () => {
 
         try {
           // Fetch shared leads
-          const sharedResponse = await axios.get(`/api/shared-leads/shared?userId=${userId}`, {
+          const sharedResponse = await axios.get(`http://195.179.231.102:6003/api/shared-leads/shared?userId=${userId}`, {
             headers: { Authorization: `Bearer ${token}` }
           });
           setSharedLeads(sharedResponse.data);
           console.log('Shared Leads:', sharedResponse.data);
 
           // Fetch received leads
-          const receivedResponse = await axios.get(`/api/shared-leads/received?userId=${userId}`, {
+          const receivedResponse = await axios.get(`http://195.179.231.102:6003/api/shared-leads/received?userId=${userId}`, {
             headers: { Authorization: `Bearer ${token}` }
           });
           setReceivedLeads(receivedResponse.data);

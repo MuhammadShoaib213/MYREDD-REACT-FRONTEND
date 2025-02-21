@@ -707,7 +707,7 @@ const PropertyDetailsPage = () => {
   useEffect(() => {
     const fetchPropertyDetails = async () => {
       try {
-        const response = await axios.get(`/api/properties/property/${id}`, {
+        const response = await axios.get(`http://195.179.231.102:6003/api/properties/property/${id}`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
             'Content-Type': 'application/json',
@@ -735,7 +735,7 @@ const PropertyDetailsPage = () => {
   // Set up carousel images using both frontPictures and propertyPictures
   useEffect(() => {
     if (property) {
-      const baseUrl = '';
+      const baseUrl = 'http://195.179.231.102:6003/';
       const { frontPictures = [], propertyPictures = [] } = property;
       let images = [];
       if (frontPictures.length > 0) {
@@ -784,7 +784,7 @@ const PropertyDetailsPage = () => {
         email: formData.email,
       };
 
-      const response = await axios.put(`/api/properties/${id}`, updatedData, {
+      const response = await axios.put(`http://195.179.231.102:6003/api/properties/${id}`, updatedData, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`,
           'Content-Type': 'application/json',

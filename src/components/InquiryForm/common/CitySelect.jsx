@@ -25,7 +25,7 @@ function CitySelect({ selectedCountry, city, onCityChange, isRequired = false })
   useEffect(() => {
     // Only fetch if the selectedCountry is PK
     if (selectedCountry === 'PK') {
-      fetch('/api/places/cities')
+      fetch('http://195.179.231.102:6003/api/places/cities')
         .then((response) => response.json())
         .then((data) => {
           // Map the data into React-Select options

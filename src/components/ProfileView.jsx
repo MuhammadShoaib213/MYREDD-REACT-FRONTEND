@@ -167,7 +167,7 @@ const ProfileView = () => {
       const decoded = jwtDecode(token);
       const userId = decoded.userId;
       try {
-        const response = await axios.get(`/api/auth/profile/${userId}`);
+        const response = await axios.get(`http://195.179.231.102:6003/api/auth/profile/${userId}`);
         setProfile({ ...profile, ...response.data });
         setError(null); // Clear any previous errors
       } catch (error) {
@@ -200,7 +200,7 @@ const ProfileView = () => {
     };
 
     try {
-      await axios.patch(`/api/auth/profile/${userId}`, formData, config);
+      await axios.patch(`http://195.179.231.102:6003/api/auth/profile/${userId}`, formData, config);
       alert('Profile updated successfully!');
       setError(null); // Clear any previous errors
     } catch (error) {

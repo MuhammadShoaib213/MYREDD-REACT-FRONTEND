@@ -117,7 +117,7 @@ function PropertyMatches() {
   
     const findMatches = async (propertyId) => {
       try {
-        const response = await axios.get(`http://localhost:3000/api/properties/findMatches/${propertyId}`);
+        const response = await axios.get(`http://localhost:3000http://195.179.231.102:6003/api/properties/findMatches/${propertyId}`);
         setMatches(response.data);
         setError('');
       } catch (err) {

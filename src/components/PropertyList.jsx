@@ -554,7 +554,7 @@ const PropertyList = () => {
         const decoded = jwtDecode(token);
         const userId = decoded.userId;
         // Using the API endpoint from previous version:
-        const response = await axios.get('/api/properties/all', {
+        const response = await axios.get('http://195.179.231.102:6003/api/properties/all', {
           params: { userId },
         });
         if (!Array.isArray(response.data)) {
@@ -678,7 +678,7 @@ const PropertyList = () => {
         const token = localStorage.getItem('token');
         const headers = { Authorization: `Bearer ${token}` };
         await axios.patch(
-          `/api/properties/updateStatus/${property._id}`,
+          `http://195.179.231.102:6003/api/properties/updateStatus/${property._id}`,
           { status: newStatus },
           { headers }
         );

@@ -535,7 +535,7 @@ const CheckCustomer = () => {
     }
 
     try {
-      const response = await axios.get('/api/customers/check', { params });
+      const response = await axios.get('http://195.179.231.102:6003/api/customers/check', { params });
 
       if (response.data.exists) {
         setCustomerData(response.data.customer);

@@ -425,7 +425,7 @@ const Dashboard = () => {
       try {
         const token = localStorage.getItem('token');
         const response = await fetch(
-          `/api/auth/profile/${user.userId}`,
+          `http://195.179.231.102:6003/api/auth/profile/${user.userId}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,

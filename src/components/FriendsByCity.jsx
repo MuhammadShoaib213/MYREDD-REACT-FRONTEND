@@ -172,7 +172,7 @@ const FriendsByCity = () => {
   useEffect(() => {
     const fetchFriends = async () => {
       try {
-        const response = await axios.get(`/api/friend/friends-by-city/${cityName}`, {
+        const response = await axios.get(`http://195.179.231.102:6003/api/friend/friends-by-city/${cityName}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         if (response.data && Array.isArray(response.data)) {
