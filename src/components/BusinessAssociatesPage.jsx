@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import axios from 'axios';
@@ -8,9 +7,7 @@ import RightSidebar from './RightSidebar';
 import LeftSidebar from './LeftSidebar';
 import bgImage from '../images/bg.jpg';
 import {  useNavigate } from 'react-router-dom';
-
-
-
+import { API_CONFIG } from '../config/api.config';
 
 // Adjust the main page container for responsive padding and alignment
 const StyledPageContainer = styled.div`
@@ -372,26 +369,10 @@ const BusinessAssociatesPage = () => {
   const { token } = useAuth();
   const navigate = useNavigate(); 
 
-  // useEffect(() => {
-  //   const fetchFriendRequests = async () => {
-  //     try {
-  //       const response = await axios.get('http://localhost:5000/api/friend/requests', {
-  //         headers: { Authorization: `Bearer ${token}` }
-  //       });
-  //       setFriendRequests(response.data);
-  //       setFriendRequestCount(response.data.length);
-  //     } catch (error) {
-  //       console.error('Failed to fetch friend requests:', error);
-  //     }
-  //   };
-
-  //   fetchFriendRequests();
-  // }, [token]);
-
   useEffect(() => {
     const fetchFriendRequests = async () => {
         try {
-            const response = await axios.get('http://localhost:5000/api/friend/requests', {
+            const response = await axios.get(`${API_CONFIG.API_URL}/friend/requests`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setFriendRequests(response.data);
@@ -402,21 +383,27 @@ const BusinessAssociatesPage = () => {
     };
 
     fetchFriendRequests();
-    const intervalId = setInterval(fetchFriendRequests, 3000); // 30 seconds
+    const intervalId = setInterval(fetchFriendRequests, 30000); // Changed to 30 seconds
 
     return () => clearInterval(intervalId);
 }, [token]);
 
-
   const handleAcceptFriendRequest = async (requestId) => {
     try {
-      await axios.put('http://localhost:5000/api/friend/update', { 
+      await axios.put(`${API_CONFIG.API_URL}/friend/update`, { 
         friendsId: requestId,
         action: 'accept'
       }, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      setFriendRequests(prev => prev.filter(req => req._id !== requestId));
+      
+      // Refresh friend requests after accepting
+      const response = await axios.get(`${API_CONFIG.API_URL}/friend/requests`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setFriendRequests(response.data);
+      setFriendRequestCount(response.data.length);
+      
       alert('Friend request accepted!');
     } catch (error) {
       console.error('Error accepting friend request:', error);
@@ -426,13 +413,20 @@ const BusinessAssociatesPage = () => {
 
   const handleDeclineFriendRequest = async (requestId) => {
     try {
-      await axios.put('http://localhost:5000/api/friend/update', { 
+      await axios.put(`${API_CONFIG.API_URL}/friend/update`, { 
         friendsId: requestId,
         action: 'decline'
       }, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      setFriendRequests(prev => prev.filter(req => req._id !== requestId));
+      
+      // Refresh friend requests after declining
+      const response = await axios.get(`${API_CONFIG.API_URL}/friend/requests`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setFriendRequests(response.data);
+      setFriendRequestCount(response.data.length);
+      
       alert('Friend request declined!');
     } catch (error) {
       console.error('Error declining friend request:', error);
@@ -451,7 +445,13 @@ const BusinessAssociatesPage = () => {
           friendRequestCount={friendRequestCount}
         />
         {activeTab === 'main' && <FriendsList />}
-        {activeTab === 'catchUp' && <CatchUpContent friendRequests={friendRequests} handleAcceptFriendRequest={handleAcceptFriendRequest} handleDeclineFriendRequest={handleDeclineFriendRequest} />}
+        {activeTab === 'catchUp' && (
+          <CatchUpContent 
+            friendRequests={friendRequests} 
+            handleAcceptFriendRequest={handleAcceptFriendRequest} 
+            handleDeclineFriendRequest={handleDeclineFriendRequest} 
+          />
+        )}
       </div>
       <br/>
       <RightSidebar />

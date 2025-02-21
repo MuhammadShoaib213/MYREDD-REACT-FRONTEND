@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import axios from 'axios';
 import html2canvas from 'html2canvas';
@@ -664,8 +665,9 @@ const PropertyView = () => {
     const [status, setStatus] = useState(property.status || 'New');
     const [showStatusDropdown, setShowStatusDropdown] = useState(false);
     const cardRef = useRef(null);
-    // New local state for controlling the spinner
     const [isSharing, setIsSharing] = useState(false);
+    const navigate = useNavigate();  // Add this line
+
 
     const handleStatusClick = (e) => {
       e.stopPropagation();
@@ -772,12 +774,17 @@ const PropertyView = () => {
 
     return (
       <PropertyCard
-        ref={cardRef}
-        onClick={(e) => {
-          e.stopPropagation();
-          // If needed, handle a click on the card here
-        }}
-      >
+      ref={cardRef}
+      onClick={(e) => {
+        // Only navigate if we didn't click on a button or dropdown
+        if (!e.target.closest('.share-buttons') && 
+            !e.target.closest('.status-dropdown') && 
+            !e.target.closest('.status-icon')) {
+          navigate(`/property/${property._id}`);
+        }
+      }}
+      style={{ cursor: 'pointer' }}  // Add this style
+    >
         <StatusContainer>
           <StatusIcon className="status-icon" onClick={handleStatusClick}>
             {STATUS_ICONS[status] || STATUS_ICONS['New']}
