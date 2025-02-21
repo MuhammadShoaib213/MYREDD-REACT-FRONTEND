@@ -678,7 +678,7 @@ const PropertyList = () => {
         const token = localStorage.getItem('token');
         const headers = { Authorization: `Bearer ${token}` };
         await axios.patch(
-          `api/properties/updateStatus/${property._id}`,
+          `/api/properties/updateStatus/${property._id}`,
           { status: newStatus },
           { headers }
         );

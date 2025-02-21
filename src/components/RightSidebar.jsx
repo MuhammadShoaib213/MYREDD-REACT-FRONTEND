@@ -130,7 +130,7 @@ const RightSidebar = () => {
     event.preventDefault();
     setShowInviteForm(false);
     try {
-      const response = await axios.get(`api/auth/search`, {
+      const response = await axios.get(`/api/auth/search`, {
         headers: { Authorization: `Bearer ${token}` },
         params: { query: searchTerm },
       });

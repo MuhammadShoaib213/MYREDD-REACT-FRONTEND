@@ -199,7 +199,7 @@ function InquiriesStatus() {
       try {
         const decoded = jwtDecode(token);
         const response = await axios.get(
-          `api/properties/user/${decoded.userId}`,
+          `/api/properties/user/${decoded.userId}`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
         // Aggregate the data using the updated data structure

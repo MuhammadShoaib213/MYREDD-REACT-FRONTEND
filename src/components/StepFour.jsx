@@ -266,7 +266,7 @@ const StepFour = ({ formData, prevStep, handleChange, handleSubmit }) => {
 
           try {
             const response = await fetch(
-              `api/address/reverse-geocode?lat=${latitude}&lng=${longitude}`
+              `/api/address/reverse-geocode?lat=${latitude}&lng=${longitude}`
             );
             const data = await response.json();
 

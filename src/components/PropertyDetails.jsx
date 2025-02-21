@@ -431,12 +431,12 @@ const TabContentComponent = ({
       <ContentArea>
         <Form onSubmit={handleSave}>
           <FormGroup>
-            <label htmlFor="inquiryType">Inquiry Type</label>
+            <label htmlFor="title">Inquiry Type</label>
             <input
               type="text"
               id="inquiryType"
               name="inquiryType"
-              value={formData.inquiryType}
+              value={formData.title}
               onChange={handleChange}
               required
             />
@@ -679,7 +679,7 @@ const PropertyDetailsPage = () => {
   const navigate = useNavigate();
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
-    inquiryType: '',
+    title: '',
     budget: '',
     location: '',
     email: '',
@@ -707,7 +707,7 @@ const PropertyDetailsPage = () => {
   useEffect(() => {
     const fetchPropertyDetails = async () => {
       try {
-        const response = await axios.get(`api/properties/property/${id}`, {
+        const response = await axios.get(`/api/properties/property/${id}`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
             'Content-Type': 'application/json',
@@ -735,7 +735,7 @@ const PropertyDetailsPage = () => {
   // Set up carousel images using both frontPictures and propertyPictures
   useEffect(() => {
     if (property) {
-      const baseUrl = 'http://localhost:5000';
+      const baseUrl = '';
       const { frontPictures = [], propertyPictures = [] } = property;
       let images = [];
       if (frontPictures.length > 0) {
@@ -784,7 +784,7 @@ const PropertyDetailsPage = () => {
         email: formData.email,
       };
 
-      const response = await axios.put(`api/properties/${id}`, updatedData, {
+      const response = await axios.put(`/api/properties/${id}`, updatedData, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`,
           'Content-Type': 'application/json',

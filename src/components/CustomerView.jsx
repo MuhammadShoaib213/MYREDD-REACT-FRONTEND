@@ -253,7 +253,7 @@ const CustomerView = (customer) => {
         const decodedToken = jwtDecode(token);
         const userId = decodedToken.userId;
 
-        const response = await fetch(`api/customers?userId=${userId}`);
+        const response = await fetch(`/api/customers?userId=${userId}`);
         if (!response.ok) {
           throw new Error('Failed to fetch customers');
         }

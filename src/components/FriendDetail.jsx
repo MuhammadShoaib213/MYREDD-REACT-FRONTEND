@@ -196,7 +196,7 @@ const FriendDetail = () => {
   useEffect(() => {
     const fetchFriendDetail = async () => {
       try {
-        const response = await fetch(`api/friend/detail/${id}`, {
+        const response = await fetch(`/api/friend/detail/${id}`, {
           headers: {
             Authorization: `Bearer ${token}`, // Include token in headers
           },

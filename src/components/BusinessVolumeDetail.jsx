@@ -346,7 +346,7 @@ function BusinessVolumeDetail() {
       try {
         // Fetch user's properties from your API
         const response = await axios.get(
-          `api/properties/user/${decoded.userId}`,
+          `/api/properties/user/${decoded.userId}`,
           {
             headers: { Authorization: `Bearer ${token}` }
           }

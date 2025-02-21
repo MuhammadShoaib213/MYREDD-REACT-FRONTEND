@@ -111,7 +111,7 @@ const SchedulePage = () => {
       }
       try {
         const { userId } = jwtDecode(token);
-        const response = await axios.get(`api/schedules/user/all/${userId}`);
+        const response = await axios.get(`/api/schedules/user/all/${userId}`);
         setSchedules(response.data);
       } catch (err) {
         setError('Failed to fetch schedules');

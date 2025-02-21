@@ -263,7 +263,7 @@ const LeadDetailPage = () => {
       const headers = { Authorization: `Bearer ${token}` };
       let propertyResponse;
       try {
-        propertyResponse = await axios.get(`api/properties/propertybyid/${id}`, { headers });
+        propertyResponse = await axios.get(`/api/properties/propertybyid/${id}`, { headers });
         setPropertyData(propertyResponse.data);
       } catch (err) {
         setError(`Error fetching property data: ${err.response ? err.response.data.message : err.message}`);
@@ -272,7 +272,7 @@ const LeadDetailPage = () => {
         try {
           const decodedToken = jwtDecode(token);
           const userId = decodedToken.userId;
-          const notesResponse = await axios.get(`api/notes/${userId}/${id}/${propertyResponse.data.customerId}`, { headers });
+          const notesResponse = await axios.get(`/api/notes/${userId}/${id}/${propertyResponse.data.customerId}`, { headers });
           setNotes(notesResponse.data);
         } catch (err) {
           console.error(`Error fetching notes: ${err.response ? err.response.data.message : err.message}`);
@@ -290,7 +290,7 @@ const LeadDetailPage = () => {
     try {
       const decodedToken = jwtDecode(token);
       const userId = decodedToken.userId;
-      const response = await axios.get(`api/schedules/user/${userId}`, { headers });
+      const response = await axios.get(`/api/schedules/user/${userId}`, { headers });
       setSchedules(response.data);
     } catch (error) {
       console.error('Failed to fetch schedules:', error);
@@ -302,7 +302,7 @@ const LeadDetailPage = () => {
     setStatus(newStatus);
     try {
       const headers = { Authorization: `Bearer ${token}` };
-      const response = await axios.patch(`api/properties/updateStatus/${id}`, { status: newStatus }, { headers });
+      const response = await axios.patch(`/api/properties/updateStatus/${id}`, { status: newStatus }, { headers });
       alert('Status updated successfully!');
       console.log(response.data);
     } catch (error) {
@@ -354,7 +354,7 @@ const LeadDetailPage = () => {
   const handleDeleteNote = async (noteId, index) => {
     try {
       const headers = { Authorization: `Bearer ${token}` };
-      await axios.delete(`api/notes/${noteId}`, { headers });
+      await axios.delete(`/api/notes/${noteId}`, { headers });
       const updatedNotes = [...notes];
       updatedNotes.splice(index, 1);
       setNotes(updatedNotes);

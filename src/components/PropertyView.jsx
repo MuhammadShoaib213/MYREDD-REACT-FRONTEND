@@ -2332,7 +2332,7 @@ const PropertyView = () => {
         const decoded = jwtDecode(token);
         const userId = decoded.userId;
         const response = await axios.get(
-          `api/properties/all?userId=${userId}`
+          `/api/properties/all?userId=${userId}`
         );
         if (!Array.isArray(response.data)) {
           throw new Error('Invalid data format received from API.');
@@ -2424,7 +2424,7 @@ const PropertyView = () => {
         const token = localStorage.getItem('token');
         const headers = { Authorization: `Bearer ${token}` };
         await axios.patch(
-          `api/properties/updateStatus/${property._id}`,
+          `/api/properties/updateStatus/${property._id}`,
           { status: newStatus },
           { headers }
         );

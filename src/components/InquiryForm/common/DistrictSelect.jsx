@@ -35,7 +35,7 @@ function DistrictSelect({ selectedCityName, area, onAreaChange, isRequired = fal
     const fetchAreas = async () => {
       try {
         const response = await axios.get(
-          `api/places/cities/${selectedCityName}/areas`
+          `/api/places/cities/${selectedCityName}/areas`
         );
         
         let areaOptions = [];

@@ -236,7 +236,7 @@ function BusinessVolume() {
       try {
         const decoded = jwtDecode(token);
         const response = await axios.get(
-          `api/properties/user/${decoded.userId}`,
+          `/api/properties/user/${decoded.userId}`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
         // Use the updated aggregation function for profit calculations.

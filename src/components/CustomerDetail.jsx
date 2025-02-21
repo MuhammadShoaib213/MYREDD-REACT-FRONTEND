@@ -149,7 +149,7 @@ const CustomerDetail = () => {
   useEffect(() => {
     const fetchCustomerDetail = async () => {
       try {
-        const response = await fetch(`api/customers/detail/${id}`);
+        const response = await fetch(`/api/customers/detail/${id}`);
         if (!response.ok) {
           throw new Error('Failed to fetch customer details');
         }

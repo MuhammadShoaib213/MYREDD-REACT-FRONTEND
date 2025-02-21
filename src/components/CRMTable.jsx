@@ -256,7 +256,7 @@ const CRMTable = () => {
           return;
         }
         const response = await axios.get(
-          `api/properties/lead/user/${decoded.userId}`
+          `/api/properties/lead/user/${decoded.userId}`
         );
         setData(response.data);
       } catch (err) {

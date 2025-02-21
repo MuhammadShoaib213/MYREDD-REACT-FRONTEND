@@ -31,7 +31,7 @@ const LocationAutocomplete = () => {
       }
       try {
         const res = await axios.get(
-          `api/places/autocomplete/${cityInput}`
+          `/api/places/autocomplete/${cityInput}`
         );
         setCitySuggestions(res.data);
       } catch (error) {
@@ -64,14 +64,14 @@ const LocationAutocomplete = () => {
       try {
         // (A) optional: city details for lat/lng
         const detailsRes = await axios.get(
-          `api/places/details/${selectedCityPlaceId}`
+          `/api/places/details/${selectedCityPlaceId}`
         );
         setCityDetails(detailsRes.data);
 
         // (B) fetch municipality areas: "towns in <city>"
         //   or you can pass query=societies in the params if you want
         const muniRes = await axios.get(
-          `api/places/municipalities`,
+          `/api/places/municipalities`,
           {
             params: {
               city: selectedCityName,
@@ -111,7 +111,7 @@ const LocationAutocomplete = () => {
       const parentName = `${selectedMunicipality.name || selectedMunicipality.formatted_address} ${selectedCityName}`.trim();
 
       try {
-        const res = await axios.get(`api/places/submunicipalities`, {
+        const res = await axios.get(`/api/places/submunicipalities`, {
           params: {
             parent: parentName,
             // query: 'phases' or 'blocks' etc. (default = "blocks")
@@ -142,7 +142,7 @@ const LocationAutocomplete = () => {
       const parentName = `${selectedSubMunicipality.name || selectedSubMunicipality.formatted_address} ${selectedCityName}`.trim();
 
       try {
-        const res = await axios.get(`api/places/drilldown`, {
+        const res = await axios.get(`/api/places/drilldown`, {
           params: {
             parent: parentName,
             // query: 'streets' or 'sub-blocks' etc. (default = "streets")

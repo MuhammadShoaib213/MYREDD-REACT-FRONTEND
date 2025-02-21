@@ -220,7 +220,7 @@ function PropertyBank() {
         const userId = decoded.userId;
 
         const response = await axios.get(
-          `api/properties/all?userId=${userId}`
+          `/api/properties/all?userId=${userId}`
         );
         setProperties(response.data);
         setLoading(false);
