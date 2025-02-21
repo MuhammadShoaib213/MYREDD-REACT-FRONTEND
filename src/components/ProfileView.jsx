@@ -236,7 +236,12 @@ const ProfileView = () => {
       <br/>
       <br/>
       <br/>
-        <ProfilePic src={profile.profilePicture ? `${profile.profilePicture}` : 'https://via.placeholder.com/200'} alt={profile.profilePicture} />
+      <ProfilePic
+          src={profile.profilePicture 
+            ? `${API_CONFIG.API_URL}/${profile.profilePicture}` 
+            : 'https://via.placeholder.com/200'} 
+          alt={profile.profilePicture} 
+        />
         <FileInput type="file" onChange={(e) => handleImageChange(e, setProfileImage)} />
         <p>{`${profile.firstName} ${profile.lastName}`}</p>
         <p>{profile.email}</p>

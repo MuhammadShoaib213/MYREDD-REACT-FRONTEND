@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import {jwtDecode} from 'jwt-decode';
 import bgImage from '../images/bg.jpg';
-
+import { API_CONFIG } from '../config/api.config';
 // Styled components
 const PageContainer = styled.div`
   background-image: url(${bgImage});
@@ -223,8 +223,12 @@ const formatDate = (dateString) => {
 
 const CustomerCard = ({ customer, onViewDetail }) => (
   <Card>
-    {/* <CardImage src={customer.profilePicture || 'default-profile.jpg'} alt={customer.fullName} /> */}
-    <CardImage src={customer.profilePicture ? `${customer.profilePicture}` : 'https://via.placeholder.com/200'} alt={customer.fullName} />
+   <CardImage 
+      src={customer.profilePicture 
+        ? `${API_CONFIG.API_URL}/${customer.profilePicture}` 
+        : 'https://via.placeholder.com/200'} 
+      alt={customer.fullName} 
+    />
     <CardBody>
       <CardTitle>{customer.fullName}</CardTitle>
       <CardSubtitle>{customer.currentAddress}</CardSubtitle>

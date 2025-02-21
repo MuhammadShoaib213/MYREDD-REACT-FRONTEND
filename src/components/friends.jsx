@@ -130,7 +130,7 @@ const FriendsList = () => {
       const userId = decoded.userId;
 
       axios
-        .get(`/friend/list?userId=${userId}`, {
+        .get(`/api/friend/list?userId=${userId}`, {
           headers: { Authorization: `Bearer ${token}` },
         })
         .then((response) => {
@@ -151,7 +151,7 @@ const FriendsList = () => {
   }, []);
 
   const handleMoreDetails = (id) => {
-    navigate(`/FriendDetail/${id}`);
+    navigate(`/api/FriendDetail/${id}`);
   };
 
   const handleOpenGmail = (email) => {

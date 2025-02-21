@@ -57,7 +57,7 @@ const LeftSidebar = () => {
   useEffect(() => {
     const fetchFriendsByCity = async () => {
       try {
-        const response = await axios.get('/friend/friends-by-city', { headers: { Authorization: `Bearer ${token}` }});
+        const response = await axios.get('/api/friend/friends-by-city', { headers: { Authorization: `Bearer ${token}` }});
         setCities(response.data);
       } catch (error) {
         console.error('Failed to fetch friends by city:', error);
