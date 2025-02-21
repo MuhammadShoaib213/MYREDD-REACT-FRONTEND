@@ -6,6 +6,7 @@ import styled from 'styled-components';
 import bgImage from '../images/bg.jpg';
 import { FiHome } from 'react-icons/fi';
 import { motion } from 'framer-motion';
+import { API_CONFIG } from '../config/api.config';
 
 // --- Styled Components --- //
 
@@ -220,7 +221,7 @@ function PropertyBank() {
         const userId = decoded.userId;
 
         const response = await axios.get(
-          `http://195.179.231.102:6003/api/properties/all?userId=${userId}`
+          `${API_CONFIG.API_URL}/properties/all?userId=${userId}`
         );
         setProperties(response.data);
         setLoading(false);

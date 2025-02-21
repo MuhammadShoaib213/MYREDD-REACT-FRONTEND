@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import 'react-phone-number-input/style.css';
 import PhoneInput, { getCountryCallingCode, isValidPhoneNumber } from 'react-phone-number-input';
 import bgImage from '../images/bg.jpg';
+import { API_CONFIG } from '../config/api.config';
 
 const Container = styled.div`
   background-image: url(${bgImage});
@@ -188,7 +189,7 @@ function SignupPage() {
     };
 
     try {
-      const response = await fetch('http://195.179.231.102:6003/api/auth/signup', {
+      const response = await fetch(`${API_CONFIG.API_URL}/auth/signup`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -209,7 +210,7 @@ function SignupPage() {
   };
 
   const sendOtpToUser = async (email) => {
-    const response = await fetch('http://195.179.231.102:6003/api/auth/send-otp', {
+    const response = await fetch(`${API_CONFIG.API_URL}/auth/send-otp`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

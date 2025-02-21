@@ -20,6 +20,7 @@ import {
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import {jwtDecode} from 'jwt-decode';
 import bgImage from '../images/bg.jpg';
+import { API_CONFIG } from '../config/api.config';
 
 // Import Images Corresponding to Each Property Subtype
 import apartmentImg from '../images/apartment.jpg';
@@ -554,7 +555,7 @@ const PropertyList = () => {
         const decoded = jwtDecode(token);
         const userId = decoded.userId;
         // Using the API endpoint from previous version:
-        const response = await axios.get('http://195.179.231.102:6003/api/properties/all', {
+        const response = await axios.get(`${API_CONFIG.API_URL}/properties/all`, {
           params: { userId },
         });
         if (!Array.isArray(response.data)) {
@@ -678,7 +679,7 @@ const PropertyList = () => {
         const token = localStorage.getItem('token');
         const headers = { Authorization: `Bearer ${token}` };
         await axios.patch(
-          `http://195.179.231.102:6003/api/properties/updateStatus/${property._id}`,
+          `${API_CONFIG.API_URL}/properties/updateStatus/${property._id}`,
           { status: newStatus },
           { headers }
         );

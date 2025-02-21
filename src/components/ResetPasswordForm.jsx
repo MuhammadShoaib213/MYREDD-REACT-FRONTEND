@@ -4,6 +4,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import bgImage from '../images/bg.jpg';
+import { API_CONFIG } from '../config/api.config';
 
 const MainContainer = styled.div`
   background-image: url(${bgImage});
@@ -105,7 +106,7 @@ function ResetPasswordForm() {
             return;
         }
         try {
-          const response = await fetch('http://195.179.231.102:6003/api/auth/reset-password', {
+          const response = await fetch(`${API_CONFIG.API_URL}/auth/reset-password`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',

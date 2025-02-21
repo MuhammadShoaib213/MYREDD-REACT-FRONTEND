@@ -3,7 +3,7 @@ import axios from 'axios';
 import styled from 'styled-components';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
+import { API_CONFIG } from '../config/api.config';
 
 const Container = styled.div`
   display: flex;
@@ -86,7 +86,6 @@ const ModalContent = styled.div`
   max-width: 500px;
 `;
 
-
 const Badge = styled.span`
   background-color: #ff0000;
   color: white;
@@ -98,11 +97,6 @@ const Badge = styled.span`
   right: -5px;
 `;
 
-
-
-
-
-
 const Message = styled.div`
   padding: 8px 12px;
   margin: 5px;
@@ -113,11 +107,6 @@ const Message = styled.div`
   max-width: 70%;
   word-wrap: break-word;
 `;
-
-
-
-
-
 
 const FriendRequestList = styled.div`
   padding: 5px; // Reduced padding
@@ -145,9 +134,8 @@ const ContactItem = styled.div`
   }
 `;
 
+axios.defaults.baseURL = API_CONFIG.BASE_URL;
 
-// Setup axios instance with token
-axios.defaults.baseURL = 'http://195.179.231.102:6003/';
 axios.interceptors.request.use(config => {
   const token = localStorage.getItem('token');
   config.headers.Authorization = token ? `Bearer ${token}` : '';
@@ -156,14 +144,11 @@ axios.interceptors.request.use(config => {
 
 const ChatComponent = () => {
 
+  const toggleSidebar = () => setSidebarVisible(!isSidebarVisible);
 
-
-const toggleSidebar = () => setSidebarVisible(!isSidebarVisible);
-
-
-const [isSidebarVisible, setSidebarVisible] = useState(true);
-const [showAddModal, setShowAddModal] = useState(false);
-const [showRequestsModal, setShowRequestsModal] = useState(false);
+  const [isSidebarVisible, setSidebarVisible] = useState(true);
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [showRequestsModal, setShowRequestsModal] = useState(false);
 
   const [currentChat, setCurrentChat] = useState({ messages: [] });
   const [contacts, setContacts] = useState([]);
@@ -185,21 +170,18 @@ const [showRequestsModal, setShowRequestsModal] = useState(false);
         console.error('Failed to fetch contacts:', error);
       }
     };
-  
+
     fetchContacts();
   }, []);
-  
-  
-  
 
   const handleAddContact = async (event) => {
     event.preventDefault();
     if (!newContact.trim()) return;
-  
+
     try {
       const token = localStorage.getItem('token'); // Assuming you store the token in localStorage
       console.log("Retrieved token:", token);
-      
+
       const response = await axios.post('/friends/add', { email: newContact}, {
         headers: {
           'Authorization': `Bearer ${token}` // Correctly passing the token
@@ -212,7 +194,7 @@ const [showRequestsModal, setShowRequestsModal] = useState(false);
       alert('Failed to add contact. Please try again.');
     }
   };
-  
+
   useEffect(() => {
     axios.get('/friends/requests')
       .then(response => {
@@ -225,10 +207,8 @@ const [showRequestsModal, setShowRequestsModal] = useState(false);
       .catch(error => {
         console.error('Failed to fetch friend requests:', error);
       });
-}, []);
+  }, []);
 
-  
-  
   const acceptFriendRequest = async (requestId) => {
     try {
       const response = await axios.post(`/friends/accept`, { requestId });
@@ -243,131 +223,125 @@ const [showRequestsModal, setShowRequestsModal] = useState(false);
       alert(error.response ? error.response.data.message : error.message);
     }
   };
-  
-const handleSelectContact = async (contact) => {
+
+  const handleSelectContact = async (contact) => {
     const senderId = contact.users[0].id; // Assuming the first user is always the sender
     const receiverId = contact.users[1].id; // Assuming the second user is always the receiver
 
     setSenderId(senderId); // Set global sender ID
-    setReceiverId(receiverId); 
-
+    setReceiverId(receiverId);
 
     try {
-        // Fetch the chatId from the backend
-        const response = await axios.get(`/messages/chat/${senderId}/${receiverId}`, {
-            headers: { Authorization: `Bearer ${localStorage.getItem('token')}`, 
-        }
-        });
+      // Fetch the chatId from the backend
+      const response = await axios.get(`/messages/chat/${senderId}/${receiverId}`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}`, 
+      }
+      });
 
-        console.log("contact data:", contact);
-        const chatId = response.data.chatId;
+      console.log("contact data:", contact);
+      const chatId = response.data.chatId;
 
-        setCurrentChat({
-            id: chatId,
-            name: contact.users[1].name, // Assuming the second user is the one you're chatting with
-            messages: [],
-            recipientId: receiverId
-        });
+      setCurrentChat({
+        id: chatId,
+        name: contact.users[1].name, // Assuming the second user is the one you're chatting with
+        messages: [],
+        recipientId: receiverId
+      });
 
-        // Fetch messages for the newly set chat
-        fetchMessages(chatId);
+      // Fetch messages for the newly set chat
+      fetchMessages(chatId);
     } catch (error) {
-        console.error('Failed to select contact:', error);
-        alert('Failed to load chat. Please try again.');
+      console.error('Failed to select contact:', error);
+      alert('Failed to load chat. Please try again.');
     }
-};
+  };
 
-const fetchMessages = async (chatId) => {
+  const fetchMessages = async (chatId) => {
     try {
-        const response = await axios.get(`/messages/fetch/${chatId}`, {
-            headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
-        });
-        setCurrentChat(prevChat => ({
-            ...prevChat,
-            messages: response.data
-        }));
-
-
+      const response = await axios.get(`/messages/fetch/${chatId}`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+      });
+      setCurrentChat(prevChat => ({
+        ...prevChat,
+        messages: response.data
+      }));
 
     } catch (error) {
-        console.error('Failed to fetch messages:', error);
+      console.error('Failed to fetch messages:', error);
     }
-};
+  };
 
-  
-
-const handleSendMessage = async (event) => {
+  const handleSendMessage = async (event) => {
     console.log("senderId",sender);
     console.log("receiverId",receiver);
     event.preventDefault();
     if (!message.trim()) return;
 
     try {
-        const { data } = await axios.post('/messages/send', {
-            content: message,
-            receiver, // Send this along with the message content
-            sender,
+      const { data } = await axios.post('/messages/send', {
+        content: message,
+        receiver, // Send this along with the message content
+        sender,
 
-        });
-        const updatedMessages = [...currentChat.messages, data];
-        setCurrentChat(prev => ({ ...prev, messages: updatedMessages }));
-        setMessage('');
+      });
+      const updatedMessages = [...currentChat.messages, data];
+      setCurrentChat(prev => ({ ...prev, messages: updatedMessages }));
+      setMessage('');
     } catch (error) {
-        console.error('Failed to send message:', error);
+      console.error('Failed to send message:', error);
     }
-};
-
+  };
 
   return (
-  <Container>
-     <ToastContainer position="top-right" autoClose={5000} hideProgressBar={false} newestOnTop={false} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover />
-    <Sidebar className={isSidebarVisible ? 'active' : ''} isVisible={isSidebarVisible}>
-    <h3>Contacts</h3>
-  {contacts.map(contact => contact.users && contact.users[0] && (
-    <ContactItem key={contact.id} onClick={() => handleSelectContact(contact)}>
-      {contact.users[0].name}
-    </ContactItem>
-  ))}
-  <br/>
-      <br/>
-      <Button onClick={() => setShowAddModal(true)}>Add New Contact</Button>
-      <br/>
-      <br/>
-      <Button onClick={() => setShowRequestsModal(true)}>
-        Friend Requests ({friendRequests.length})
-      </Button>
-    </Sidebar>
-
-    <Modal show={showAddModal}>
-      <ModalContent>
-        <h4>Add New Contact</h4>
-        <InputArea onSubmit={handleAddContact}>
-          <Input
-            type="text"
-            placeholder="Enter contact email"
-            value={newContact}
-            onChange={(e) => setNewContact(e.target.value)}
-          />
-          <Button type="submit">Add</Button>
-        </InputArea>
-        <Button onClick={() => setShowAddModal(false)}>Close</Button>
-      </ModalContent>
-    </Modal>
-
-    <Modal show={showRequestsModal}>
-      <ModalContent>
-        <h4>Friend Requests</h4>
-        {friendRequests.map(request => (
-          <div key={request._id}>
-            {request.requester.email}
-            <Button onClick={() => acceptFriendRequest(request._id)}>Accept</Button>
-          </div>
+    <Container>
+      <ToastContainer position="top-right" autoClose={5000} hideProgressBar={false} newestOnTop={false} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover />
+      <Sidebar className={isSidebarVisible ? 'active' : ''} isVisible={isSidebarVisible}>
+        <h3>Contacts</h3>
+        {contacts.map(contact => contact.users && contact.users[0] && (
+          <ContactItem key={contact.id} onClick={() => handleSelectContact(contact)}>
+            {contact.users[0].name}
+          </ContactItem>
         ))}
-        <Button onClick={() => setShowRequestsModal(false)}>Close</Button>
-      </ModalContent>
-    </Modal>
+        <br/>
+        <br/>
+        <Button onClick={() => setShowAddModal(true)}>Add New Contact</Button>
+        <br/>
+        <br/>
+        <Button onClick={() => setShowRequestsModal(true)}>
+          Friend Requests ({friendRequests.length})
+        </Button>
+      </Sidebar>
 
-    <ChatWindow>
+      <Modal show={showAddModal}>
+        <ModalContent>
+          <h4>Add New Contact</h4>
+          <InputArea onSubmit={handleAddContact}>
+            <Input
+              type="text"
+              placeholder="Enter contact email"
+              value={newContact}
+              onChange={(e) => setNewContact(e.target.value)}
+            />
+            <Button type="submit">Add</Button>
+          </InputArea>
+          <Button onClick={() => setShowAddModal(false)}>Close</Button>
+        </ModalContent>
+      </Modal>
+
+      <Modal show={showRequestsModal}>
+        <ModalContent>
+          <h4>Friend Requests</h4>
+          {friendRequests.map(request => (
+            <div key={request._id}>
+              {request.requester.email}
+              <Button onClick={() => acceptFriendRequest(request._id)}>Accept</Button>
+            </div>
+          ))}
+          <Button onClick={() => setShowRequestsModal(false)}>Close</Button>
+        </ModalContent>
+      </Modal>
+
+      <ChatWindow>
         {currentChat ? (
           <>
             <h2>Chat with {currentChat.name}</h2>
@@ -392,7 +366,7 @@ const handleSendMessage = async (event) => {
           <div>Please select a contact to start chatting.</div>
         )}
       </ChatWindow>
-  </Container>
+    </Container>
   );
 };
 

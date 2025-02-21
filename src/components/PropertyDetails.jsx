@@ -14,6 +14,7 @@ import {
 import bgImage from '../images/bg.jpg';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { API_CONFIG } from '../config/api.config';
 
 // ---------- Styled Components ----------
 
@@ -707,7 +708,7 @@ const PropertyDetailsPage = () => {
   useEffect(() => {
     const fetchPropertyDetails = async () => {
       try {
-        const response = await axios.get(`http://195.179.231.102:6003/api/properties/property/${id}`, {
+        const response = await axios.get(`${API_CONFIG.API_URL}/properties/property/${id}`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
             'Content-Type': 'application/json',
@@ -735,7 +736,6 @@ const PropertyDetailsPage = () => {
   // Set up carousel images using both frontPictures and propertyPictures
   useEffect(() => {
     if (property) {
-      const baseUrl = 'http://195.179.231.102:6003/';
       const { frontPictures = [], propertyPictures = [] } = property;
       let images = [];
       if (frontPictures.length > 0) {
@@ -744,7 +744,7 @@ const PropertyDetailsPage = () => {
         images = propertyPictures;
       }
       if (images.length > 0) {
-        const normalized = images.map(img => `${baseUrl}${normalizePath(img)}`);
+        const normalized = images.map(img => `${API_CONFIG.BASE_URL}/${normalizePath(img)}`);
         console.log('Carousel image URLs:', normalized);
         setCarouselImages(normalized);
         setCurrentImageIndex(0);
@@ -784,7 +784,7 @@ const PropertyDetailsPage = () => {
         email: formData.email,
       };
 
-      const response = await axios.put(`http://195.179.231.102:6003/api/properties/${id}`, updatedData, {
+      const response = await axios.put(`${API_CONFIG.API_URL}/properties/${id}`, updatedData, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`,
           'Content-Type': 'application/json',

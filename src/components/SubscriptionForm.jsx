@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useStripe, useElements, CardElement } from '@stripe/react-stripe-js';
-import {jwtDecode} from 'jwt-decode'; // Import jwt-decode without curly braces
+import { jwtDecode } from 'jwt-decode'; // Import jwt-decode without curly braces
+import { API_CONFIG } from '../config/api.config';
 
 const SubscriptionForm = () => {
     const { planTitle } = useParams();
@@ -37,7 +38,7 @@ const SubscriptionForm = () => {
     // Updated to include userId in the POST request
     const saveSubscriptionDetails = async (email, packageName, subscriptionStatus, userId) => {
         try {
-            const response = await fetch('http://195.179.231.102:6003/api/subscriptions', {
+            const response = await fetch(`${API_CONFIG.API_URL}/subscriptions`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

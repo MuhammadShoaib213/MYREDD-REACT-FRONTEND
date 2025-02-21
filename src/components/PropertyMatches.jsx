@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
 import bgImage from '../images/bg.jpg'; // Make sure this path is correct
+import { API_CONFIG } from '../config/api.config';
 
 const FullScreenContainer = styled.div`
   background-image: url(${bgImage});
@@ -117,7 +118,7 @@ function PropertyMatches() {
   
     const findMatches = async (propertyId) => {
       try {
-        const response = await axios.get(`http://localhost:3000http://195.179.231.102:6003/api/properties/findMatches/${propertyId}`);
+        const response = await axios.get(`${API_CONFIG.API_URL}/properties/findMatches/${propertyId}`);
         setMatches(response.data);
         setError('');
       } catch (err) {

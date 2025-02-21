@@ -4,6 +4,7 @@ import {jwtDecode} from 'jwt-decode';
 import { useParams, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import bgImage from '../images/bg.jpg';
+import { API_CONFIG } from '../config/api.config';
 
 // --- Styled Components --- //
 
@@ -157,7 +158,7 @@ const PropertyBankDetails = () => {
         const decoded = jwtDecode(token);
         const userId = decoded.userId;
 
-        const response = await axios.get('http://195.179.231.102:6003/api/properties/all', {
+        const response = await axios.get(`${API_CONFIG.API_URL}/properties/all`, {
           params: { userId },
         });
         setProperties(response.data);

@@ -16,6 +16,7 @@ import animationData from '../animation/3.json';
 import WeatherWidget from '../components/WeatherWidget';
 import bgImage from '../images/bg.jpg';
 import { AnimatePresence, motion } from 'framer-motion';
+import { API_CONFIG } from '../config/api.config';
 
 // Styled components with updated styles and adjustments
 const DashboardContainer = styled.div`
@@ -425,7 +426,7 @@ const Dashboard = () => {
       try {
         const token = localStorage.getItem('token');
         const response = await fetch(
-          `http://195.179.231.102:6003/api/auth/profile/${user.userId}`,
+          `${API_CONFIG.API_URL}/auth/profile/${user.userId}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,

@@ -8,6 +8,7 @@ import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
   PieChart, Pie, Cell 
 } from 'recharts';
+import { API_CONFIG } from '../config/api.config';
 
 // ----------------------
 // Styled Components
@@ -249,7 +250,7 @@ function InquiryDealDetail() {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          `http://195.179.231.102:6003/api/properties/user/${decoded.userId}`,
+          `${API_CONFIG.API_URL}/properties/user/${decoded.userId}`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
         const aggregated = aggregateData(response.data, inquiryType);

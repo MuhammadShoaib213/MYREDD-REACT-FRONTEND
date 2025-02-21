@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import {jwtDecode} from 'jwt-decode';
 import bgImage from '../images/bg.jpg';
 import { useNavigate } from 'react-router-dom';
+import { API_CONFIG } from '../config/api.config';
 
 // Full screen background and container styling
 const FullScreenContainer = styled.div`
@@ -115,14 +116,14 @@ const LeadTracker = () => {
 
         try {
           // Fetch shared leads
-          const sharedResponse = await axios.get(`http://195.179.231.102:6003/api/shared-leads/shared?userId=${userId}`, {
+          const sharedResponse = await axios.get(`${API_CONFIG.API_URL}/shared-leads/shared?userId=${userId}`, {
             headers: { Authorization: `Bearer ${token}` }
           });
           setSharedLeads(sharedResponse.data);
           console.log('Shared Leads:', sharedResponse.data);
 
           // Fetch received leads
-          const receivedResponse = await axios.get(`http://195.179.231.102:6003/api/shared-leads/received?userId=${userId}`, {
+          const receivedResponse = await axios.get(`${API_CONFIG.API_URL}/shared-leads/received?userId=${userId}`, {
             headers: { Authorization: `Bearer ${token}` }
           });
           setReceivedLeads(receivedResponse.data);

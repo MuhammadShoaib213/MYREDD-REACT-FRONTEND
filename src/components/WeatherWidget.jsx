@@ -21,7 +21,7 @@ const WeatherWidget = () => {
         };
 
         const fetchCityName = async (lat, lon) => {
-            const url = `https://maps.googleapis.com/mapshttp://195.179.231.102:6003/api/geocode/json?latlng=${lat},${lon}&key=AIzaSyCJiE5-F5s--KvBT8QDbvkXXpymdg7vAtk`;
+            const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lon}&key=AIzaSyCJiE5-F5s--KvBT8QDbvkXXpymdg7vAtk`;
 
             try {
                 const response = await fetch(url);

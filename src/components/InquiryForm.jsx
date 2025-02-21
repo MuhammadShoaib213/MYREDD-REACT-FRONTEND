@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import StepOne from './StepOne';
 import StepTwo from './StepTwo';
@@ -11,6 +10,7 @@ import {jwtDecode} from 'jwt-decode';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import styled from 'styled-components';
+import { API_CONFIG } from '../config/api.config';
 
 const BackButton = styled.button`
   position: absolute;
@@ -315,7 +315,7 @@ const InquiryForm = () => {
       console.log('Submitting form data...');
     
       // Submit the form data to the API endpoint
-      const response = await axios.post('http://195.179.231.102:6003/api/properties/add', submitData, {
+      const response = await axios.post(`${API_CONFIG.API_URL}/properties/add`, submitData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
     

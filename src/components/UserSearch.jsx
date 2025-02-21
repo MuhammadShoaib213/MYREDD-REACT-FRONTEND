@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useAuth } from './AuthContext';  // Assuming you have an authentication context
+import { API_CONFIG } from '../config/api.config';
 
 const UserSearch = () => {
     const [query, setQuery] = useState('');
@@ -10,7 +11,7 @@ const UserSearch = () => {
     const handleSearch = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.get('http://195.179.231.102:6003/api/auth/search', {
+            const response = await axios.get(`${API_CONFIG.API_URL}/auth/search`, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 },
@@ -26,7 +27,7 @@ const UserSearch = () => {
 
     const sendFriendRequest = async (recipientId) => {
         try {
-            await axios.post('http://195.179.231.102:6003/api/friend/request', {
+            await axios.post(`${API_CONFIG.API_URL}/friend/request`, {
                 recipientId
             }, {
                 headers: {

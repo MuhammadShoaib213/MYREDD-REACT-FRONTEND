@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import Modal from 'react-modal';
 import styled, { keyframes } from 'styled-components';
 import axios from 'axios';
-import {jwtDecode} from 'jwt-decode';
+import { jwtDecode } from 'jwt-decode';
+import { API_CONFIG } from '../config/api.config';
 
 // Fade-in animation for the modal content
 const fadeIn = keyframes`
@@ -204,7 +205,7 @@ const ShareLeadModal = ({ isOpen, onRequestClose, leadId }) => {
         const userId = decoded.userId;
 
         try {
-          const response = await axios.get(`/friend/list?userId=${userId}`, {
+          const response = await axios.get(`${API_CONFIG.API_URL}/friend/list?userId=${userId}`, {
             headers: { Authorization: `Bearer ${token}` },
           });
 
@@ -241,7 +242,7 @@ const ShareLeadModal = ({ isOpen, onRequestClose, leadId }) => {
     try {
       const token = localStorage.getItem('token');
       await axios.post(
-        'http://195.179.231.102:6003/api/shared-leads/share-lead',
+        `${API_CONFIG.API_URL}/shared-leads/share-lead`,
         {
           leadId: leadId,
           shareWithAll: true,
@@ -261,7 +262,7 @@ const ShareLeadModal = ({ isOpen, onRequestClose, leadId }) => {
     try {
       const token = localStorage.getItem('token');
       await axios.post(
-        'http://195.179.231.102:6003/api/shared-leads/share-lead',
+        `${API_CONFIG.API_URL}/shared-leads/share-lead`,
         {
           leadId: leadId,
           friendIds: selectedFriends,

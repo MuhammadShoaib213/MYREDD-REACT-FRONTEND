@@ -5,6 +5,7 @@ import bgImage from '../images/bg.jpg';
 import { useParams, useNavigate } from 'react-router-dom';
 import {jwtDecode} from 'jwt-decode';
 import ContractForm from './ContractForm';
+import { API_CONFIG } from '../config/api.config';
 
 // ----------------------
 // Theme Definition
@@ -263,7 +264,7 @@ const LeadDetailPage = () => {
       const headers = { Authorization: `Bearer ${token}` };
       let propertyResponse;
       try {
-        propertyResponse = await axios.get(`http://195.179.231.102:6003/api/properties/propertybyid/${id}`, { headers });
+        propertyResponse = await axios.get(`${API_CONFIG.API_URL}/properties/propertybyid/${id}`, { headers });
         setPropertyData(propertyResponse.data);
       } catch (err) {
         setError(`Error fetching property data: ${err.response ? err.response.data.message : err.message}`);
@@ -272,7 +273,7 @@ const LeadDetailPage = () => {
         try {
           const decodedToken = jwtDecode(token);
           const userId = decodedToken.userId;
-          const notesResponse = await axios.get(`http://195.179.231.102:6003/api/notes/${userId}/${id}/${propertyResponse.data.customerId}`, { headers });
+          const notesResponse = await axios.get(`${API_CONFIG.API_URL}/notes/${userId}/${id}/${propertyResponse.data.customerId}`, { headers });
           setNotes(notesResponse.data);
         } catch (err) {
           console.error(`Error fetching notes: ${err.response ? err.response.data.message : err.message}`);
@@ -290,7 +291,7 @@ const LeadDetailPage = () => {
     try {
       const decodedToken = jwtDecode(token);
       const userId = decodedToken.userId;
-      const response = await axios.get(`http://195.179.231.102:6003/api/schedules/user/${userId}`, { headers });
+      const response = await axios.get(`${API_CONFIG.API_URL}/schedules/user/${userId}`, { headers });
       setSchedules(response.data);
     } catch (error) {
       console.error('Failed to fetch schedules:', error);
@@ -302,7 +303,7 @@ const LeadDetailPage = () => {
     setStatus(newStatus);
     try {
       const headers = { Authorization: `Bearer ${token}` };
-      const response = await axios.patch(`http://195.179.231.102:6003/api/properties/updateStatus/${id}`, { status: newStatus }, { headers });
+      const response = await axios.patch(`${API_CONFIG.API_URL}/properties/updateStatus/${id}`, { status: newStatus }, { headers });
       alert('Status updated successfully!');
       console.log(response.data);
     } catch (error) {
@@ -340,7 +341,7 @@ const LeadDetailPage = () => {
       formData.append('audio', new File([blob], 'audioNote.webm', { type: 'audio/webm' }));
     }
     try {
-      const response = await axios.post('http://195.179.231.102:6003/api/notes', formData, {
+      const response = await axios.post(`${API_CONFIG.API_URL}/notes`, formData, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setNotes([...notes, response.data]);
@@ -354,7 +355,7 @@ const LeadDetailPage = () => {
   const handleDeleteNote = async (noteId, index) => {
     try {
       const headers = { Authorization: `Bearer ${token}` };
-      await axios.delete(`http://195.179.231.102:6003/api/notes/${noteId}`, { headers });
+      await axios.delete(`${API_CONFIG.API_URL}/notes/${noteId}`, { headers });
       const updatedNotes = [...notes];
       updatedNotes.splice(index, 1);
       setNotes(updatedNotes);
@@ -405,7 +406,7 @@ const LeadDetailPage = () => {
       time: scheduleTime
     };
     try {
-      const response = await axios.post('http://195.179.231.102:6003/api/schedules/add', scheduleData, { headers });
+      const response = await axios.post(`${API_CONFIG.API_URL}/schedules/add`, scheduleData, { headers });
       alert('Schedule saved successfully');
       console.log(response.data);
     } catch (error) {

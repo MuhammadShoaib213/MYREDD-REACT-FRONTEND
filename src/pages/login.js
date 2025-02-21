@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { API_CONFIG } from '../config/api.config';
 
 const FormContainer = styled.div`
   display: flex;
@@ -78,7 +79,7 @@ function LoginForm({ onLoginSuccess, onClose }) { // Ensure onClose is also cond
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      const response = await fetch('http://195.179.231.102:6003/api/auth/login', {
+      const response = await fetch(`${API_CONFIG.API_URL}/auth/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

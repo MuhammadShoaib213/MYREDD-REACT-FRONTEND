@@ -4,6 +4,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import bgImage from '../images/bg.jpg';
+import { API_CONFIG } from '../config/api.config';
 
 
 
@@ -73,7 +74,7 @@ function VerifyOtpPage() {
       return;
     }
 
-    const response = await fetch('http://195.179.231.102:6003/api/auth/verify-otp', {
+    const response = await fetch(`${API_CONFIG.API_URL}/auth/verify-otp`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

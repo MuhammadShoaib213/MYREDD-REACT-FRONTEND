@@ -30,6 +30,7 @@ import { GiElevator } from 'react-icons/gi';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import ShareLeadModal from './ShareLeadModal';
+import { API_CONFIG } from '../config/api.config';
 
 // ---------- HELPER ICON FUNCTIONS ----------
 const getFacilityIcon = (name) => {
@@ -331,8 +332,6 @@ const BackButton = styled.button`
 `;
 
 // ---------- HELPER FUNCTIONS FOR CAPTURING & UPLOADING ----------
-const BASE_URL = 'http://195.179.231.102:6003';
-
 const captureAdAsImage = async (adElement) => {
   try {
     const canvas = await html2canvas(adElement, { useCORS: true });
@@ -348,7 +347,7 @@ const uploadImage = async (dataURL) => {
     const blob = await (await fetch(dataURL)).blob();
     const formData = new FormData();
     formData.append('file', blob, 'property-ad.png');
-    const response = await axios.post(`${BASE_URL}/api/upload`, formData, {
+    const response = await axios.post(`${API_CONFIG.BASE_URL}/api/upload`, formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
     });
     return response.data.url;
@@ -376,7 +375,7 @@ const NewPropertyAd = () => {
   useEffect(() => {
     const fetchProperty = async () => {
       try {
-        const response = await axios.get(`${BASE_URL}/api/properties/propertyAd/${propertyId}`, {
+        const response = await axios.get(`${API_CONFIG.API_URL}/properties/propertyAd/${propertyId}`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
             'Content-Type': 'application/json',
@@ -403,17 +402,17 @@ const NewPropertyAd = () => {
       } else {
         const { frontPictures = [], propertyPictures = [] } = property;
         if (frontPictures.length > 0) {
-          mainImg = `${BASE_URL}/${frontPictures[0]}`;
+          mainImg = `${API_CONFIG.BASE_URL}/${frontPictures[0]}`;
           thumbImgs = frontPictures.slice(1).concat(propertyPictures);
         } else if (propertyPictures.length > 0) {
-          mainImg = `${BASE_URL}/${propertyPictures[0]}`;
+          mainImg = `${API_CONFIG.BASE_URL}/${propertyPictures[0]}`;
           thumbImgs = propertyPictures.slice(1);
         } else {
           mainImg = `${process.env.PUBLIC_URL}/image.png`;
         }
       }
       setSelectedImage(mainImg);
-      setThumbnails(thumbImgs.map(img => `${BASE_URL}/${img}`));
+      setThumbnails(thumbImgs.map(img => `${API_CONFIG.BASE_URL}/${img}`));
     }
   }, [property]);
 
