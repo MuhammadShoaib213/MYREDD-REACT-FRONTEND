@@ -331,7 +331,7 @@ const BackButton = styled.button`
 `;
 
 // ---------- HELPER FUNCTIONS FOR CAPTURING & UPLOADING ----------
-const BASE_URL = 'http://localhost:5000';
+const BASE_URL = '';
 
 const captureAdAsImage = async (adElement) => {
   try {

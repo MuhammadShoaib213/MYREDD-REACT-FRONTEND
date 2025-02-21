@@ -1888,7 +1888,7 @@ const handlePrint = () => {
 };
 
 // --- New Helper Functions for Capturing & Uploading Card Image ---
-const BASE_URL = 'http://localhost:5000';
+const BASE_URL = '';
 
 const captureCardAsImage = async (cardElement) => {
   try {

@@ -394,7 +394,7 @@ const BusinessAssociatesPage = () => {
   useEffect(() => {
     const fetchFriendRequests = async () => {
         try {
-            const response = await axios.get('http://localhost:5000/api/friend/requests', {
+            const response = await axios.get('/api/friend/requests', {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setFriendRequests(response.data);
@@ -413,7 +413,7 @@ const BusinessAssociatesPage = () => {
 
   const handleAcceptFriendRequest = async (requestId) => {
     try {
-      await axios.put('http://localhost:5000/api/friend/update', { 
+      await axios.put('/api/friend/update', { 
         friendsId: requestId,
         action: 'accept'
       }, {
@@ -429,7 +429,7 @@ const BusinessAssociatesPage = () => {
 
   const handleDeclineFriendRequest = async (requestId) => {
     try {
-      await axios.put('http://localhost:5000/api/friend/update', { 
+      await axios.put('/api/friend/update', { 
         friendsId: requestId,
         action: 'decline'
       }, {
