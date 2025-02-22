@@ -744,7 +744,7 @@ const PropertyDetailsPage = () => {
         images = propertyPictures;
       }
       if (images.length > 0) {
-        const normalized = images.map(img => `${API_CONFIG.BASE_URL}/${normalizePath(img)}`);
+        const normalized = images.map(img => `${API_CONFIG.BASE_URL}${normalizePath(img)}`);
         console.log('Carousel image URLs:', normalized);
         setCarouselImages(normalized);
         setCurrentImageIndex(0);

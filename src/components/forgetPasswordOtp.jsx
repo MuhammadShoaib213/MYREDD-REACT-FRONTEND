@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { useNavigate, useLocation } from 'react-router-dom';  // Import useLocation to access the navigation state
+import { useNavigate, useLocation } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import bgImage from '../images/bg.jpg';
+import { API_CONFIG } from '../config/api.config';
 
 const MainContainer = styled.div`
   background-image: url(${bgImage});
@@ -21,60 +22,60 @@ const MainContainer = styled.div`
 const FormContainer = styled.div`
   background: rgba(255, 255, 255, 0.9);
   border-radius: 8px;
-  padding: 60px; // Increased padding for more space inside
+  padding: 60px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 400px; // Increased width for more spacious layout
+  width: 400px;
 `;
 
 const Heading = styled.h1`
-  font-size: 28px; // Increased font size for better visibility
+  font-size: 28px;
   color: #333;
   margin-bottom: 20px;
+  text-align: center;
 `;
 
 const StyledLabel = styled.label`
   margin-bottom: 5px;
   color: #333;
-  font-size: 16px; // Increased font size for better readability
+  font-size: 16px;
 `;
 
 const StyledInput = styled.input`
-  padding: 12px; // Increased padding for easier interaction
-  margin-bottom: 15px; // Slightly increased margin for better spacing
+  padding: 12px;
+  margin-bottom: 15px;
   border: 1px solid #ccc;
   border-radius: 4px;
-  font-size: 16px; // Increased font size for better readability
+  font-size: 16px;
+  width: 100%;
+  box-sizing: border-box;
 `;
 
 const StyledButton = styled.button`
-  padding: 12px 20px; // Increased padding for a more clickable area
-  font-size: 16px; // Increased font size for better visibility
+  padding: 12px 20px;
+  font-size: 16px;
   background-color: red;
   color: white;
   border: none;
   border-radius: 4px;
   cursor: pointer;
+  width: 100%;
   transition: background-color 0.3s;
-
   &:hover {
     background-color: darkred;
   }
 `;
-
-
 
 const StyledForm = styled.form`
   display: flex;
   flex-direction: column;
 `;
 
-
 function OTPVerificationForm() {
-  const location = useLocation();  // Access location to retrieve state
-  const email = location.state?.email;  // Retrieve the email passed via state
+  const location = useLocation();
+  const email = location.state?.email;
   const [otp, setOTP] = useState('');
   const navigate = useNavigate();
 
@@ -86,7 +87,7 @@ function OTPVerificationForm() {
     }
 
     try {
-      const response = await fetch('http://195.179.231.102:6003/api/auth/verify-otp-pass', {
+      const response = await fetch(`${API_CONFIG.API_URL}/auth/verify-otp-pass`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -98,7 +99,7 @@ function OTPVerificationForm() {
       const data = await response.json();
       if (response.ok) {
         toast.success('OTP verified successfully!');
-        navigate('/ResetPasswordForm', { state: { email } });  // Optionally pass email to reset password page
+        navigate('/ResetPasswordForm', { state: { email } });
       } else {
         toast.error(data.message);
       }
@@ -110,14 +111,24 @@ function OTPVerificationForm() {
   return (
     <MainContainer>
       <FormContainer>
-        <ToastContainer position="top-center" autoClose={5000} hideProgressBar={false} newestOnTop={false} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover />
+        <ToastContainer
+          position="top-center"
+          autoClose={5000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+        />
         <Heading>Verify Your OTP</Heading>
         <StyledForm onSubmit={handleSubmit}>
           <StyledLabel>OTP:</StyledLabel>
           <StyledInput
             type="text"
             value={otp}
-            onChange={e => setOTP(e.target.value)}
+            onChange={(e) => setOTP(e.target.value)}
             required
             placeholder="Enter OTP"
           />

@@ -241,6 +241,9 @@ import PropertyList from './components/PropertyList';
 import MainForm from './components/InquiryForm/InquiryForm';
 import LocationAutocomplete from './components/InquiryForm/common/area/LocationAutocomplete';
 import StepOne from './components/InquiryForm/steps/StepOne';
+import AdminDashboard from './pages/AdminDashboard';
+import AdminLogin from './pages/AdminLogin';
+import { useAuth } from './components/AuthContext';
 
 const stripePromise = loadStripe('pk_test_51NPVZGJSiT0U6CqFk8KzITi5LilCEfscsbsUCIUxpDiEdMx2DOMzatnUPHdCiFhQXoorpP4yA6UaNaLKSt7sF06400gjhlHI8y');
 
@@ -269,12 +272,27 @@ function App() {
     }
   }, []);
 
+
+  function PrivateAdminRoute({ children }) {
+    const { isAdmin } = useAuth();
+    return isAdmin ? children : <Navigate to="/admin/login" />;
+  }
+
   return (
     <AuthProvider>
       <Router>
         <Navbar />
         <Routes>
           {/* Public Routes */}
+          <Route path="/admin/login" element={<AdminLogin />} />
+<Route 
+  path="/admin/dashboard" 
+  element={
+    <PrivateAdminRoute>
+      <AdminDashboard />
+    </PrivateAdminRoute>
+  } 
+/>
           <Route path="/" element={<HomePage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignupPage />} />

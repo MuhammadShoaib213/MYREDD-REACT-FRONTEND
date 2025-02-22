@@ -46,7 +46,7 @@
     "react-slick": "^0.30.2",
     "react-toastify": "^10.0.5",
     "react-tooltip": "^5.28.0",
-    "recharts": "^2.12.7",
+    "recharts": "^2.15.1",
     "redux": "^5.0.1",
     "redux-thunk": "^3.1.0",
     "sendbird": "^3.1.33",
