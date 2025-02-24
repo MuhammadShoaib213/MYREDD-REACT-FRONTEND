@@ -1112,7 +1112,7 @@ const Dashboard = () => {
             <Icon>
               <FiBarChart2 />
             </Icon>
-            <Label>Business Status</Label>
+            <Label>CRM</Label>
           </NavButton>
         </Link>
         <Link to="/profileView" style={{ textDecoration: 'none' }}>
