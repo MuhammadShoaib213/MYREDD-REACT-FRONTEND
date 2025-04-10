@@ -647,6 +647,42 @@ const MainForm = () => {
     }));
   };
 
+  const handleCommercialFloorChange = (updatedFloors) => {
+    const transformedFloors = updatedFloors.map((floor) => ({
+      name: floor.name || 'Unnamed Floor',
+      features: floor.features
+        ? Object.fromEntries(
+            Object.entries(floor.features).map(([featureName, featureValue]) => [
+              featureName || 'Unnamed Feature',
+              featureValue || 0,
+            ])
+          )
+        : {},
+    }));
+    setFormData(prev => ({
+      ...prev,
+      floors: transformedFloors,
+    }));
+  };
+
+  const handlePlotFeatureChange = (updatedFloors) => {
+    const transformedFloors = updatedFloors.map((floor) => ({
+      name: floor.name || 'Unnamed Floor',
+      features: floor.features
+        ? Object.fromEntries(
+            Object.entries(floor.features).map(([featureName, featureValue]) => [
+              featureName || 'Unnamed Feature',
+              featureValue || 0,
+            ])
+          )
+        : {},
+    }));
+    setFormData(prev => ({
+      ...prev,
+      floors: transformedFloors,
+    }));
+  };
+
   const handleFacilitiesChange = (updatedFacilities) => {
     const transformedFacilities = updatedFacilities.map((facility) => ({
       name: facility.name || 'Unknown',
@@ -814,6 +850,8 @@ const MainForm = () => {
   const handlers = {
     handleChange,
     handleFloorChange,
+    handleCommercialFloorChange,
+    handlePlotFeatureChange,
     handleFilesChange,
     handleFacilitiesChange,
     handlePriorityChange,

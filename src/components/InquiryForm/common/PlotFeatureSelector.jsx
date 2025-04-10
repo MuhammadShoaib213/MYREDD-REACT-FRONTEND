@@ -156,41 +156,32 @@ const DropdownListItem = styled.li`
 `;
 
 /* --- COMPONENT --- */
-const FloorFeatureSelector = ({ floors = [], onFloorChange, isRequired = false }) => {
+const PlotFeatureSelector = ({ floors = [], onFloorChange, isRequired = false }) => {
   const [localFloors, setLocalFloors] = useState(floors);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   // Predefined features remain the same
   const predefinedFeatures = [
-    'Bedroom',
-    'Kids Room',
-    'Guest Room',
-    'Study Room',
-    'Dining',
-    'Sitting',
-    'Lounge',
-    'Servant Quarter',
-    'Driver Room',
-    'Maid Room',
-    'Lawn',
-    'Cinema',
-    'Garage',
-    'Elevator',
-    'Bathroom',
-    'Kitchen',
+    'Possesion',
+    'Corner',
+    'Park Facing',
+    'File',
+    'Balloted',
+    'Sewerage',
+    'Electricity',
+    'Water Supply',
+    'Sui Gas',
+    'Boundary Wall',
+    'Nearby Schools',
+    'Nearby Hospitals',
+    'Nearby Shopping Malls',
+    'Nearby Restaurants',
+    'Nearby Public Transport Service',
   ];
 
   // Predefined floor types plus an option for a custom floor.
   const floorTypes = [
-    "Basement",
-    "Mezzanine",
-    "Ground Floor",
-    "First Floor",
-    "Second Floor",
-    "Third Floor",
-    "Fourth Floor",
-    "Fifth Floor",
-    "Custom Floor"
+    "Add features",
   ];
 
   // Toggle dropdown open/close
@@ -254,7 +245,7 @@ const FloorFeatureSelector = ({ floors = [], onFloorChange, isRequired = false }
   return (
     <>
       <Label htmlFor="floor">
-        Click to Enter Floor Features {isRequired && <RequiredAsterisk>*</RequiredAsterisk>}
+        Click to Enter Plot Features {isRequired && <RequiredAsterisk>*</RequiredAsterisk>}
       </Label>
       <Container>
         {localFloors.map((floor, index) => (
@@ -310,7 +301,7 @@ const FloorFeatureSelector = ({ floors = [], onFloorChange, isRequired = false }
         {/* NEW: Dropdown button to add a floor */}
         <DropdownContainer>
           <DropdownButton type="button" onClick={toggleDropdown}>
-            + Add Floor
+            + Add Features
           </DropdownButton>
           {isDropdownOpen && (
             <DropdownList>
@@ -330,4 +321,4 @@ const FloorFeatureSelector = ({ floors = [], onFloorChange, isRequired = false }
   );
 };
 
-export default FloorFeatureSelector;
+export default PlotFeatureSelector;

@@ -135,7 +135,7 @@ const StepOne = React.memo(({ nextStep, handleChange, formData }) => {
                 checked={mainOption === 'lookingFor'}
                 onChange={handleMainOptionChange}
               />
-              Looking for
+              Looking
             </Label>
             <Label>
               <input

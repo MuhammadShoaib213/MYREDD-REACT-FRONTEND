@@ -7,6 +7,7 @@ import logoImage from '../images/logo.png';
 import FormModal from '../components/FormModal';
 import LoginForm from '../pages/login.js';
 import SignupPage from '../pages/SignupPage.js';
+import NotificationBell from './Notification.jsx';
 
 // const Nav = styled.nav`
 //   display: flex;
@@ -197,6 +198,7 @@ const Navbar = () => {
         <StyledLink to="AboutUs" smooth={true} duration={500} onClick={closeMenu}>About</StyledLink>
         <StyledLink to="Tab" smooth={true} duration={500} onClick={closeMenu}>Features</StyledLink>
         <StyledLink to="ContactUs" smooth={true} duration={500} onClick={closeMenu}>Contact Us</StyledLink>
+        <NotificationBell />
       </Menu>
       {isLoggedIn ? (
         <AuthButton onClick={handleLogout}>Logout</AuthButton>

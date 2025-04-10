@@ -110,6 +110,8 @@ const StepFour = memo(({ prevStep, formData, handlers }) => {
                 handleChange={handlers.handleChange}
                 handleFilesChange={handlers.handleFilesChange}
                 handleFloorChange={handlers.handleFloorChange}
+                handleCommercialFloorChange={handlers.handleCommercialFloorChange}
+                handlePlotFeatureChange={handlers.handlePlotFeatureChange}
                 handleFacilitiesChange={handlers.handleFacilitiesChange}
                 handleBudgetChange={handlers.handleBudgetChange}
                 handleAdvanceChange={handlers.handleAdvanceChange}
@@ -153,6 +155,8 @@ StepFour.propTypes = {
     handleChange: PropTypes.func.isRequired,
     handleFilesChange: PropTypes.func.isRequired,
     handleFloorChange: PropTypes.func.isRequired,
+    handleCommercialFloorChange: PropTypes.func.isRequired,
+    handlePlotFeatureChange: PropTypes.func.isRequired,
     handleFacilitiesChange: PropTypes.func.isRequired,
     handleBudgetChange: PropTypes.func.isRequired,
     handleAdvanceChange: PropTypes.func.isRequired,

@@ -10,7 +10,7 @@ import PhaseBlockSelect from '../../common/PhaseBlockSelect';
 import SizeInput from '../../common/area/SizeInput';
 import LandAreaDimensionsInput from '../../common/area/LandAreaDimensionsInput';
 import FileUploadComponent from '../../common/FileUpload';
-import FloorFeatureSelector from '../../common/FloorFeatureSelector';
+import PlotFeatureSelector from '../../common/PlotFeatureSelector';
 import FacilitySelector from '../../common/FacilitySelector';
 import BudgetRangeInput from '../../common/financial/BudgetRangeInput';
 import AdvanceAmountInput from '../../common/financial/AdvanceAmountInput';
@@ -35,6 +35,7 @@ const CommercialForSale = ({
   handleChange,
   handleFilesChange,
   handleFloorChange,
+  handlePlotFeatureChange,
   handleFacilitiesChange,
   handleBudgetChange,
   handleAdvanceChange,
@@ -170,10 +171,10 @@ const CommercialForSale = ({
       />
 
       {/* Features & Facilities */}
-      {/* <FloorFeatureSelector
+      <PlotFeatureSelector
         floors={formData.floors}
-        onFloorChange={handleFloorChange}
-      /> */}
+        onFloorChange={handlePlotFeatureChange}
+      />
       {/* <FacilitySelector
         facilities={formData.facilities}
         onFacilitiesChange={handleFacilitiesChange}

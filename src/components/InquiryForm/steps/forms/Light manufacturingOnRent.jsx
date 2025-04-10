@@ -10,7 +10,7 @@ import PhaseBlockSelect from '../../common/PhaseBlockSelect';
 import SizeInput from '../../common/area/SizeInput';
 import LandAreaDimensionsInput from '../../common/area/LandAreaDimensionsInput';
 import FileUploadComponent from '../../common/FileUpload';
-import FloorFeatureSelector from '../../common/FloorFeatureSelector';
+import CommercialFloorFeatureSelector from '../../common/CommercialFloorFeatureSelector';
 import FacilitySelector from '../../common/FacilitySelector';
 import BudgetRangeInput from '../../common/financial/BudgetRangeInput';
 import AdvanceAmountInput from '../../common/financial/AdvanceAmountInput';
@@ -110,6 +110,11 @@ const LightmanufacturingOnRent = ({
     <PropertyConditionSelect
         condition={formData.propertyCondition}
         onConditionChange={handlePropertyConditionChange}
+      />
+
+<CommercialFloorFeatureSelector
+        floors={formData.floors}
+        onFloorChange={handleFloorChange}
       />
 
       {/* Financial Details */}

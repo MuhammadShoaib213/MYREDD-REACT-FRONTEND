@@ -13,21 +13,21 @@ const FlexContainer = styled.div`
 `;
 
 const Input = styled.input`
-  flex: 1;
-  padding: 12px 12px; // Increased padding for greater height
+  width: 150px; /* Fixed width for the input */
+  padding: 12px 12px;
   border-radius: 4px;
   border: 1px solid #ccc;
-  box-sizing: border-box; // Ensures padding doesn't affect the overall width
-  font-size: 16px; // Ensuring consistent font size across inputs
+  box-sizing: border-box; 
+  font-size: 16px; 
 `;
 
 const Select = styled.select`
-  width: 150px; /* Fixed width for the dropdown */
-  padding: 12px 12px; // Consistent with the input field
+  flex: 1;         /* Let the select fill the remaining space */
+  padding: 12px 12px; 
   border-radius: 4px;
   border: 1px solid #ccc;
   box-sizing: border-box;
-  font-size: 16px; // Ensuring consistent font size across selects
+  font-size: 16px;
 `;
 
 const Label = styled.label`

@@ -8,17 +8,17 @@ const StyledWrapper = styled.div`
 `;
 
 const Input = styled.input`
-  flex: 7; // Takes 70% of the width
+  width: 150px; /* Fixed width for the input */
   padding: 12px 12px;
   border-radius: 4px;
   border: 1px solid #ccc;
-  box-sizing: border-box;
-  font-size: 16px;
+  box-sizing: border-box; 
+  font-size: 16px; 
 `;
 
 const Select = styled.select`
-  flex: 3; // Takes 30% of the width
-  padding: 12px 12px;
+  flex: 1;         /* Let the select fill the remaining space */
+  padding: 12px 12px; 
   border-radius: 4px;
   border: 1px solid #ccc;
   box-sizing: border-box;
