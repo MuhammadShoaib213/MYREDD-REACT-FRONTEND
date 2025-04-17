@@ -1,55 +1,65 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import 'react-phone-number-input/style.css';
 import PhoneInput, { getCountryCallingCode, isValidPhoneNumber } from 'react-phone-number-input';
 import bgImage from '../images/bg.jpg';
 import { API_CONFIG } from '../config/api.config';
 
 const Container = styled.div`
-  background-image: url(${bgImage});
-  background-size: cover;
-  background-position: center;
-  background-blend-mode: overlay;
-  background-color: rgba(0, 0, 0, 0.5);
-  height: 100vh;
+  /* full-screen background */
+  background:
+    linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)),
+    url(${bgImage}) center/cover no-repeat;
+  min-height: 100vh;
+  /* avoid overlapping sticky header/footer; adjust as needed */
+  padding-top: ${({ theme }) => theme.headerHeight || '60px'};
+  padding-bottom: ${({ theme }) => theme.footerHeight || '60px'};
+
+  /* center form horizontally */
   display: flex;
-  flex-direction: column;
-  @media (max-width: 768px) {
-    height: auto;
-  }
+  align-items: flex-start; /* start below header */
+  justify-content: center;
 `;
 
 const FormContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  width: 300px;
-  margin: 50px auto;
-  padding: 20px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   background: #fff;
-  border-radius: 15px;
+  padding: 2rem;
+  border-radius: 0.8rem;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+
+  /* responsive width */
+  width: 90%;
+  max-width: 400px;
+  margin: 2rem auto;
 `;
 
 const StyledForm = styled.form`
   display: flex;
   flex-direction: column;
+  width: 100%;
 `;
 
-const StyledInput = styled.input`
-  padding: 8px;
-  margin-bottom: 10px;
+const inputStyles = css`
+  width: 100%;
+  padding: 0.75rem;
+  margin-bottom: 1rem;
   border: 1px solid #ccc;
-  border-radius: 4px;
+  border-radius: 0.5rem;
+  font-size: 1rem;
 `;
+
+const StyledInput = styled.input`${inputStyles}`;
+const StyledSelect = styled.select`${inputStyles}`;
 
 const StyledButton = styled.button`
-  padding: 10px;
+  padding: 0.75rem;
   background-color: red;
   color: white;
   border: none;
-  border-radius: 4px;
+  border-radius: 0.5rem;
   cursor: pointer;
+  font-size: 1rem;
   transition: background-color 0.3s ease;
 
   &:hover {
@@ -57,31 +67,29 @@ const StyledButton = styled.button`
   }
 `;
 
-const StyledSelect = styled.select`
-  padding: 8px;
-  margin-bottom: 10px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-`;
-
 const PasswordContainer = styled.div`
   position: relative;
+  width: 100%;
   display: flex;
   align-items: center;
+  margin-bottom: 1rem;
 `;
 
 const ToggleButton = styled.button`
   position: absolute;
-  right: 10px;
-  border: none;
+  right: 1rem;
   background: transparent;
+  border: none;
   cursor: pointer;
+  font-size: 0.9rem;
   color: #666;
 `;
 
 const Label = styled.label`
-  margin-bottom: 5px;
+  margin-bottom: 0.5rem;
   color: #333;
+  font-weight: 500;
+  display: block;
   &:after {
     content: ' *';
     color: red;
@@ -90,8 +98,8 @@ const Label = styled.label`
 
 const ErrorMessage = styled.div`
   color: red;
-  margin-bottom: 10px;
-  font-size: 0.9em;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
 `;
 
 function SignupPage() {
