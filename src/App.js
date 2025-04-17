@@ -301,6 +301,7 @@ function App() {
           <Route path="/ForgotPasswordForm" element={<ForgotPasswordForm />} />
           <Route path="/OTPVerificationForm" element={<OTPVerificationForm />} />
           <Route path="/ResetPasswordForm" element={<ResetPasswordForm />} />
+          <Route path="/VerifyOtpPage" element={<VerifyOtpPage />} />
 
           {/* Protected Routes */}
           <Route element={<ProtectedRoute />}>
@@ -322,7 +323,6 @@ function App() {
             <Route path="/Agent" element={<Agent />} />
             <Route path="/CheckCustomer" element={<CheckCustomer />} />
             <Route path="/CustomerInquiryForm" element={<CustomerInquiryForm />} />
-            <Route path="/VerifyOtpPage" element={<VerifyOtpPage />} />
             <Route path="/FriendsList" element={<FriendsList />} />
             <Route path="/ProfileView" element={<ProfileView />} />
             <Route path="/customer/:id" element={<CustomerDetail />} />
